@@ -3,12 +3,18 @@ import {useState} from "react";
 import ShipSelector from "./ShipSelector";
 
 function GameCreatorMenu(){
-    const [fields, setFields] = useState(getEmptyFields)
+    const [ships, setShips] = useState([])
+    const [selectedShip, setSelectedShip] = useState(0)
+    const addShip=(ship)=>{
+        setShips((newShips=>{
+            return [...newShips,ship];
+        }))
+    }
     return <div style={styles.panel}>
-        <PanelMessage msg={"pick position for your ships"}/>
+        <PanelMessage msg={selectedShip===0?"select ship to deploy":"pick location for selected ship"}/>
         <div style={{display:"flex",marginTop:"1em"}}>
-            <CreatorBoard fields={fields}></CreatorBoard>
-            <ShipSelector></ShipSelector>
+            <CreatorBoard deployingShipNumber={selectedShip} disabled={selectedShip===0} ships={ships} addShip={addShip}></CreatorBoard>
+            <ShipSelector selectedShip={selectedShip} selectShip={setSelectedShip}></ShipSelector>
         </div>
         <div>
 
@@ -36,19 +42,6 @@ const styles={
     }
 
 }
-const getEmptyFields=()=>{
-    return [
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0]
-    ]
-}
+
 
 export default GameCreatorMenu
