@@ -1,12 +1,14 @@
 import CreatorBoard from "./CreatorBoard";
 import {useState} from "react";
+import ShipSelector from "./ShipSelector";
 
 function GameCreatorMenu(){
     const [fields, setFields] = useState(getEmptyFields)
     return <div style={styles.panel}>
         <PanelMessage msg={"pick position for your ships"}/>
-        <div>
+        <div style={{display:"flex",marginTop:"1em"}}>
             <CreatorBoard fields={fields}></CreatorBoard>
+            <ShipSelector></ShipSelector>
         </div>
         <div>
 

@@ -71,7 +71,6 @@ const styles={
         display:"flex",
         flexWrap:"wrap",
         height:"30em",
-        marginTop:"2em",
         padding:"0.5em"
     },
     field:{
