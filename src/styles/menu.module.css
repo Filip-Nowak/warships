@@ -1,0 +1,6 @@
+.container{
+    border-radius: 4em;
+    margin-right: auto;
+    margin-left: auto;
+    display: flex;
+}

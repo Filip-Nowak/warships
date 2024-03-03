@@ -1,0 +1,11 @@
+@font-face {
+    font-family: 'pixel';
+    src: url('../fonts/upheavtt.ttf'), url('../fonts/upheavtt.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+body{
+    background-color: #1E0074;
+    color: #8FFF00;
+    font-family: pixel, serif;
+}

@@ -1,0 +1,33 @@
+.input{
+    display: block;
+    float:none;
+    width: 80%;
+    background-color: #0F2703;
+    border:none;
+    outline: none;
+    color:#8FFF00;
+    font-family: pixel, serif;
+    font-size: 3em;
+    padding: 0;
+}
+.button{
+    width:20%;
+    border:none;
+    background-color: #1d4f02;
+    font-family: pixel, serif;
+    color: #8FFF00;
+
+}
+.button:disabled{
+    background-color: #0F2703;
+    color: #47730b;
+}
+.container{
+    margin-top: 4em;
+    display:flex;
+    margin-left:auto;
+    margin-right:auto;
+    width:30em;
+    padding: 1em;
+    background-color: #071501;
+}
