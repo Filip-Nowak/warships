@@ -1,139 +1,171 @@
 import {useState} from "react";
 
-function CreatorBoard({ships,addShip,disabled,deployingShipNumber}){
-    const [selectedField, setSelectedField] = useState([0,0])
-    const [deployingShip, setDeployingShip] = useState({fields:[],size:0})
-    const fields=getEmptyFields();
+function CreatorBoard({ships, addShip, disabled, deployingShipNumber}) {
+    const [selectedField, setSelectedField] = useState([0, 0])
+    const [deployingShip, setDeployingShip] = useState({fields: []})
+    const fields = getEmptyFields();
+    const getField = (pos) => {
+        return fields[pos.y][pos.x]
+    }
+    const setField = (pos, value) => {
+        fields[pos.y][pos.x] = value;
+    }
+    const checkField = (x, y) => {
+        return !(x < 0 || y < 0 || x > 9 || x > 9)
+    }
+    const setForbiddenFields = (x, y) => {
+        for (let i = -1; i < 2; i++) {
+            for (let j = -1; j < 2; j++) {
+                if (checkField(x + i, y + j)) {
+                    if (getField({x: x + i, y: y + j}) !== 1) {
+                        setField({x: x + i, y: y + j}, 4);
+                    }
+                }
+            }
+        }
+    }
     let style;
-    ships.forEach(ship=>{
-        fields[ship.x][ship.y]=1;
-    })
-    console.log("xd"+deployingShip.toString())
-    for(let i=0;i<deployingShip.fields.length;i++){
-        fields[deployingShip.fields[i].x][deployingShip.fields[i].y]=2;
+    if (deployingShip.fields.length === deployingShipNumber && deployingShipNumber !== 0) {
+        addShip(deployingShip);
     }
-    deployingShip.fields.forEach(pos=>{
-        if(pos.x>0){
-            if(fields[pos.x-1][pos.y]===0){
-                fields[pos.x-1][pos.y]=3;
+    if (deployingShipNumber === 0 && deployingShip.fields.length !== 0) {
+        setDeployingShip({fields: []})
+    }
+    ships.forEach(ship => {
+        ship.fields.forEach(pos => {
+            setField({x: pos.x, y: pos.y},1)
+            setForbiddenFields(pos.x, pos.y);
+        })
+    })
+    for (let i = 0; i < deployingShip.fields.length; i++) {
+        setField({x:deployingShip.fields[i].x,y:deployingShip.fields[i].y},2);
+    }
+    deployingShip.fields.forEach(pos => {
+        if (pos.x > 0) {
+            if (getField({x:pos.x-1,y:pos.y}) === 0) {
+                setField({x:pos.x-1,y:pos.y},3);
             }
         }
-        if(pos.y>0){
-            if(fields[pos.x][pos.y-1]===0){
-                fields[pos.x][pos.y-1]=3;
+        if (pos.y > 0) {
+            if (getField({x:pos.x,y:pos.y-1}) === 0) {
+                setField({x:pos.x,y:pos.y-1},3);
             }
         }
-        if(pos.x<9){
-            if(fields[pos.x+1][pos.y]===0){
-                fields[pos.x+1][pos.y]=3;
+        if (pos.x < 9) {
+            if (getField({x:pos.x+1,y:pos.y}) === 0) {
+                setField({x:pos.x+1,y:pos.y},3);
             }
+
         }
-        if(pos.y<9){
-            if(fields[pos.x][pos.y+1]===0){
-                fields[pos.x][pos.y+1]=3;
+        if (pos.y < 9) {
+            if (getField({x:pos.x,y:pos.y+1}) === 0) {
+                setField({x:pos.x,y:pos.y+1},3);
             }
         }
     })
 
 
-
-    const selectField=(x,y)=>{
-        setSelectedField([x,y])
+    const selectField = (x, y) => {
+        setSelectedField([x, y])
     }
-    const pickField=(pos)=>{
-        setDeployingShip(prevState=>({
+    const pickField = (pos) => {
+        setDeployingShip(prevState => ({
             ...prevState,
-            fields:[...prevState.fields,pos]
+            fields: [...prevState.fields, pos]
         }));
+
+
     }
 
 
-    style=styles.board;
-    if(disabled)
-        style={...style,opacity:"50%"}
+    style = styles.board;
+    if (disabled) {
+        style = {...style, opacity: "50%"}
+    }
     return <div style={style}>
-        {fields.map((row,x)=>{
-            return row.map((field,y)=>{
-                 return(
-                     <Field
-                            disabled={disabled}
-                            x={x} y={y}
-                            selected={selectedField[0]===x&&selectedField[1]===y}
-                            picked={fields[x][y]===1}
-                            select={selectField}
-                            pickField={pickField}
-                            value={field}
-                     >
-                         {field}
+        {fields.map((row, y) => {
+            return row.map((field, x) => {
+                return (
+                    <Field
+                        disabled={disabled || (deployingShip.fields.length !== 0 && field !== 3)}
+                        x={x} y={y}
+                        selected={selectedField[0] === x && selectedField[1] === y}
+                        picked={getField({x:x,y:y}) === 1}
+                        select={selectField}
+                        pickField={pickField}
+                        value={field}
+                    >
+                        {x + "," + y + ": " + field}
                     </Field>
-                 )
+                )
             })
         })}
     </div>
 }
 
 
-
-function Field({x,y,selected,select,picked,pickField,disabled,children,value}){
+function Field({x, y, selected, select, picked, pickField, disabled, children, value}) {
     const [light, setLight] = useState(true)
-    let style=styles.field;
+    let style = styles.field;
     let timeout;
 
-    const handleClick=()=>{
-        console.log("clicked")
-        pickField({x:x,y:y})
+    const handleClick = () => {
+        if (!disabled && (value === 0 || value === 3))
+            pickField({x: x, y: y})
     }
-    const handleMouseOver=()=>{
-        if(!selected && !picked)
-            select(x,y)
+    const handleMouseOver = () => {
+        select(x, y)
     }
-    const handleMouseLeave=()=>{
+    const handleMouseLeave = () => {
 
     }
-    if(value===1){
-        style={...style,backgroundColor:"#1BC000"}
-    }else if(value===2){
-        style={...style,backgroundColor:"yellow"}
+    if (value === 1) {
+        style = {...style, backgroundColor: "#1BC000", border: "0.5em solid #1BC000"}
+    } else if (value === 2) {
+        style = {...style, backgroundColor: "yellow"}
 
-    }else if(value===3){
-        style={...style,backgroundColor:"blue"}
+    } else if (value === 3) {
+        style = {...style, backgroundColor: "blue"}
 
-    }else if(value===4){
-        style={...style,backgroundColor:"red"}
-
+    } else if (value === 4) {
+        style = {...style, backgroundColor: "#330000", border: "0.5em solid #330000"}
+    }
+    if (selected) {
+        style = {...style, border: "solid 0.5em #1BC000"}
     }
 
     return <div onMouseLeave={handleMouseLeave} onMouseOver={handleMouseOver} onClick={handleClick} style={style}>
         {children}
     </div>
 }
-const styles={
-    board:{
-        border:"0.5em #1BC000 solid",
-        width:"30em",
-        display:"flex",
-        flexWrap:"wrap",
-        height:"30em",
-        padding:"0.5em"
+
+const styles = {
+    board: {
+        border: "0.5em #1BC000 solid",
+        width: "30em",
+        display: "flex",
+        flexWrap: "wrap",
+        height: "30em",
+        padding: "0.5em"
     },
-    field:{
-        width:"2em",
+    field: {
+        width: "2em",
         height: "2em",
-        border:"0.5em solid #001801",
+        border: "0.5em solid #001801",
     }
 }
-const getEmptyFields=()=>{
+const getEmptyFields = () => {
     return [
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0],
-        [0,0,0,0,0,0,0,0,0,0]
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
     ]
 }
 export default CreatorBoard
