@@ -30,7 +30,7 @@ function GameCreatorMenu(){
 
         }
     }, [deployingShip]);
-
+    console.log("render")
     const pickField = (pos) => {
         setDeployingShip(prevState => (
             [...prevState, pos]
@@ -46,7 +46,7 @@ function GameCreatorMenu(){
     }
     const removeShip=(pos)=>{
         let shipId=-1
-        console.log(ships)
+
         ships.forEach((ship,i)=>{
             ship.forEach(cord=>{
                 if(pos.x===cord.x && pos.y===cord.y){
@@ -58,22 +58,35 @@ function GameCreatorMenu(){
             console.log("ship doesnt exist")
             return
         }
-        console.log(ships[shipId])
-        setShips(prevState => {
-            prevState.splice(shipId,1)
-        })
+        const size=ships[shipId].length;
+
+        setShipsLeft(prevState => {
+            prevState[4 - size] += 1
+            return prevState
+        });
+        setShips(prevState => (
+            prevState.slice(0,shipId).concat(prevState.slice(shipId+1))
+        ))
     }
+    let remainingShips=0;
+    shipsLeft.forEach(value=>{
+        remainingShips+=value;
+    })
     return <div style={styles.panel}>
-        <PanelMessage msg={selectedShip===0?"select ship to deploy":"pick location for selected ship"}/>
+        <PanelMessage msg={(!boardMode)?"Pick ship to remove":selectedShip===0?"select ship to deploy":"pick location for selected ship"} mode={boardMode}/>
         <div style={{display:"flex",marginTop:"1em"}}>
             <CreatorBoard removeShip={removeShip} pickField={pickField} disabled={!(!boardMode||(boardMode&&selectedShip!==0))} ships={ships} deployingShip={deployingShip} mode={boardMode}></CreatorBoard>
             <ShipSelector disabled={!boardMode || (boardMode && deployingShip.length!==0)} shipsLeft={shipsLeft} selectedShip={selectedShip} selectShip={setSelectedShip}></ShipSelector>
         </div>
-        <BottomPanel changeMode={changeBoardMode} cancelButton={deployingShip.length!==0} cancelShip={cancelShipDeploy}></BottomPanel>
+        <BottomPanel remainingShips={remainingShips} changeMode={changeBoardMode} cancelButton={deployingShip.length!==0} cancelShip={cancelShipDeploy}></BottomPanel>
     </div>
 }
-function PanelMessage({msg}){
-    return <div style={styles.message}>
+function PanelMessage({msg,mode}){
+    let style=styles.message;
+    if(!mode){
+        style={...style,color:"red"}
+    }
+    return <div style={style}>
         {msg}
     </div>
 }

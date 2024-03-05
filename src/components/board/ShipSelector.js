@@ -66,7 +66,7 @@ const styles={
         backgroundColor:"#1BC000FF"
     },
     shipConnect:{
-        width:"1em",
+        width:"0.7em",
         height:"0.5em",
         backgroundColor:"#1BC000FF"
     }

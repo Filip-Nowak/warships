@@ -1,7 +1,7 @@
 import {useState} from "react";
 
 function CreatorBoard({ships, disabled,deployingShip,pickField,mode,removeShip}) {
-    const [selectedField, setSelectedField] = useState([0, 0])
+    const [selectedField, setSelectedField] = useState([])
     const fields = getEmptyFields();
     const getField = (pos) => {
         return fields[pos.y][pos.x]
@@ -25,7 +25,7 @@ function CreatorBoard({ships, disabled,deployingShip,pickField,mode,removeShip})
     }
     let style;
 
-
+    console.log(ships)
     ships.forEach(ship => {
         ship.forEach(pos => {
             setField({x: pos.x, y: pos.y},1)
@@ -70,6 +70,9 @@ function CreatorBoard({ships, disabled,deployingShip,pickField,mode,removeShip})
     if (disabled) {
         style = {...style, opacity: "50%",border:"0.5em #001801 solid"}
     }
+    if(!mode){
+        style = {...style,border:"0.5em red solid"}
+    }
     const handleClick=(pos)=>{
         if(mode){
             pickField(pos);
@@ -112,7 +115,8 @@ function Field({x, y, selected, select, picked, handleFieldClick, disabled, chil
         }
     }
     const handleMouseOver = () => {
-        select(x, y)
+        if(!disabled)
+            select(x, y)
     }
     const handleMouseLeave = () => {
     }
@@ -150,13 +154,14 @@ const styles = {
         display: "flex",
         flexWrap: "wrap",
         height: "30em",
-        padding: "0.5em"
+        padding: "0.5em",
+        backgroundColor:"#010903"
     },
 
     field: {
         width: "2em",
         height: "2em",
-        border: "0.5em solid #001801",
+        border: "0.5em solid #010903",
     }
 }
 const getEmptyFields = () => {

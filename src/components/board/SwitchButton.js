@@ -23,7 +23,7 @@ function Button({selected,handleClick,msg}){
 
 const styles={
     container:{
-        display:"flex"
+        display:"flex",
     },
     btn:{
         width:"100%",
