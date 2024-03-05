@@ -1,8 +1,7 @@
 import {useState} from "react";
 
-function CreatorBoard({ships, addShip, disabled, deployingShipNumber}) {
+function CreatorBoard({ships, disabled,deployingShip,pickField,mode,removeShip}) {
     const [selectedField, setSelectedField] = useState([0, 0])
-    const [deployingShip, setDeployingShip] = useState({fields: []})
     const fields = getEmptyFields();
     const getField = (pos) => {
         return fields[pos.y][pos.x]
@@ -11,7 +10,7 @@ function CreatorBoard({ships, addShip, disabled, deployingShipNumber}) {
         fields[pos.y][pos.x] = value;
     }
     const checkField = (x, y) => {
-        return !(x < 0 || y < 0 || x > 9 || x > 9)
+        return !(x < 0 || y < 0 || x > 9 || y > 9)
     }
     const setForbiddenFields = (x, y) => {
         for (let i = -1; i < 2; i++) {
@@ -25,22 +24,18 @@ function CreatorBoard({ships, addShip, disabled, deployingShipNumber}) {
         }
     }
     let style;
-    if (deployingShip.fields.length === deployingShipNumber && deployingShipNumber !== 0) {
-        addShip(deployingShip);
-    }
-    if (deployingShipNumber === 0 && deployingShip.fields.length !== 0) {
-        setDeployingShip({fields: []})
-    }
+
+
     ships.forEach(ship => {
-        ship.fields.forEach(pos => {
+        ship.forEach(pos => {
             setField({x: pos.x, y: pos.y},1)
             setForbiddenFields(pos.x, pos.y);
         })
     })
-    for (let i = 0; i < deployingShip.fields.length; i++) {
-        setField({x:deployingShip.fields[i].x,y:deployingShip.fields[i].y},2);
+    for (let i = 0; i < deployingShip.length; i++) {
+        setField({x:deployingShip[i].x,y:deployingShip[i].y},2);
     }
-    deployingShip.fields.forEach(pos => {
+    deployingShip.forEach(pos => {
         if (pos.x > 0) {
             if (getField({x:pos.x-1,y:pos.y}) === 0) {
                 setField({x:pos.x-1,y:pos.y},3);
@@ -68,32 +63,33 @@ function CreatorBoard({ships, addShip, disabled, deployingShipNumber}) {
     const selectField = (x, y) => {
         setSelectedField([x, y])
     }
-    const pickField = (pos) => {
-        setDeployingShip(prevState => ({
-            ...prevState,
-            fields: [...prevState.fields, pos]
-        }));
 
-
-    }
 
 
     style = styles.board;
     if (disabled) {
-        style = {...style, opacity: "50%"}
+        style = {...style, opacity: "50%",border:"0.5em #001801 solid"}
+    }
+    const handleClick=(pos)=>{
+        if(mode){
+            pickField(pos);
+        }else{
+            removeShip(pos)
+        }
     }
     return <div style={style}>
         {fields.map((row, y) => {
             return row.map((field, x) => {
                 return (
                     <Field
-                        disabled={disabled || (deployingShip.fields.length !== 0 && field !== 3)}
+                        disabled={disabled || !(field===0?(deployingShip.length===0):field===3 || !mode)}
                         x={x} y={y}
                         selected={selectedField[0] === x && selectedField[1] === y}
                         picked={getField({x:x,y:y}) === 1}
                         select={selectField}
-                        pickField={pickField}
                         value={field}
+                        handleFieldClick={handleClick}
+                        mode={mode}
                     >
                         {x + "," + y + ": " + field}
                     </Field>
@@ -104,38 +100,46 @@ function CreatorBoard({ships, addShip, disabled, deployingShipNumber}) {
 }
 
 
-function Field({x, y, selected, select, picked, pickField, disabled, children, value}) {
+function Field({x, y, selected, select, picked, handleFieldClick, disabled, children, value,mode}) {
     const [light, setLight] = useState(true)
     let style = styles.field;
     let timeout;
 
     const handleClick = () => {
-        if (!disabled && (value === 0 || value === 3))
-            pickField({x: x, y: y})
+        if (!disabled )
+        {
+            handleFieldClick({x: x, y: y})
+        }
     }
     const handleMouseOver = () => {
         select(x, y)
     }
     const handleMouseLeave = () => {
-
     }
-    if (value === 1) {
-        style = {...style, backgroundColor: "#1BC000", border: "0.5em solid #1BC000"}
-    } else if (value === 2) {
-        style = {...style, backgroundColor: "yellow"}
+    if(mode)
+    {
+        if (value === 1) {
+            style = {...style, backgroundColor: "#1BC000", border: "0.5em solid #1BC000"}
+        } else if (value === 2) {
+            style = {...style, backgroundColor: "yellow"}
 
-    } else if (value === 3) {
-        style = {...style, backgroundColor: "blue"}
+        } else if (value === 3) {
+            style = {...style, backgroundColor: "blue"}
 
-    } else if (value === 4) {
-        style = {...style, backgroundColor: "#330000", border: "0.5em solid #330000"}
+        } else if (value === 4) {
+            style = {...style, backgroundColor: "#330000", border: "0.5em solid #330000"}
+        }
+    }else{
+        if(value===1){
+            style = {...style, backgroundColor: "red", border: "0.5em solid red"}
+        }
     }
     if (selected) {
         style = {...style, border: "solid 0.5em #1BC000"}
     }
 
     return <div onMouseLeave={handleMouseLeave} onMouseOver={handleMouseOver} onClick={handleClick} style={style}>
-        {children}
+
     </div>
 }
 
@@ -148,6 +152,7 @@ const styles = {
         height: "30em",
         padding: "0.5em"
     },
+
     field: {
         width: "2em",
         height: "2em",

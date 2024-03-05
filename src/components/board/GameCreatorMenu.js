@@ -1,20 +1,21 @@
 import CreatorBoard from "./CreatorBoard";
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import ShipSelector from "./ShipSelector";
+import BottomPanel from "./BottomPanel";
 
 function GameCreatorMenu(){
     const [ships, setShips] = useState([])
     const [selectedShip, setSelectedShip] = useState(0)
     const [shipsLeft, setShipsLeft] = useState([1,2,3,4])
-    const addShip=(ship)=>{
+    const [deployingShip, setDeployingShip] = useState([])
+    const [boardMode, setBoardMode] = useState(true)
+    const addShip=()=>{
         setShips(prevState => (
-            [...prevState,ship]
+            [...prevState,deployingShip]
         ))
-        console.log(selectedShip)
         setShipsLeft((prevState)=>{
             return prevState.map((element,i)=>{
                 if(i===4-selectedShip){
-                    console.log("Xd")
                     return element-1
                 }
                 return element
@@ -22,16 +23,53 @@ function GameCreatorMenu(){
         });
         setSelectedShip(0)
     }
-    console.log(shipsLeft)
+    useEffect(() => {
+        if(deployingShip.length===selectedShip&&selectedShip!==0){
+            addShip()
+            setDeployingShip([])
+
+        }
+    }, [deployingShip]);
+
+    const pickField = (pos) => {
+        setDeployingShip(prevState => (
+            [...prevState, pos]
+        ));
+    }
+    const changeBoardMode=(mode)=>{
+        setBoardMode(mode)
+        setSelectedShip(0);
+    }
+    const cancelShipDeploy=()=>{
+        setDeployingShip([]);
+
+    }
+    const removeShip=(pos)=>{
+        let shipId=-1
+        console.log(ships)
+        ships.forEach((ship,i)=>{
+            ship.forEach(cord=>{
+                if(pos.x===cord.x && pos.y===cord.y){
+                    shipId=i;
+                }
+            })
+        })
+        if(shipId===-1){
+            console.log("ship doesnt exist")
+            return
+        }
+        console.log(ships[shipId])
+        setShips(prevState => {
+            prevState.splice(shipId,1)
+        })
+    }
     return <div style={styles.panel}>
         <PanelMessage msg={selectedShip===0?"select ship to deploy":"pick location for selected ship"}/>
         <div style={{display:"flex",marginTop:"1em"}}>
-            <CreatorBoard deployingShipNumber={selectedShip} disabled={selectedShip===0} ships={ships} addShip={addShip}></CreatorBoard>
-            <ShipSelector shipsLeft={shipsLeft} selectedShip={selectedShip} selectShip={setSelectedShip}></ShipSelector>
+            <CreatorBoard removeShip={removeShip} pickField={pickField} disabled={!(!boardMode||(boardMode&&selectedShip!==0))} ships={ships} deployingShip={deployingShip} mode={boardMode}></CreatorBoard>
+            <ShipSelector disabled={!boardMode || (boardMode && deployingShip.length!==0)} shipsLeft={shipsLeft} selectedShip={selectedShip} selectShip={setSelectedShip}></ShipSelector>
         </div>
-        <div>
-
-        </div>
+        <BottomPanel changeMode={changeBoardMode} cancelButton={deployingShip.length!==0} cancelShip={cancelShipDeploy}></BottomPanel>
     </div>
 }
 function PanelMessage({msg}){
