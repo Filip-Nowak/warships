@@ -1,0 +1,19 @@
+.board{
+    width: 30em;
+    display: flex;
+    flex-wrap: wrap;
+    height: 30em;
+    background-color: #0F2703;
+}
+.seaBoard{
+    background-color: #1E6DE2;
+    width:50em;
+    height:50em;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: 20em;
+}
+.enemyBoard{
+    width:40em;
+    height:40em;
+}

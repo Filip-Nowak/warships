@@ -1,0 +1,36 @@
+.field{
+    width: 2em;
+    height: 2em;
+    border: 0.5em solid #00000000
+}
+.seaField{
+    width:5em;
+    height:5em;
+    border:none;
+}
+.hit{
+    background-color: #930000
+}
+.sunken{
+    background-color: #420000FF;
+}
+.ship{
+    background-color: #8D8D8D;
+}
+.consoleField{
+    width:2em;
+    height: 2em;
+    border: 1em solid #00000000;
+    background-color: #0d2502;
+    margin-left: auto;
+    margin-right: auto;
+}
+.consoleHit{
+    background-color: #037B08;
+}
+.consoleSunken{
+background-color: #420000;
+}
+.consoleMissed{
+    background-color: #353434;
+}

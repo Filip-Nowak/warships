@@ -1,7 +1,7 @@
 import Menu from "../Menu";
-import GameCreatorMenu from "../board/GameCreatorMenu";
+import GameCreatorMenu from "../creator/GameCreatorMenu";
 
-function GameCreatorLayout(){
+function GameCreatorLayout({}){
     return <GameCreatorMenu></GameCreatorMenu>
 }
 export default GameCreatorLayout;

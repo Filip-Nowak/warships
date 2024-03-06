@@ -1,6 +1,8 @@
 import ShipSelector from "./ShipSelector";
-import SwitchButton from "./SwitchButton";
+import SwitchButton from "../utils/SwitchButton";
 import {renderToStaticMarkup} from "react-dom/server";
+import {useContext} from "react";
+import GameContext from "../context/gameContext";
 
 function BottomPanel({cancelButton,cancelShip,changeMode,remainingShips}) {
     return <div style={styles.container}>
@@ -18,7 +20,8 @@ function DefaultPanel({changeMode,remainingShips}){
     </div>
 }
 function StartButton({remainingShips}){
-    return <div style={remainingShips===0?{backgroundColor:"#1BC000",color:"#001801FF",...styles.startButton}:{...styles.startButton,backgroundColor:"#001801FF",color:"#1BC000FF"}}> <div style={{fontSize:"200%"}}>{remainingShips===0?"ready":remainingShips+" ships to go"}</div></div>
+    const value=useContext(GameContext);
+    return <div onClick={remainingShips===0?value.startGame:null} style={remainingShips===0?{backgroundColor:"#1BC000",color:"#001801FF",...styles.startButton}:{...styles.startButton,backgroundColor:"#001801FF",color:"#1BC000FF"}}> <div style={{fontSize:"200%"}}>{remainingShips===0?"ready":remainingShips+" ships to go"}</div></div>
 }
 
 const styles = {
