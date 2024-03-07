@@ -2,7 +2,7 @@ import styles from "./fieldStyle.module.css"
 function Field({x,y,style,handleClick, isDisabled,fieldType}){
     const handleFieldClick=()=>{
         if(!isDisabled(x,y)){
-            handleClick();
+            handleClick(x,y);
         }
     }
     console.log(fieldType)
