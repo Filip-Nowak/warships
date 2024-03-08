@@ -1,11 +1,11 @@
 .field{
-    width: 2em;
-    height: 2em;
-    border: 0.5em solid #00000000
+    width: 1em;
+    height: 1em;
+    border: 0.25em solid #00000000
 }
 .seaField{
-    width:5em;
-    height:5em;
+    width:2.5em;
+    height:2.5em;
     border:none;
 }
 .hit{
@@ -18,19 +18,22 @@
     background-color: #8D8D8D;
 }
 .consoleField{
-    width:2em;
-    height: 2em;
-    border: 1em solid #00000000;
+    width:1.5em;
+    height: 1.5em;
+    border: 0.25em solid black;
     background-color: #0d2502;
     margin-left: auto;
     margin-right: auto;
 }
 .consoleHit{
-    background-color: #037B08;
+    background-color: #037b08;
 }
 .consoleSunken{
 background-color: #420000;
 }
 .consoleMissed{
     background-color: #353434;
+}
+.selectedConsoleField{
+    border: 0.25em solid #037B08FF;
 }

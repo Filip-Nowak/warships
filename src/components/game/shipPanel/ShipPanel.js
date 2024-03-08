@@ -1,7 +1,7 @@
 import styles from "./shipPanel.module.css"
 function ShipPanel({children}){
     return <div style={{width:"70%"}}>
-        <div style={{width:"46em",height:"5em"}}>
+        <div style={{width:"23em",height:"2.5em"}}>
             <div style={{height:"100%",width:"75%",marginLeft:"auto",marginRight:"auto",display:"flex",justifyContent:"space-between"}}>
                 <div className={styles.verticalConnect}></div>
                 <div className={styles.verticalConnect}></div>

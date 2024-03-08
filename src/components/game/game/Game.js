@@ -3,18 +3,26 @@ import fieldStyles from "../../board/field/fieldStyle.module.css"
 import boardStyles from "../../board/board/boardStyle.module.css"
 import styles from "./gameStyle.module.css"
 import ShipPanel from "../shipPanel/ShipPanel";
-import {useRef, useState} from "react";
+import {useEffect, useState} from "react";
+import Bot from "../../../bot/Bot";
 
 function Game() {
     let userFields = getEmptyFields()
     const [enemyFields, setEnemyFields] = useState(getEmptyFields())
+    let bot;
+    useEffect(() => {
+        bot = new Bot()
+        console.log("bot")
+        console.log(bot.fields)
+    }, []);
     const getEnemyField = (pos) => {
         return enemyFields[pos.y][pos.x]
     }
     const setEnemyField = (pos, value) => {
         setEnemyFields((prevState) => {
-                prevState[pos.y][pos.x] = value;
-                return prevState;
+                const arr = [...prevState]
+                arr[pos.y][pos.x] = value;
+                return arr;
             }
         )
     }
@@ -36,9 +44,8 @@ function Game() {
     const handleConsoleFieldClick = (x, y) => {
         console.log("dupa")
         if (playerTurn) {
-            setEnemyField({x:x,y:y},1)
+            setEnemyField({x: x, y: y}, 1)
         }
-        console.log(enemyFields)
     }
 
     return (
@@ -50,8 +57,10 @@ function Game() {
                        isFieldDisabled={() => true}/></div>
             <div style={{width: "50%"}}>
                 <ShipPanel>
-                    <Board boardStyle={boardStyles.enemyBoard} fields={enemyFields} fieldType={fieldStyles.consoleField}
-                           fieldStyles={enemyFieldStyle} isFieldDisabled={() => false} handleFieldClick={handleConsoleFieldClick}/>
+                    <Board selectedFieldStyle={fieldStyles.selectedConsoleField} boardStyle={boardStyles.enemyBoard}
+                           fields={enemyFields} fieldType={fieldStyles.consoleField}
+                           fieldStyles={enemyFieldStyle} isFieldDisabled={() => false}
+                           handleFieldClick={handleConsoleFieldClick}/>
                 </ShipPanel>
             </div>
         </div>

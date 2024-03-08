@@ -1,19 +1,19 @@
 .board{
-    width: 30em;
+    width: 15em;
     display: flex;
     flex-wrap: wrap;
-    height: 30em;
+    height: 15em;
     background-color: #0F2703;
 }
 .seaBoard{
     background-color: #1E6DE2;
-    width:50em;
-    height:50em;
+    width:25em;
+    height:25em;
     margin-right: auto;
     margin-left: auto;
-    margin-top: 20em;
+    margin-top: 10em;
 }
 .enemyBoard{
-    width:40em;
-    height:40em;
+    width:20em;
+    height:20em;
 }
