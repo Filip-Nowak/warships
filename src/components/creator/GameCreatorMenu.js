@@ -1,7 +1,8 @@
 import CreatorBoard from "./CreatorBoard";
-import {useEffect, useRef, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import ShipSelector from "./ShipSelector";
 import BottomPanel from "./BottomPanel";
+import GameContext from "../context/gameContext";
 
 function GameCreatorMenu(){
     const [ships, setShips] = useState([])
@@ -9,7 +10,14 @@ function GameCreatorMenu(){
     const [shipsLeft, setShipsLeft] = useState([1,2,3,4])
     const [deployingShip, setDeployingShip] = useState([])
     const [boardMode, setBoardMode] = useState(true)
+    const context=useContext(GameContext)
     const addShip=()=>{
+        let fields=[]
+        deployingShip.forEach(field=>{
+            fields.push({x:field.x,y:field.y,hit:false})
+        })
+        let ship = {fields:fields,sunken:false}
+        context.createdShips.push(ship)
         setShips(prevState => (
             [...prevState,deployingShip]
         ))
@@ -30,7 +38,9 @@ function GameCreatorMenu(){
 
         }
     }, [deployingShip]);
-    console.log("render")
+    useEffect(() => {
+        context.createdShips=[]
+    }, []);
     const pickField = (pos) => {
         setDeployingShip(prevState => (
             [...prevState, pos]

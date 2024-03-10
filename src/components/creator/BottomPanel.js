@@ -21,7 +21,7 @@ function DefaultPanel({changeMode,remainingShips}){
 }
 function StartButton({remainingShips}){
     const value=useContext(GameContext);
-    return <div onClick={remainingShips===0?value.startGame:null} style={remainingShips===0?{backgroundColor:"#1BC000",color:"#001801FF",...styles.startButton}:{...styles.startButton,backgroundColor:"#001801FF",color:"#1BC000FF"}}> <div style={{fontSize:"200%"}}>{remainingShips===0?"ready":remainingShips+" ships to go"}</div></div>
+    return <div onClick={remainingShips===0?()=>value.launchGame(value.createdShips):null} style={remainingShips===0?{backgroundColor:"#1BC000",color:"#001801FF",...styles.startButton}:{...styles.startButton,backgroundColor:"#001801FF",color:"#1BC000FF"}}> <div style={{fontSize:"200%"}}>{remainingShips===0?"ready":remainingShips+" ships to go"}</div></div>
 }
 
 const styles = {

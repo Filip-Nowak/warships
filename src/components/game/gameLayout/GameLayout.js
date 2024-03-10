@@ -1,8 +1,8 @@
 import styles from "./gameLayout.module.css"
-import Game from "../game/Game";
-function GameLayout(){
+import GameView from "../game/GameView";
+function GameLayout({createdShips}){
     return <div>
-        <Game></Game>
+        <GameView createdShips={createdShips}></GameView>
     </div>
 }
 export default GameLayout;

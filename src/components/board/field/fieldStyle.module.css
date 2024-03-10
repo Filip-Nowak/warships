@@ -37,3 +37,6 @@ background-color: #420000;
 .selectedConsoleField{
     border: 0.25em solid #037B08FF;
 }
+.enemyMissed{
+    background-color: #053280;
+}

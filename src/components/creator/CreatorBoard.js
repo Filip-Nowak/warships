@@ -25,7 +25,6 @@ function CreatorBoard({ships, disabled,deployingShip,pickField,mode,removeShip})
     }
     let style;
 
-    console.log(ships)
     ships.forEach(ship => {
         ship.forEach(pos => {
             setField({x: pos.x, y: pos.y},1)
