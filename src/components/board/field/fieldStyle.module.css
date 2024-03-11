@@ -40,3 +40,29 @@ background-color: #420000;
 .enemyMissed{
     background-color: #053280;
 }
+.creatorField{
+    width: 2em;
+    height: 2em;
+    border: 0.5em solid #010903
+}
+.creatorPicked {
+    background-color: #1BC000;
+    border: 0.5em solid #1BC000;
+}
+.creatorForbidden{
+    background-color: #330000;
+    border: 0.5em solid #330000;
+}
+.creatorRemovable{
+    background-color: red;
+    border:0.5em solid red;
+}
+.creatorDeploy{
+    background-color: yellow;
+}
+.creatorPossible{
+    background-color: blue;
+}
+.creatorSelected{
+    border: solid 0.5em #1BC000;
+}

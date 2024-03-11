@@ -63,11 +63,13 @@ function App() {
         }
     ]
     const launchGame=(createdShips)=>{
+        console.log("launched")
+        console.log(createdShips)
         setPlayerShips(createdShips);
         setLayout("botGame")
     }
     return <div>
-        <GameContext.Provider value={{launchGame:launchGame}}>
+        <GameContext.Provider value={{launchGame:launchGame,createdShips: []}}>
         {content}
         </GameContext.Provider>
     </div>

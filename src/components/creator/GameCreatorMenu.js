@@ -77,6 +77,7 @@ function GameCreatorMenu(){
         setShips(prevState => (
             prevState.slice(0,shipId).concat(prevState.slice(shipId+1))
         ))
+        context.createdShips.splice(shipId,1)
     }
     let remainingShips=0;
     shipsLeft.forEach(value=>{

@@ -17,3 +17,10 @@
     width:20em;
     height:20em;
 }
+.creatorBoard{
+    border: 0.5em #1BC000 solid;
+    width: 30em;
+    height: 30em;
+    padding: 0.5em;
+    background-color: #010903;
+}

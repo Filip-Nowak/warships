@@ -9,8 +9,7 @@ import shipPanel from "../shipPanel/ShipPanel";
 
 function GameView({createdShips}) {
     // const [enemyFields, setEnemyFields] = useState(getEmptyFields())
-    console.log("dupa")
-    console.log(createdShips)
+    console.log("rendered gameview")
     const [game, setGame] = useState({})
     const [enemyShips, setEnemyShips] = useState([])
     const [misses, setMisses] = useState([])
@@ -122,33 +121,39 @@ function GameView({createdShips}) {
             }
         }
 
-    enemyShips.forEach(ship=>{
-        ship.fields.forEach(field=>{
-            setEnemyField({x:field.x,y:field.y},ship.sunken?2:1)
-        })
-    })
-    misses.forEach(field=>{
-        setEnemyField({x:field.x,y:field.y},3)
-    });
+
     console.log(playerShips)
-    playerShips.forEach(ship=>{
-        ship.fields.forEach(field=>{
-            setPlayerField({x:field.x,y:field.y},ship.sunken?3:field.hit?2:1)
+
+    const generateEnemyFields=(fields)=>{
+        enemyShips.forEach(ship=>{
+            ship.fields.forEach(field=>{
+                fields[field.y][field.x]=ship.sunken?2:1
+            })
         })
-    })
-    enemyMisses.forEach(field=>{
-        setPlayerField(field,4)
-    })
+        misses.forEach(field=>{
+            fields[field.y][field.x]=3
+        });
+    }
+    const generatePlayerFields=(fields)=>{
+        playerShips.forEach(ship=>{
+            ship.fields.forEach(field=>{
+                fields[field.y][field.x]=ship.sunken?3:field.hit?2:1
+            })
+        })
+        enemyMisses.forEach(field=>{
+            fields[field.y][field.x]=4
+        })
+    }
     return (
         <div className={styles.game}>
             <div style={{width: "50%"}}>
 
-                <Board boardStyle={boardStyles.seaBoard} fields={playerFields} fieldType={fieldStyles.seaField}
+                <Board boardStyle={boardStyles.seaBoard} generateFields={generatePlayerFields} fieldType={fieldStyles.seaField}
                        fieldStyles={playerFieldStyle}
                        isFieldDisabled={() => true}/></div>
             <div style={{width: "50%"}}>
                 <ShipPanel>
-                    <Board selectedFieldStyle={fieldStyles.selectedConsoleField} boardStyle={boardStyles.enemyBoard}
+                    <Board generateFields={generateEnemyFields} selectedFieldStyle={fieldStyles.selectedConsoleField} boardStyle={boardStyles.enemyBoard}
                            fields={enemyFields} fieldType={fieldStyles.consoleField}
                            fieldStyles={enemyFieldStyle} isFieldDisabled={() => false}
                            handleFieldClick={handleConsoleFieldClick}/>

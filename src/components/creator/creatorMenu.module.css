@@ -1,0 +1,16 @@
+.panel{
+    border: 1em #0C0400 solid;
+    background-color: #001801;
+    height: 50em;
+    width: 50em;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 5em;
+    padding:1em
+}
+.panelMessage{
+    font-size: 250%;
+}
+.redPanelMessage{
+    color:red
+}

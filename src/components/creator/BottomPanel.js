@@ -4,9 +4,9 @@ import {renderToStaticMarkup} from "react-dom/server";
 import {useContext} from "react";
 import GameContext from "../context/gameContext";
 
-function BottomPanel({cancelButton,cancelShip,changeMode,remainingShips}) {
+function BottomPanel({showCancelButton,cancelShipDeploy,changeMode,remainingShips}) {
     return <div style={styles.container}>
-        {cancelButton ? <CancelButton handleClick={cancelShip}></CancelButton> :
+        {showCancelButton ? <CancelButton handleClick={cancelShipDeploy}></CancelButton> :
         <DefaultPanel remainingShips={remainingShips} changeMode={changeMode}></DefaultPanel>}
     </div>
 }
