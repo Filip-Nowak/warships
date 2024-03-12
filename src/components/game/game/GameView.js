@@ -6,6 +6,7 @@ import ShipPanel from "../shipPanel/ShipPanel";
 import {useEffect, useState} from "react";
 import Bot from "../../../bot/Bot";
 import shipPanel from "../shipPanel/ShipPanel";
+import InfoPanel from "../infoPanel/InfoPanel";
 
 function GameView({createdShips}) {
     // const [enemyFields, setEnemyFields] = useState(getEmptyFields())
@@ -15,6 +16,15 @@ function GameView({createdShips}) {
     const [misses, setMisses] = useState([])
     const [playerShips, setPlayerShips] = useState([...createdShips])
     const [enemyMisses, setEnemyMisses] = useState([])
+    const [infoPanelContent, setInfoPanelContent] = useState(
+        {
+            shooting:false,
+            pickingField:true,
+            pos:{x:null,y:null},
+            enemyTurn:false,
+            enemyResult:false
+        }
+    )
     const enemyFields=getEmptyFields()
     const playerFields=getEmptyFields()
     useEffect(() => {
@@ -36,18 +46,6 @@ function GameView({createdShips}) {
         fieldStyles.consoleMissed
 
     ]
-    const getEnemyField=(pos)=>{
-        return enemyFields[pos.y][pos.x]
-    }
-    const setEnemyField=(pos,value)=>{
-        enemyFields[pos.y][pos.x]=value;
-    }
-    const setPlayerField=(pos,value)=>{
-        playerFields[pos.y][pos.x]=value
-    }
-    const getPlayerField=(pos)=>{
-        return playerFields[pos.y][pos.x]
-    }
     const handleEnemyHit=(pos)=>{
         let index;
         let ships=[...playerShips]
@@ -75,6 +73,12 @@ function GameView({createdShips}) {
 
     const handleConsoleFieldClick = (x, y) => {
         if (playerTurn) {
+            setInfoPanelContent(prevState => {
+                let obj={...prevState};
+                obj.pickingField=false
+                obj.shooting=true;
+                return obj
+            })
             let result=game.takeShot({x:x,y:y});
             if(result.hit){
                 addEnemyShip({x:x,y:y},result.sunken)
@@ -137,7 +141,7 @@ function GameView({createdShips}) {
     const generatePlayerFields=(fields)=>{
         playerShips.forEach(ship=>{
             ship.fields.forEach(field=>{
-                fields[field.y][field.x]=ship.sunken?3:field.hit?2:1
+                fields[field.pos.y][field.pos.x]=ship.sunken?3:field.hit?2:1
             })
         })
         enemyMisses.forEach(field=>{
@@ -150,11 +154,12 @@ function GameView({createdShips}) {
 
                 <Board boardStyle={boardStyles.seaBoard} generateFields={generatePlayerFields} fieldType={fieldStyles.seaField}
                        fieldStyles={playerFieldStyle}
-                       isFieldDisabled={() => true}/></div>
+                       isFieldDisabled={() => true} additionalStyle={{backgroundColor:"#2777ee",border:"solid 1em #2777ee"}}/></div>
             <div style={{width: "50%"}}>
                 <ShipPanel>
+                    <InfoPanel info={infoPanelContent}></InfoPanel>
                     <Board generateFields={generateEnemyFields} selectedFieldStyle={fieldStyles.selectedConsoleField} boardStyle={boardStyles.enemyBoard}
-                           fields={enemyFields} fieldType={fieldStyles.consoleField}
+                           fieldType={fieldStyles.consoleField}
                            fieldStyles={enemyFieldStyle} isFieldDisabled={() => false}
                            handleFieldClick={handleConsoleFieldClick}/>
                 </ShipPanel>

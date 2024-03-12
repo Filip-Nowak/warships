@@ -8,7 +8,7 @@ import Board from "../../board/board/Board";
 import ShipPanel from "../../game/shipPanel/ShipPanel";
 import ShipSelector from "../ShipSelector";
 import board from "../../board/board/Board";
-import BottomPanel from "../BottomPanel";
+import BottomPanel from "../bottomPanel/BottomPanel";
 function CreatorMenu(){
     const [ships, setShips] = useState([])
     const [selectedShip, setSelectedShip] = useState(0)
@@ -190,8 +190,17 @@ function CreatorMenu(){
     shipsLeft.forEach(value=>{
         remainingShips+=value;
     })
+    const fill=()=>{
+        context.createdShips=[
+            {
+                fields:[{x:0,y:0,hit:false},{x:1,y:0,hit:false},{x:2,y:0,hit:false},{x:3,y:0,hit:false}],
+                sunken:false
+            }
+        ]
+    }
     return <div className={styles.panel}>
         <PanelMessage msg={(!boardMode)?"Pick ship to remove":selectedShip===0?"select ship to deploy":"pick location for selected ship"} mode={boardMode}/>
+        <button onClick={fill}>fill</button>
         <div style={{display:"flex",marginTop:"1em"}}>
             <Board additionalStyle={additionalStyle} generateFields={generateFields} fieldStyles={fieldStyleList} fieldType={fieldStyles.creatorField} boardStyle={boardStyles.creatorBoard} isFieldDisabled={isFieldDisabled} handleFieldClick={handleFieldClick} selectedFieldStyle={!boardDisabled?boardMode?fieldStyles.creatorSelected:"":""}></Board>
             <ShipSelector shipsLeft={shipsLeft} selectedShip={selectedShip} disabled={shipSelectorDisabled} selectShip={setSelectedShip}></ShipSelector>

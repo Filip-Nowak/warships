@@ -1,7 +1,7 @@
 import CreatorBoard from "./CreatorBoard";
 import {useContext, useEffect, useRef, useState} from "react";
 import ShipSelector from "./ShipSelector";
-import BottomPanel from "./BottomPanel";
+import BottomPanel from "./bottomPanel/BottomPanel";
 import GameContext from "../context/gameContext";
 
 function GameCreatorMenu(){

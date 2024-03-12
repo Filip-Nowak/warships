@@ -11,13 +11,6 @@ function ShipPanel({children}){
             <div className={styles.panelBorder}>
             {children}
             </div>
-            {/*<div style={{height:"46em",width:"100%",display:"flex",alignItems:"center"}}>*/}
-            {/*    <div style={{width:"100%",height:"75%",display:"flex",flexDirection:"column-reverse"}}>*/}
-            {/*        <div className={styles.horizontalConnect}></div>*/}
-            {/*        <div style={{height:"26em"}}></div>*/}
-            {/*        <div className={styles.horizontalConnect}></div>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
         </div>
     </div>
 }

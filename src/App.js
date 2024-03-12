@@ -66,11 +66,12 @@ function App() {
         console.log("launched")
         console.log(createdShips)
         setPlayerShips(createdShips);
+        document.body.style.backgroundColor="#1E6DE2"
         setLayout("botGame")
     }
     return <div>
-        <GameContext.Provider value={{launchGame:launchGame,createdShips: []}}>
-        {content}
+        <GameContext.Provider value={{launchGame:launchGame,createdShips: [],test: true}}>
+        <GameLayout createdShips={testShips}></GameLayout>
         </GameContext.Provider>
     </div>
 }

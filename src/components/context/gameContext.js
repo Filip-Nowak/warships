@@ -2,6 +2,7 @@ import {createContext} from "react";
 
 const GameContext=createContext({
     launchGame:(createdShips)=>{},
-    createdShips:[]
+    createdShips:[],
+    test:false
 })
 export default GameContext
