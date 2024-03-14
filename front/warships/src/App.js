@@ -5,21 +5,26 @@ import GameCreatorLayout from "./components/layouts/GameCreatorLayout";
 import "./styles/appContainer.css"
 import GameLayout from "./components/game/gameLayout/GameLayout";
 import GameContext from "./components/context/gameContext";
+import MultiplayerLayout from "./components/layouts/MultiplayerLayout";
 
 function App() {
     const [layout, setLayout] = useState("welcome")
-    let nickname = useRef();
+    const [username, setUsername] = useState()
     const [mode, setMode] = useState()
     const [playerShips, setPlayerShips] = useState()
     let content;
     const setModeLayout = (username) => {
         setLayout("mode")
-        nickname.current = username
+        setUsername(username)
     }
     const openGameCreator = (mode) => {
         setMode(mode)
         document.body.style.backgroundColor = "#090023"
         setLayout("gameCreator")
+    }
+    const changeView=(viewName)=>{
+        setLayout(viewName);
+        console.log("Xd")
     }
     const startBotGame = () => {
         document.body.style.backgroundColor = "#1E6DE2"
@@ -28,11 +33,13 @@ function App() {
     if (layout === "welcome") {
         content = <WelcomeLayout handleButtonClick={setModeLayout}></WelcomeLayout>
     } else if (layout === "mode") {
-        content = <ModeLayout setMode={openGameCreator} nickname={nickname.current}></ModeLayout>
+        content = <ModeLayout setMode={openGameCreator} nickname={username}></ModeLayout>
     } else if (layout === "gameCreator") {
         content = <GameCreatorLayout></GameCreatorLayout>
     } else if (layout === "botGame") {
         content = <GameLayout createdShips={playerShips}></GameLayout>
+    }else if(layout === "multiplayer"){
+        content = <MultiplayerLayout username={username}></MultiplayerLayout>
     }
 
     // return (
@@ -70,8 +77,9 @@ function App() {
         setLayout("botGame")
     }
     return <div>
-        <GameContext.Provider value={{launchGame:launchGame,createdShips: [],test: true}}>
-        <GameLayout createdShips={testShips}></GameLayout>
+        <GameContext.Provider value={{launchGame:launchGame,createdShips: [],test: true,changeView:changeView}}>
+        {/*<GameLayout createdShips={testShips}></GameLayout>*/}
+            {content}
         </GameContext.Provider>
     </div>
 }

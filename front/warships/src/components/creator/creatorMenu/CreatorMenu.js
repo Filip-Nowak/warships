@@ -6,7 +6,7 @@ import boardStyles from "../../board/board/boardStyle.module.css"
 import PanelMessage from "../panelMessage/PanelMessage";
 import Board from "../../board/board/Board";
 import ShipPanel from "../../game/shipPanel/ShipPanel";
-import ShipSelector from "../ShipSelector";
+import ShipSelector from "../shipSelector/ShipSelector";
 import board from "../../board/board/Board";
 import BottomPanel from "../bottomPanel/BottomPanel";
 function CreatorMenu(){
@@ -32,7 +32,7 @@ function CreatorMenu(){
     const addShip=()=>{
         let fields=[]
         deployingShip.forEach(field=>{
-            fields.push({x:field.x,y:field.y,hit:false})
+            fields.push({pos:{x:field.x,y:field.y},hit:false})
         })
         let ship = {fields:fields,sunken:false}
         context.createdShips.push(ship)
@@ -208,18 +208,5 @@ function CreatorMenu(){
         <BottomPanel remainingShips={remainingShips}  showCancelButton={deployingShip.length!==0} changeMode={changeBoardMode} cancelShipDeploy={cancelShipDeploy}></BottomPanel>
     </div>
 }
-const getEmptyFields = () => {
-    return [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ]
-}
+
 export default CreatorMenu

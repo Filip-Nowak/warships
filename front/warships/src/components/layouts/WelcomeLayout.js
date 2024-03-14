@@ -3,8 +3,11 @@ import WelcomeMenu from "../WelcomeMenu";
 import Menu from "../Menu";
 import BlinkingDots from "../BlinkingDots";
 import SubmitInput from "../SubmitInput";
+import {useContext} from "react";
+import GameContext from "../context/gameContext";
 function WelcomeLayout({handleButtonClick}){
     //return <WelcomeMenu handleButtonClick={handleButtonClick}></WelcomeMenu>
+    const context=useContext(GameContext);
     return <Menu height={"20em"} width={"50em"} bgColor={"#0F2703"} style={{display:"block",marginTop:"10em", paddingTop:"3em"}}>
         <div  style={{
             fontSize: "2.5em",
@@ -15,7 +18,7 @@ function WelcomeLayout({handleButtonClick}){
         }}>
             <span>Type in your nickname</span><BlinkingDots></BlinkingDots>
         </div>
-        <SubmitInput msg={"start"} handleButtonClick={handleButtonClick}></SubmitInput>
+        <SubmitInput msg={"start"} handleButtonClick={()=>context.changeView("mode")}></SubmitInput>
     </Menu>
 }
 

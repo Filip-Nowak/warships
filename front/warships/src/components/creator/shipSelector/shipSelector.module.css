@@ -1,0 +1,30 @@
+.container{
+    border: 0.5em #1BC000FF solid;
+    width:15em;
+    height:30em;
+    margin-left: auto;
+    margin-right: auto;
+    padding: 0.5em;
+}
+.shipContainer{
+    display:flex;
+    align-items: center;
+    margin-top: 1em;
+    width:93%;
+    height:5em;
+    margin-left: auto;
+    margin-right: auto;
+    justify-content: space-between;
+    border: #001801 0.25em solid;
+    padding:0.3em;
+}
+.shipCell{
+    width:2em;
+    height:2em;
+    background-color: #1BC000FF;
+}
+.shipConnect{
+    width: 0.7em;
+    height:0.5em;
+    background-color: #1BC000FF;
+}

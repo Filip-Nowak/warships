@@ -1,5 +1,3 @@
-import Menu from "../Menu";
-import GameCreatorMenu from "../creator/GameCreatorMenu";
 import CreatorMenu from "../creator/creatorMenu/CreatorMenu";
 
 function GameCreatorLayout({}){

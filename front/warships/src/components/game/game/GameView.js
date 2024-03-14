@@ -140,6 +140,8 @@ function GameView({createdShips}) {
     }
     const generatePlayerFields=(fields)=>{
         playerShips.forEach(ship=>{
+            console.log("Xd")
+            console.log(ship)
             ship.fields.forEach(field=>{
                 fields[field.pos.y][field.pos.x]=ship.sunken?3:field.hit?2:1
             })
