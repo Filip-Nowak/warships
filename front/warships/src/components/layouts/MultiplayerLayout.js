@@ -1,4 +1,6 @@
+import JoinRoom from "../room/JoinRoom";
+
 function MultiplayerLayout(){
-    return <diV></diV>
+    return <JoinRoom></JoinRoom>
 }
 export default MultiplayerLayout

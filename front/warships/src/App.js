@@ -1,11 +1,11 @@
 import WelcomeLayout from "./components/layouts/WelcomeLayout";
-import {useRef, useState} from "react";
+import {useState} from "react";
 import ModeLayout from "./components/layouts/ModeLayout";
 import GameCreatorLayout from "./components/layouts/GameCreatorLayout";
-import "./styles/appContainer.css"
 import GameLayout from "./components/game/gameLayout/GameLayout";
 import GameContext from "./components/context/gameContext";
 import MultiplayerLayout from "./components/layouts/MultiplayerLayout";
+import "./App.css"
 
 function App() {
     const [layout, setLayout] = useState("welcome")

@@ -1,14 +1,11 @@
-
-import WelcomeMenu from "../WelcomeMenu";
-import Menu from "../Menu";
-import BlinkingDots from "../BlinkingDots";
-import SubmitInput from "../SubmitInput";
+import Menu from "../utils/Menu/Menu"
+import BlinkingDots from "../utils/BlinkingDots";
+import SubmitInput from "../utils/SubmitInput/SubmitInput";
 import {useContext} from "react";
 import GameContext from "../context/gameContext";
 function WelcomeLayout({handleButtonClick}){
-    //return <WelcomeMenu handleButtonClick={handleButtonClick}></WelcomeMenu>
     const context=useContext(GameContext);
-    return <Menu height={"20em"} width={"50em"} bgColor={"#0F2703"} style={{display:"block",marginTop:"10em", paddingTop:"3em"}}>
+    return <Menu containerStyle={{height:"20em",width:"50em",display:"block",marginTop:"10em", paddingTop:"3em"}}>
         <div  style={{
             fontSize: "2.5em",
             marginRight: "auto",

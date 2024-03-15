@@ -1,5 +1,5 @@
 import styles from "./infoPanel.module.css"
-import BlinkingDots from "../../BlinkingDots";
+import BlinkingDots from "../../utils/BlinkingDots";
 function InfoPanel({info}){
     return <div className={styles.container}>
         {info.pickingField?(<div>pick field to shoot<BlinkingDots/></div>):"dupa"}
