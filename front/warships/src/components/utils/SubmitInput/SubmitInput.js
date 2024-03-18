@@ -17,7 +17,7 @@ function SubmitInput({msg,handleButtonClick,containerStyle}){
         }
     }
     return (
-        <div className={styles.submitContainer}>
+        <div className={styles.submitContainer} style={containerStyle}>
             <input ref={input} autoFocus={true} maxLength={15} className={styles.input} onChange={handleChange}/>
             <button className={styles.button} disabled={disabled} onClick={handleClick}>{msg}</button>
         </div>

@@ -1,7 +1,7 @@
 .panelBorder{
     background-color: #420000;
-    width: 20em;
-    padding:1.5em;
+    width: 20rem;
+    padding:1.5rem;
 }
 .verticalConnect{
     height:100%;
@@ -11,7 +11,7 @@
 }
 .horizontalConnect{
     width:100%;
-    height:5em;
+    height:5rem;
 
     background-color: #8D8D8D;
 }

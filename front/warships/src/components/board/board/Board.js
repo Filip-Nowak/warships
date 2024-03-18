@@ -1,6 +1,7 @@
 import Field from "../field/Field";
 import styles from "./boardStyle.module.css"
 import {useState} from "react";
+import getEmptyFields from "../../utils/getEmptyFields";
 function Board({generateFields,handleFieldClick,fieldStyles,boardStyle,isFieldDisabled, fieldType,selectedFieldStyle,additionalStyle={}}){
     const [selectedField, setSelectedField] = useState({x:null,y:null})
     const fields=getEmptyFields()
@@ -24,18 +25,5 @@ function Board({generateFields,handleFieldClick,fieldStyles,boardStyle,isFieldDi
             })
         })}</div>
 }
-const getEmptyFields = () => {
-    return [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ]
-}
+
 export default Board

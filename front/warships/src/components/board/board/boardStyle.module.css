@@ -1,26 +1,26 @@
 .board{
-    width: 15em;
+    width: 15rem;
     display: flex;
     flex-wrap: wrap;
-    height: 15em;
+    height: 15rem;
     background-color: #0F2703;
 }
 .seaBoard{
     background-color: #1E6DE2;
-    width:25em;
-    height:25em;
+    width:25rem;
+    height:25rem;
     margin-right: auto;
     margin-left: auto;
-    margin-top: 5em;
+    margin-top: 5rem;
 }
 .enemyBoard{
-    width:20em;
-    height:20em;
+    width:20rem;
+    height:20rem;
 }
 .creatorBoard{
-    border: 0.5em #1BC000 solid;
-    width: 30em;
-    height: 30em;
-    padding: 0.5em;
+    border: 0.5rem #1BC000 solid;
+    width: 30rem;
+    height: 30rem;
+    padding: 0.5rem;
     background-color: #010903;
 }

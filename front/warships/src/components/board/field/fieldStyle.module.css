@@ -1,11 +1,11 @@
 .field{
-    width: 1em;
-    height: 1em;
-    border: 0.25em solid #00000000
+    width: 1rem;
+    height: 1rem;
+    border: 0.25rem solid #00000000
 }
 .seaField{
-    width:2.5em;
-    height:2.5em;
+    width:2.5rem;
+    height:2.5rem;
     border:none;
 }
 .hit{
@@ -18,9 +18,9 @@
     background-color: #8D8D8D;
 }
 .consoleField{
-    width:1.5em;
-    height: 1.5em;
-    border: 0.25em solid black;
+    width:1.5rem;
+    height: 1.5rem;
+    border: 0.25rem solid black;
     background-color: #0d2502;
     margin-left: auto;
     margin-right: auto;
@@ -35,27 +35,27 @@ background-color: #420000;
     background-color: #353434;
 }
 .selectedConsoleField{
-    border: 0.25em solid #037B08FF;
+    border: 0.25rem solid #037B08FF;
 }
 .enemyMissed{
     background-color: #053280;
 }
 .creatorField{
-    width: 2em;
-    height: 2em;
-    border: 0.5em solid #010903
+    width: 2rem;
+    height: 2rem;
+    border: 0.5rem solid #010903
 }
 .creatorPicked {
     background-color: #1BC000;
-    border: 0.5em solid #1BC000;
+    border: 0.5rem solid #1BC000;
 }
 .creatorForbidden{
     background-color: #330000;
-    border: 0.5em solid #330000;
+    border: 0.5rem solid #330000;
 }
 .creatorRemovable{
     background-color: red;
-    border:0.5em solid red;
+    border:0.5rem solid red;
 }
 .creatorDeploy{
     background-color: yellow;
@@ -64,5 +64,5 @@ background-color: #420000;
     background-color: blue;
 }
 .creatorSelected{
-    border: solid 0.5em #1BC000;
+    border: solid 0.5rem #1BC000;
 }

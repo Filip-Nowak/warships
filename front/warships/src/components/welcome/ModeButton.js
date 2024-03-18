@@ -1,16 +1,16 @@
 function ModeButton({modeName,handleClick}){
     return <div style={{
-        width:"10em",
-        height:"10em",
+        width:"12rem",
+        height:"12rem",
         marginLeft:"auto",
         marginRight:"auto",
         margin:"auto",
         backgroundColor:"#154019",
-        borderRadius:"2em",
+        borderRadius:"2rem",
         display:"flex",
         justifyContent:"center",
         alignItems:"center",
-        fontSize:"150%"
+        fontSize:"1.5rem"
 
     }} onClick={handleClick}>
         <div style={{

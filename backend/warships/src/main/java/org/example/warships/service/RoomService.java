@@ -2,45 +2,56 @@ package org.example.warships.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.warships.model.RoomModel;
+import org.example.warships.model.UserModel;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
-import java.util.Random;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
 public class RoomService {
 
     private final CacheManager cacheManager;
-    public String createRoom(String username) {
-        String id=generateId();
-        RoomModel roomModel = RoomModel.builder().id(id).owner(username).build();
-        cacheManager.getCache("rooms").put(id, roomModel);
-        return id;
+    public UserModel createUser(String username) {
+        String id = generateUserId();
+        UserModel userModel = UserModel.builder().id(id).username(username).build();
+        cacheManager.getCache("users").put(id,userModel);
+        return userModel;
     }
-    public boolean joinRoom(String id, String username) {
-        if(cacheManager.getCache("rooms").get(id) == null) {
-            return false;
-        }
-        RoomModel roomModel = cacheManager.getCache("rooms").get(id, RoomModel.class);
-        if(roomModel.getGuest() == null) {
-            roomModel.setGuest(username);
-            cacheManager.getCache("rooms").put(id, roomModel);
-            return true;
-        }
-        return false;
+    public RoomModel createRoom(String userId) {
+        String id = generateRoomId();
+        UserModel user = cacheManager.getCache("users").get(userId, UserModel.class);
+        RoomModel roomModel = RoomModel.builder().id(id).users(new ArrayList<>(Collections.singletonList(user))).build();
+        cacheManager.getCache("rooms").put(id,roomModel);
+        return roomModel;
     }
-    public String generateId() {
+    public String generateRoomId() {
         Random random;
         String id;
         do {
             random = new Random();
-            id = String.valueOf(random.nextInt(100000));
+            id = String.valueOf(random.nextInt(10000,99999));
         } while (cacheManager.getCache("rooms").get(id) != null);
         return id;
     }
-
+    public String generateUserId() {
+        Random random;
+        String id;
+        do {
+            random = new Random();
+            id = String.valueOf(random.nextInt(10000,99999));
+        } while (cacheManager.getCache("users").get(id) != null);
+        return id;
+    }
     public RoomModel getRoom(String id) {
-        return  cacheManager.getCache("rooms").get(id, RoomModel.class);
+        return cacheManager.getCache("rooms").get(id, RoomModel.class);
+    }
+
+    public void joinRoom(String roomId, String senderId) {
+        RoomModel room = cacheManager.getCache("rooms").get(roomId, RoomModel.class);
+        UserModel user = cacheManager.getCache("users").get(senderId, UserModel.class);
+        room.getUsers().add(user);
+        cacheManager.getCache("rooms").put(roomId,room);
     }
 }

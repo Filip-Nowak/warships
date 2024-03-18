@@ -1,4 +1,3 @@
-import styles from "./gameLayout.module.css"
 import GameView from "../game/GameView";
 function GameLayout({createdShips}){
     return <div>

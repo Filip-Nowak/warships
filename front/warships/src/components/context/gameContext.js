@@ -2,8 +2,9 @@ import {createContext} from "react";
 
 const GameContext=createContext({
     launchGame:(createdShips)=>{},
-    createdShips:[],
-    test:false,
-    changeView:(viewName)=>{}
+    test:[],
+    changeView:(viewName)=>{},
+    setUsername:username=>{},
+    username:""
 })
 export default GameContext

@@ -1,5 +1,6 @@
 import field from "../components/board/field/Field";
 import {type} from "@testing-library/user-event/dist/type";
+import getEmptyFields from "../components/utils/getEmptyFields";
 
 class Bot {
     fields = getEmptyFields()
@@ -179,20 +180,6 @@ class Bot {
 
 const getRandomNumber = (max) => {
     return Math.floor(Math.random() * max)
-}
-const getEmptyFields = () => {
-    return [
-        [0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 2, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ]
 }
 
 export default Bot

@@ -9,14 +9,13 @@ import ShipPanel from "../../game/shipPanel/ShipPanel";
 import ShipSelector from "../shipSelector/ShipSelector";
 import board from "../../board/board/Board";
 import BottomPanel from "../bottomPanel/BottomPanel";
+import CreatedShipsContext from "../../context/createdShipsContext";
 function CreatorMenu(){
     const [ships, setShips] = useState([])
     const [selectedShip, setSelectedShip] = useState(0)
     const [shipsLeft, setShipsLeft] = useState([1,2,3,4])
     const [deployingShip, setDeployingShip] = useState([])
     const [boardMode, setBoardMode] = useState(true)
-    const context=useContext(GameContext)
-
     useEffect(() => {
         if(deployingShip.length===selectedShip&&selectedShip!==0){
             addShip()
@@ -24,20 +23,14 @@ function CreatorMenu(){
 
         }
     }, [deployingShip]);
-
-    useEffect(() => {
-        context.createdShips=[]
-    }, []);
-
     const addShip=()=>{
         let fields=[]
         deployingShip.forEach(field=>{
             fields.push({pos:{x:field.x,y:field.y},hit:false})
         })
         let ship = {fields:fields,sunken:false}
-        context.createdShips.push(ship)
         setShips(prevState => (
-            [...prevState,deployingShip]
+            [...prevState,ship]
         ))
         setShipsLeft((prevState)=>{
             return prevState.map((element,i)=>{
@@ -66,8 +59,8 @@ function CreatorMenu(){
         let shipId=-1
 
         ships.forEach((ship,i)=>{
-            ship.forEach(cord=>{
-                if(pos.x===cord.x && pos.y===cord.y){
+            ship.fields.forEach(field=>{
+                if(pos.x===field.pos.x && pos.y===field.pos.y){
                     shipId=i;
                 }
             })
@@ -76,7 +69,7 @@ function CreatorMenu(){
             console.log("ship doesnt exist")
             return
         }
-        const size=ships[shipId].length;
+        const size=ships[shipId].fields.length;
 
         setShipsLeft(prevState => {
             prevState[4 - size] += 1
@@ -85,7 +78,7 @@ function CreatorMenu(){
         setShips(prevState => (
             prevState.slice(0,shipId).concat(prevState.slice(shipId+1))
         ))
-        context.createdShips.splice(shipId,1)
+
     }
 
     const generateFields=(fields)=>{
@@ -109,9 +102,10 @@ function CreatorMenu(){
                 }
             }
         }
-
+        console.log(ships)
         ships.forEach(ship => {
-            ship.forEach(pos => {
+            ship.fields.forEach(field => {
+                let pos=field.pos;
                 setField({x: pos.x, y: pos.y},1)
                 setForbiddenFields(pos.x, pos.y);
             })
@@ -164,7 +158,7 @@ function CreatorMenu(){
     let boardDisabled=(boardMode && selectedShip===0)
     if(boardDisabled){
         additionalStyle.opacity="50%";
-        additionalStyle.borderColor="#00000000";
+        additionalStyle.borderColor="#001801";
     }
     if(!boardMode){
         additionalStyle.borderColor="red"
@@ -176,7 +170,6 @@ function CreatorMenu(){
             return true
         if(boardMode){
             if(deployingShip.length===0){
-                console.log("Xd")
                 enabled= value===0
             }else{
                 enabled= value===3;
@@ -191,21 +184,23 @@ function CreatorMenu(){
         remainingShips+=value;
     })
     const fill=()=>{
-        context.createdShips=[
-            {
-                fields:[{x:0,y:0,hit:false},{x:1,y:0,hit:false},{x:2,y:0,hit:false},{x:3,y:0,hit:false}],
-                sunken:false
-            }
-        ]
+        // context.createdShips=[
+        //     {
+        //         fields:[{x:0,y:0,hit:false},{x:1,y:0,hit:false},{x:2,y:0,hit:false},{x:3,y:0,hit:false}],
+        //         sunken:false
+        //     }
+        // ]
     }
     return <div className={styles.panel}>
         <PanelMessage msg={(!boardMode)?"Pick ship to remove":selectedShip===0?"select ship to deploy":"pick location for selected ship"} mode={boardMode}/>
         <button onClick={fill}>fill</button>
-        <div style={{display:"flex",marginTop:"1em"}}>
+        <div style={{display:"flex",marginTop:"1rem"}}>
             <Board additionalStyle={additionalStyle} generateFields={generateFields} fieldStyles={fieldStyleList} fieldType={fieldStyles.creatorField} boardStyle={boardStyles.creatorBoard} isFieldDisabled={isFieldDisabled} handleFieldClick={handleFieldClick} selectedFieldStyle={!boardDisabled?boardMode?fieldStyles.creatorSelected:"":""}></Board>
             <ShipSelector shipsLeft={shipsLeft} selectedShip={selectedShip} disabled={shipSelectorDisabled} selectShip={setSelectedShip}></ShipSelector>
         </div>
+        <CreatedShipsContext.Provider value={{ships:ships}}>
         <BottomPanel remainingShips={remainingShips}  showCancelButton={deployingShip.length!==0} changeMode={changeBoardMode} cancelShipDeploy={cancelShipDeploy}></BottomPanel>
+        </CreatedShipsContext.Provider>
     </div>
 }
 

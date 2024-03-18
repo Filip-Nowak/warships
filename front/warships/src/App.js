@@ -33,7 +33,7 @@ function App() {
     if (layout === "welcome") {
         content = <WelcomeLayout handleButtonClick={setModeLayout}></WelcomeLayout>
     } else if (layout === "mode") {
-        content = <ModeLayout setMode={openGameCreator} nickname={username}></ModeLayout>
+        content = <ModeLayout setMode={openGameCreator}></ModeLayout>
     } else if (layout === "gameCreator") {
         content = <GameCreatorLayout></GameCreatorLayout>
     } else if (layout === "botGame") {
@@ -77,7 +77,7 @@ function App() {
         setLayout("botGame")
     }
     return <div>
-        <GameContext.Provider value={{launchGame:launchGame,createdShips: [],test: true,changeView:changeView}}>
+        <GameContext.Provider value={{launchGame:launchGame,test: ["xd"],changeView:changeView,setUsername:setUsername,username: username}}>
         {/*<GameLayout createdShips={testShips}></GameLayout>*/}
             {content}
         </GameContext.Provider>

@@ -1,0 +1,12 @@
+.container{
+    background-color: #1d4f02;
+    width:fit-content;
+    padding:1rem;
+    border-radius: 1rem;
+}
+.msg{
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+
+}

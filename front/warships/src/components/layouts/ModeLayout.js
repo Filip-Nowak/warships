@@ -5,8 +5,8 @@ import GameContext from "../context/gameContext";
 
 function ModeLayout({nickname,setMode}){
     const context=useContext(GameContext)
-    return <Menu containerStyle={{backgroundColor:"#00000000",marginTop:"15em",width:"50em"}}>
-        <ModeButton handleClick={()=>context.changeView("gameCreator")} modeName={"vs computer"}/>
+    return <Menu containerStyle={{backgroundColor:"#00000000",marginTop:"15rem",width:"50rem",display:"flex"}}>
+        <ModeButton handleClick={()=>{context.changeView("gameCreator")}} modeName={"vs computer"}/>
         <ModeButton modeName={"multiplayer"} handleClick={()=>context.changeView("multiplayer")}/>
     </Menu>
 }

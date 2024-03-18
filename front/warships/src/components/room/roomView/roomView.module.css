@@ -1,0 +1,19 @@
+.codeContainer{
+    margin-left: auto;
+    margin-right: auto;
+    width:fit-content;
+    margin-top: 2rem;
+}
+.codeMsg{
+    font-size: 3rem;
+}
+.code{
+    background-color: #153903;
+    width: 60%;
+    margin-right: auto;
+    margin-left: auto;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-top: 2rem;
+    padding: 1rem;
+}

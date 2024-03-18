@@ -3,14 +3,17 @@ import fieldStyles from "../../board/field/fieldStyle.module.css"
 import boardStyles from "../../board/board/boardStyle.module.css"
 import styles from "./gameStyle.module.css"
 import ShipPanel from "../shipPanel/ShipPanel";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import Bot from "../../../bot/Bot";
 import shipPanel from "../shipPanel/ShipPanel";
 import InfoPanel from "../infoPanel/InfoPanel";
+import getEmptyFields from "../../utils/getEmptyFields";
+import GameContext from "../../context/gameContext";
 
 function GameView({createdShips}) {
     // const [enemyFields, setEnemyFields] = useState(getEmptyFields())
     console.log("rendered gameview")
+    console.log(createdShips)
     const [game, setGame] = useState({})
     const [enemyShips, setEnemyShips] = useState([])
     const [misses, setMisses] = useState([])
@@ -28,7 +31,6 @@ function GameView({createdShips}) {
     const enemyFields=getEmptyFields()
     const playerFields=getEmptyFields()
     useEffect(() => {
-        console.log("bot")
         setGame(new Bot(handleEnemyHit))
     }, []);
     const [playerTurn, setPlayerTurn] = useState(true)
@@ -52,7 +54,7 @@ function GameView({createdShips}) {
         ships.forEach(ship=>{
             let sunkenShip=true
             ship.fields.forEach((field,i)=>{
-                if(field.x===pos.x&&field.y===pos.y){
+                if(field.pos.x===pos.x&&field.pos.y===pos.y){
                     index=i
                     field.hit=true;
                 }
@@ -67,7 +69,7 @@ function GameView({createdShips}) {
             return {hit:false,sunken:false};
         }else{
             setPlayerShips(ships);
-            return {hit:true,sunken:ships [index].sunken}
+            return {hit:true,sunken:ships[index].sunken}
         }
     }
 
@@ -140,8 +142,6 @@ function GameView({createdShips}) {
     }
     const generatePlayerFields=(fields)=>{
         playerShips.forEach(ship=>{
-            console.log("Xd")
-            console.log(ship)
             ship.fields.forEach(field=>{
                 fields[field.pos.y][field.pos.x]=ship.sunken?3:field.hit?2:1
             })
@@ -170,18 +170,5 @@ function GameView({createdShips}) {
     )
 }
 
-const getEmptyFields = () => {
-    return [
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-    ]
-}
+
 export default GameView

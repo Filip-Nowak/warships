@@ -3,11 +3,10 @@ package org.example.warships.model;
 import lombok.Builder;
 import lombok.Data;
 
-import java.util.List;
-
 @Data
 @Builder
-public class RoomModel {
+public class UserModel {
     private String id;
-    private List<UserModel> users;
+    private String username;
+    private String roomId;
 }

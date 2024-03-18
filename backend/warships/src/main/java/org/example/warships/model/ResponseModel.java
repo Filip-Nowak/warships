@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @Builder
 public class ResponseModel {
-    private String id;
-    private String username;
+    private RoomModel room;
+    private UserModel user;
     private String error;
 }

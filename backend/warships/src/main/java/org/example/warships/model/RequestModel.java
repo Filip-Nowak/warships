@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class RequestModel {
-    String username;
-    String id;
+    UserModel user;
+    RoomModel room;
 }
