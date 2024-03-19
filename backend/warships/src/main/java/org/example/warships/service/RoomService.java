@@ -22,7 +22,7 @@ public class RoomService {
     public RoomModel createRoom(String userId) {
         String id = generateRoomId();
         UserModel user = cacheManager.getCache("users").get(userId, UserModel.class);
-        RoomModel roomModel = RoomModel.builder().id(id).users(new ArrayList<>(Collections.singletonList(user))).build();
+        RoomModel roomModel = RoomModel.builder().id(id).owner(user).players(new ArrayList<>()).build();
         cacheManager.getCache("rooms").put(id,roomModel);
         return roomModel;
     }
@@ -51,7 +51,7 @@ public class RoomService {
     public void joinRoom(String roomId, String senderId) {
         RoomModel room = cacheManager.getCache("rooms").get(roomId, RoomModel.class);
         UserModel user = cacheManager.getCache("users").get(senderId, UserModel.class);
-        room.getUsers().add(user);
+        room.getPlayers().add(user);
         cacheManager.getCache("rooms").put(roomId,room);
     }
 }

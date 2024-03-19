@@ -9,4 +9,5 @@ public class ResponseModel {
     private RoomModel room;
     private UserModel user;
     private String error;
+    private RoomMessageType type;
 }
