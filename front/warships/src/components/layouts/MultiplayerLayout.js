@@ -10,29 +10,19 @@ import io from "socket.io-client"
 function MultiplayerLayout() {
     const context = useContext(GameContext);
     const [userId, setUserId] = useState("")
-    const [fetching, setFetching] = useState(false);
+    const [fetching, setFetching] = useState(true);
     const [room, setRoom] = useState({id: "", players: []})
+    const [ready, setReady] = useState(false)
     useEffect(() => {
         http.createUser(context.username).then((id) => {
             setUserId(id)
+            http.connect(id,()=>{setFetching(false)},(error)=>{console.log("error")},handleRoomMessage)
+
         })
     }, []);
     const handleCreateRoom = () => {
         setFetching(true)
-        console.log("user:" + userId)
-        // http.createRoom(userId).then(createdRoom=>{
-        //     setRoom(createdRoom);
-        //     setFetching(false);
-        // })
-        http.connect(userId, () => {
-            setFetching(false);
-            console.log("connected!!!")
-            http.stompClient.subscribe("/user/"+userId+"/room",handleRoomMessage)
-            http.createRoom(userId)
-
-        }, (error) => {
-            console.log("error")
-        }, handleRoomMessage)
+        http.createRoom(userId);
 
     }
     const onCreatedRoom = (room) => {
@@ -46,12 +36,35 @@ function MultiplayerLayout() {
                 players: [data.room.owner, ...data.room.players]
             }
             setRoom(createdRoom);
+            setFetching(false)
+        }else if(data.type==="JOINED_ROOM"){
+            console.log("joined")
+            const createdRoom={
+                id:data.room.id,
+                players: [data.room.owner,...data.room.players]
+            }
+            setRoom(createdRoom)
+        }else if(data.type==="READY"){
+            const createdRoom={
+                id:data.room.id,
+                players: [data.room.owner,...data.room.players]
+            }
+            setRoom(createdRoom)
         }
+
+    }
+    const handleReadyButtonClick=()=>{
+        http.setReady(userId,room.id,!ready)
+        setReady(prevState => !prevState)
+    }
+    const joinRoom=(code)=>{
+        setFetching(true);
+        http.joinRoom(userId,code)
     }
     return (
         <>
-            {room.id === "" ? <JoinRoom fetching={fetching} createRoom={handleCreateRoom}></JoinRoom> :
-                <RoomView room={room}></RoomView>}
+            {room.id === "" ? <JoinRoom joinRoom={joinRoom} fetching={fetching} createRoom={handleCreateRoom}></JoinRoom> :
+                <RoomView handleReadyClick={handleReadyButtonClick} room={room} ready={ready}></RoomView>}
         </>)
 }
 

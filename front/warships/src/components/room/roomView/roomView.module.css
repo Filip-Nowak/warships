@@ -17,3 +17,29 @@
     margin-top: 2rem;
     padding: 1rem;
 }
+.playersViewContainer{
+    height:40%;
+    width:100%;
+    margin-left: auto;
+}
+.playersInRoomMsg{
+    margin-top: 3rem;
+    margin-left: auto;
+    margin-right: auto;
+    width: fit-content;
+    font-size:  2rem;
+}
+.playersContainer{
+    display: flex;
+    width:100%;
+    margin-top: 3rem;
+}
+.player{
+    width:50%;
+    font-size: 1.5rem;
+    text-align: center;
+}
+.buttonContainer{
+    width:100%;
+    height:40%
+}

@@ -9,6 +9,6 @@ import java.util.List;
 @Builder
 public class RoomModel {
     private String id;
-    private UserModel owner;
+    private String ownerId;
     private List<UserModel> players;
 }

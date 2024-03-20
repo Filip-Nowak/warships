@@ -25,15 +25,31 @@ public class GameController {
     public void joinRoom(@Payload RoomMessage roomMessage){
         RoomModel room = roomService.getRoom(roomMessage.getRoomId());
         if(room==null){
-            messagingTemplate.convertAndSend("user/"+roomMessage.getSenderId(),"Room not found");
+            messagingTemplate.convertAndSendToUser(roomMessage.getSenderId(),"/room",ResponseModel.builder().error("Room not found").type(RoomMessageType.ERROR).build());
             return;
         }
         if(room.getPlayers().size()==2){
-            messagingTemplate.convertAndSend("user/"+roomMessage.getSenderId(),"Room is full");
+            messagingTemplate.convertAndSendToUser(roomMessage.getSenderId(),"/room",ResponseModel.builder().error("Room is full").type(RoomMessageType.ERROR).build());
             return;
         }
-        roomService.joinRoom(roomMessage.getRoomId(),roomMessage.getSenderId());
-        messagingTemplate.convertAndSend("room/"+roomMessage.getRoomId(),room);
+        room=roomService.joinRoom(roomMessage.getRoomId(),roomMessage.getSenderId());
+        ResponseModel responseModel = ResponseModel.builder().room(room).type(RoomMessageType.JOINED_ROOM).build();
+        messagingTemplate.convertAndSendToUser(room.getOwnerId().getId(),"/room",ResponseModel.builder().room(room).type(RoomMessageType.JOINED_ROOM).build());
+        for(UserModel player:room.getPlayers()){
+            messagingTemplate.convertAndSendToUser(player.getId(),"/room",ResponseModel.builder().room(room).type(RoomMessageType.JOINED_ROOM).build());
+        }
     }
-
+    @MessageMapping("/ready")
+    public void test(@Payload RoomMessage roomMessage){
+        String roomId = roomMessage.getRoomId();
+        boolean ready = roomMessage.getMessage().equals("true");
+        roomService.setReady(roomId,roomMessage.getSenderId(),ready);
+        RoomModel room = roomService.getRoom(roomId);
+        System.out.println(room.getPlayers());
+        messagingTemplate.convertAndSendToUser(room.getOwnerId().getId(),"/room",ResponseModel.builder().room(room).type(RoomMessageType.READY).build());
+        for(UserModel player:room.getPlayers()){
+            System.out.println("sending ready to "+player.getId());
+            messagingTemplate.convertAndSendToUser(player.getId(),"/room",ResponseModel.builder().room(room).type(RoomMessageType.READY).build());
+        }
+    }
 }

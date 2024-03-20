@@ -15,14 +15,15 @@ public class RoomService {
     private final CacheManager cacheManager;
     public UserModel createUser(String username) {
         String id = generateUserId();
-        UserModel userModel = UserModel.builder().id(id).username(username).build();
+        UserModel userModel = UserModel.builder().id(id).nickname(username).ready(false).build();
         cacheManager.getCache("users").put(id,userModel);
         return userModel;
     }
     public RoomModel createRoom(String userId) {
         String id = generateRoomId();
         UserModel user = cacheManager.getCache("users").get(userId, UserModel.class);
-        RoomModel roomModel = RoomModel.builder().id(id).owner(user).players(new ArrayList<>()).build();
+        System.out.println(user);
+        RoomModel roomModel = RoomModel.builder().id(id).ownerId(user.getId()).players(List.of(user)).build();
         cacheManager.getCache("rooms").put(id,roomModel);
         return roomModel;
     }
@@ -48,10 +49,29 @@ public class RoomService {
         return cacheManager.getCache("rooms").get(id, RoomModel.class);
     }
 
-    public void joinRoom(String roomId, String senderId) {
+    public RoomModel joinRoom(String roomId, String senderId) {
         RoomModel room = cacheManager.getCache("rooms").get(roomId, RoomModel.class);
         UserModel user = cacheManager.getCache("users").get(senderId, UserModel.class);
         room.getPlayers().add(user);
+        cacheManager.getCache("rooms").put(roomId,room);
+        return cacheManager.getCache("rooms").get(roomId, RoomModel.class);
+    }
+    public UserModel getUser(String id) {
+        return cacheManager.getCache("users").get(id, UserModel.class);
+    }
+
+    public void setReady(String roomId, String senderId, boolean ready) {
+        System.out.println("setReady: "+roomId+" "+senderId+" "+ready);
+        RoomModel room = getRoom(roomId);
+        if(room.getOwnerId().getId().equals(senderId)){
+            room.getOwnerId().setReady(ready);
+        }else{
+            for(UserModel player:room.getPlayers()){
+                if(player.getId().equals(senderId)){
+                    player.setReady(ready);
+                }
+            }
+        }
         cacheManager.getCache("rooms").put(roomId,room);
     }
 }

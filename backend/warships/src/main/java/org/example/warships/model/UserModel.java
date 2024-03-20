@@ -7,6 +7,6 @@ import lombok.Data;
 @Builder
 public class UserModel {
     private String id;
-    private String username;
-    private String roomId;
+    private String nickname;
+    private boolean ready;
 }

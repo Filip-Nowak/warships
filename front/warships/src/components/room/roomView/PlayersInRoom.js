@@ -1,11 +1,13 @@
 import BlinkingDots from "../../utils/BlinkingDots";
-
+import styles from "./roomView.module.css"
+import Player from "./Player";
 function PlayersInRoom({players}){
-    return <div>
-        <div>players in room</div>
-        <div>
-            <div>{players[0].nicname}</div>
-            <div>{players.length===2?players[1].nickname:"waiting"+<BlinkingDots></BlinkingDots>}</div>
+    console.log(players[0])
+    return <div className={styles.playersViewContainer}>
+        <div className={styles.playersInRoomMsg}>players in room</div>
+        <div className={styles.playersContainer}>
+            <Player player={players[0]}></Player>
+            <Player player={players[1]}></Player>
         </div>
     </div>
 }
