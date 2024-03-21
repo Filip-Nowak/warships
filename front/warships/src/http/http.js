@@ -1,13 +1,20 @@
 import {over} from "stompjs"
 import SockJS from "sockjs-client"
 import {useRef} from "react";
+import submitInput from "../components/utils/SubmitInput/SubmitInput";
 const http={
+    userId:"",
+    roomId:"",
     createRoom:createRoom,
     createUser:createUser,
     connect:connect,
     stompClient:null,
     joinRoom:joinRoom,
-    setReady:setReady
+    setReady:setReady,
+    openRoomWs:openRoomWs,
+    openGameWs:openGameWs,
+    startGame:startGame,
+    submitShips:submitShips
 }
 async function createUser(username){
     const body=JSON.stringify({nickname:username,id:"",roomId:""});
@@ -21,30 +28,67 @@ async function createUser(username){
     })
     const data= await response.json();
     console.log(data)
+    http.userId=data.user.id;
     return data.user.id;
 }
-async function connect(userId,onConnected,onError,handleRoomMessage){
-    let socket=new SockJS("http://localhost:8080/ws")
-    http.stompClient=over(socket);
+async function connect(onConnected,onError){
+    if(http.stompClient===null){
+        let socket=new SockJS("http://localhost:8080/ws")
+        http.stompClient=over(socket);
+    }
     const handleConnect=()=>{
         console.log("connected");
-        http.stompClient.subscribe("/user/"+userId+"/room",handleRoomMessage)
         onConnected()
     }
     await http.stompClient.connect({},handleConnect,onError)
 }
-async function createRoom(senderId){
-    http.stompClient.send("/app/createRoom",{},JSON.stringify({senderId:senderId,roomId:"",message:""}))
+async function openRoomWs(onConnected,onError,handleRoomMessage){
+    const handleConnect=()=>{
+        http.stompClient.subscribe("/user/"+http.userId+"/room",handleRoomMessage)
+        onConnected();
+    }
+    await http.connect(handleConnect,onError,handleRoomMessage)
+}
+async function openGameWs(onConnected,onError,handleGameLog){
+    const handleConnect=()=>{
+        http.stompClient.subscribe("/user/"+http.userId+"/game",handleGameLog)
+        onConnected();
+    }
+    await http.connect(handleConnect,onError,handleGameLog)
+}
+async function createRoom(){
+    http.stompClient.send("/app/createRoom",{},JSON.stringify({senderId:http.userId,roomId:"",message:""}))
 }
 
-function joinRoom(senderId,roomId){
-    const msg=JSON.stringify({senderId:senderId,roomId:roomId})
+function joinRoom(roomId){
+    const msg=JSON.stringify({senderId:http.userId,roomId:roomId})
     console.log("joining")
+    http.roomId=roomId
     http.stompClient.send("/app/joinRoom",{},msg)
 }
-function setReady(senderId,roomId,value){
-    const msg=JSON.stringify({senderId:senderId,message:value,roomId:roomId})
+function setReady(value){
+    const msg=JSON.stringify({senderId:http.userId,message:value,roomId:http.roomId})
     //http.stompClient.send("/app/ready",{},msg);
     http.stompClient.send("/app/ready",{},msg);
+}
+function startGame(){
+    const msg=JSON.stringify({senderId:http.userId,roomId:http.roomId})
+    http.stompClient.send("/app/start",{},msg)
+}
+function submitShips(shipsFilled){
+    if(shipsFilled){
+        sendLog("SUBMIT_SHIPS")
+    }else{
+        sendLog("NO_SHIPS")
+    }
+}
+function sendLog(type,pos){
+    const log={
+        roomId:http.roomId,
+        senderId:http.userId,
+        type:type,
+        pos:pos
+    }
+    http.stompClient.send("/app/game",{},log)
 }
 export default http;

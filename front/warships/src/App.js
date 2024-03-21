@@ -6,12 +6,15 @@ import GameLayout from "./components/game/gameLayout/GameLayout";
 import GameContext from "./components/context/gameContext";
 import MultiplayerLayout from "./components/layouts/MultiplayerLayout";
 import "./App.css"
+import OnlineContext from "./components/context/onlineContext";
+import OnlineLayout from "./components/online/OnlineLayout";
 
 function App() {
     const [layout, setLayout] = useState("welcome")
     const [username, setUsername] = useState()
     const [mode, setMode] = useState()
     const [playerShips, setPlayerShips] = useState()
+    const [onlineInfo, setOnlineInfo] = useState({})
     let content;
     const setModeLayout = (username) => {
         setLayout("mode")
@@ -39,7 +42,9 @@ function App() {
     } else if (layout === "botGame") {
         content = <GameLayout createdShips={playerShips}></GameLayout>
     }else if(layout === "multiplayer"){
-        content = <MultiplayerLayout username={username}></MultiplayerLayout>
+        content = <MultiplayerLayout username={username} setOnlineInfo={setOnlineInfo}></MultiplayerLayout>
+    }else if(layout==="online"){
+        content = <OnlineLayout userId={onlineInfo.userId} room={onlineInfo.room}></OnlineLayout>
     }
 
     // return (

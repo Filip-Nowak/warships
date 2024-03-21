@@ -1,6 +1,7 @@
 import {createContext} from "react";
 
 const CreatedShipsContext=createContext({
-    ships:[]
+    ships:[],
+    handleSubmitShips:()=>{}
 })
 export default CreatedShipsContext

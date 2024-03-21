@@ -10,19 +10,39 @@ import ShipSelector from "../shipSelector/ShipSelector";
 import board from "../../board/board/Board";
 import BottomPanel from "../bottomPanel/BottomPanel";
 import CreatedShipsContext from "../../context/createdShipsContext";
-function CreatorMenu(){
+function CreatorMenu({submitShips,online}){
     const [ships, setShips] = useState([])
     const [selectedShip, setSelectedShip] = useState(0)
     const [shipsLeft, setShipsLeft] = useState([1,2,3,4])
     const [deployingShip, setDeployingShip] = useState([])
     const [boardMode, setBoardMode] = useState(true)
+    const [time, setTime] = useState(60)
+    let interval;
     useEffect(() => {
         if(deployingShip.length===selectedShip&&selectedShip!==0){
             addShip()
             setDeployingShip([])
-
         }
     }, [deployingShip]);
+    useEffect(() => {
+
+        if(online){
+            startTimer()
+        }
+    }, []);
+    const startTimer=()=>{
+        interval=setInterval(()=>{
+            setTime(prevState => {
+                console.log(prevState)
+                if(prevState===0) {
+                    clearInterval(interval);
+                    submitShips(ships)
+                }
+                return prevState-1}
+            )
+
+        },1000)
+    }
     const addShip=()=>{
         let fields=[]
         deployingShip.forEach(field=>{
@@ -191,17 +211,20 @@ function CreatorMenu(){
         //     }
         // ]
     }
-    return <div className={styles.panel}>
+    const handleSubmitShips=()=>{
+        submitShips(ships)
+    }
+    return <div>{time}<div className={styles.panel}>
         <PanelMessage msg={(!boardMode)?"Pick ship to remove":selectedShip===0?"select ship to deploy":"pick location for selected ship"} mode={boardMode}/>
         <button onClick={fill}>fill</button>
         <div style={{display:"flex",marginTop:"1rem"}}>
             <Board additionalStyle={additionalStyle} generateFields={generateFields} fieldStyles={fieldStyleList} fieldType={fieldStyles.creatorField} boardStyle={boardStyles.creatorBoard} isFieldDisabled={isFieldDisabled} handleFieldClick={handleFieldClick} selectedFieldStyle={!boardDisabled?boardMode?fieldStyles.creatorSelected:"":""}></Board>
             <ShipSelector shipsLeft={shipsLeft} selectedShip={selectedShip} disabled={shipSelectorDisabled} selectShip={setSelectedShip}></ShipSelector>
         </div>
-        <CreatedShipsContext.Provider value={{ships:ships}}>
+        <CreatedShipsContext.Provider value={{ships:ships,handleSubmitShips:handleSubmitShips}}>
         <BottomPanel remainingShips={remainingShips}  showCancelButton={deployingShip.length!==0} changeMode={changeBoardMode} cancelShipDeploy={cancelShipDeploy}></BottomPanel>
         </CreatedShipsContext.Provider>
-    </div>
+    </div></div>
 }
 
 export default CreatorMenu

@@ -2,6 +2,8 @@ package org.example.warships.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.example.warships.model.*;
+import org.example.warships.model.logs.GameLog;
+import org.example.warships.model.logs.LogType;
 import org.example.warships.service.RoomService;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -23,6 +25,7 @@ public class GameController {
     }
     @MessageMapping("/joinRoom")
     public void joinRoom(@Payload RoomMessage roomMessage){
+        System.out.println("joinRoom: "+roomMessage);
         RoomModel room = roomService.getRoom(roomMessage.getRoomId());
         if(room==null){
             messagingTemplate.convertAndSendToUser(roomMessage.getSenderId(),"/room",ResponseModel.builder().error("Room not found").type(RoomMessageType.ERROR).build());
@@ -33,23 +36,38 @@ public class GameController {
             return;
         }
         room=roomService.joinRoom(roomMessage.getRoomId(),roomMessage.getSenderId());
-        ResponseModel responseModel = ResponseModel.builder().room(room).type(RoomMessageType.JOINED_ROOM).build();
-        messagingTemplate.convertAndSendToUser(room.getOwnerId().getId(),"/room",ResponseModel.builder().room(room).type(RoomMessageType.JOINED_ROOM).build());
         for(UserModel player:room.getPlayers()){
             messagingTemplate.convertAndSendToUser(player.getId(),"/room",ResponseModel.builder().room(room).type(RoomMessageType.JOINED_ROOM).build());
         }
     }
     @MessageMapping("/ready")
-    public void test(@Payload RoomMessage roomMessage){
+    public void setReady(@Payload RoomMessage roomMessage){
         String roomId = roomMessage.getRoomId();
         boolean ready = roomMessage.getMessage().equals("true");
         roomService.setReady(roomId,roomMessage.getSenderId(),ready);
         RoomModel room = roomService.getRoom(roomId);
-        System.out.println(room.getPlayers());
-        messagingTemplate.convertAndSendToUser(room.getOwnerId().getId(),"/room",ResponseModel.builder().room(room).type(RoomMessageType.READY).build());
         for(UserModel player:room.getPlayers()){
-            System.out.println("sending ready to "+player.getId());
             messagingTemplate.convertAndSendToUser(player.getId(),"/room",ResponseModel.builder().room(room).type(RoomMessageType.READY).build());
+        }
+    }
+    @MessageMapping("/start")
+    public void start(@Payload RoomMessage roomMessage){
+        String roomId = roomMessage.getRoomId();
+        RoomModel room = roomService.getRoom(roomId);
+        for (UserModel player:room.getPlayers()){
+            roomService.setReady(roomId,player.getId(),false);
+            messagingTemplate.convertAndSendToUser(player.getId(),"/room",ResponseModel.builder().room(room).type(RoomMessageType.START).build());
+        }
+    }
+    @MessageMapping("/submitShips")
+    public void submitShips(@Payload GameLog gameLog){
+        String roomId = gameLog.getRoomId();
+        roomService.setReady(roomId,gameLog.getSender(),true);
+        RoomModel room = roomService.getRoom(roomId);
+        if(room.getPlayers().stream().allMatch(UserModel::isReady)){
+            for(UserModel player:room.getPlayers()){
+                messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().type(LogType.LAUNCH).build());
+            }
         }
     }
 }

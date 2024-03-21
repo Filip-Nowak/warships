@@ -7,7 +7,7 @@ import io from "socket.io-client"
 
 // import WebSocketClient from "websocket"
 
-function MultiplayerLayout() {
+function MultiplayerLayout({setOnlineInfo}) {
     const context = useContext(GameContext);
     const [userId, setUserId] = useState("")
     const [fetching, setFetching] = useState(true);
@@ -16,13 +16,13 @@ function MultiplayerLayout() {
     useEffect(() => {
         http.createUser(context.username).then((id) => {
             setUserId(id)
-            http.connect(id,()=>{setFetching(false)},(error)=>{console.log("error")},handleRoomMessage)
+            http.openRoomWs(()=>{setFetching(false)},(error)=>{console.log("error")},handleRoomMessage)
 
         })
     }, []);
     const handleCreateRoom = () => {
         setFetching(true)
-        http.createRoom(userId);
+        http.createRoom();
 
     }
     const onCreatedRoom = (room) => {
@@ -31,9 +31,11 @@ function MultiplayerLayout() {
     const handleRoomMessage = (message) => {
         const data = JSON.parse(message.body);
         if (data.type === "CREATED_ROOM") {
+            http.roomId=data.room.id;
             let createdRoom = {
                 id: data.room.id,
-                players: [data.room.owner, ...data.room.players]
+                ownerId:data.room.ownerId,
+                players: data.room.players,
             }
             setRoom(createdRoom);
             setFetching(false)
@@ -41,30 +43,43 @@ function MultiplayerLayout() {
             console.log("joined")
             const createdRoom={
                 id:data.room.id,
-                players: [data.room.owner,...data.room.players]
+                players: data.room.players,
+                ownerId:data.room.ownerId
             }
             setRoom(createdRoom)
         }else if(data.type==="READY"){
             const createdRoom={
                 id:data.room.id,
-                players: [data.room.owner,...data.room.players]
+                players: data.room.players,
+                ownerId:data.room.ownerId
             }
             setRoom(createdRoom)
+        }else if(data.type==='START'){
+            startGame()
         }
 
     }
     const handleReadyButtonClick=()=>{
-        http.setReady(userId,room.id,!ready)
+        http.setReady(!ready)
         setReady(prevState => !prevState)
     }
     const joinRoom=(code)=>{
         setFetching(true);
-        http.joinRoom(userId,code)
+        http.joinRoom(code)
     }
+    const startGame=()=>{
+        console.log("starting")
+        context.changeView("online")
+        setOnlineInfo({userId:userId,room:room})
+    }
+    const handleStartClick=()=>{
+        http.startGame();
+    }
+    console.log(userId+" "+room.ownerId)
     return (
         <>
             {room.id === "" ? <JoinRoom joinRoom={joinRoom} fetching={fetching} createRoom={handleCreateRoom}></JoinRoom> :
-                <RoomView handleReadyClick={handleReadyButtonClick} room={room} ready={ready}></RoomView>}
+                <RoomView handleReadyClick={handleReadyButtonClick} room={room} ready={ready} owner={userId===room.ownerId} startGame={handleStartClick}></RoomView>}
         </>)
 }
 
