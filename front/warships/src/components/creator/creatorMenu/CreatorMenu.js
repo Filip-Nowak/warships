@@ -212,6 +212,8 @@ function CreatorMenu({submitShips,online}){
         // ]
     }
     const handleSubmitShips=()=>{
+        console.log("dupa")
+        clearInterval(interval)
         submitShips(ships)
     }
     return <div>{time}<div className={styles.panel}>

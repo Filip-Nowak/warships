@@ -64,7 +64,16 @@ public class GameController {
         String roomId = gameLog.getRoomId();
         roomService.setReady(roomId,gameLog.getSender(),true);
         RoomModel room = roomService.getRoom(roomId);
-        if(room.getPlayers().stream().allMatch(UserModel::isReady)){
+        System.out.println(gameLog);
+        System.out.println(room);
+        boolean allReady=true;
+        for(UserModel player:room.getPlayers()){
+            if(!player.isReady()){
+                allReady=false;
+                break;
+            }
+        }
+        if(allReady){
             for(UserModel player:room.getPlayers()){
                 messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().type(LogType.LAUNCH).build());
             }

@@ -76,19 +76,19 @@ function startGame(){
     http.stompClient.send("/app/start",{},msg)
 }
 function submitShips(shipsFilled){
-    if(shipsFilled){
-        sendLog("SUBMIT_SHIPS")
-    }else{
-        sendLog("NO_SHIPS")
-    }
-}
-function sendLog(type,pos){
     const log={
         roomId:http.roomId,
         senderId:http.userId,
-        type:type,
-        pos:pos
     }
-    http.stompClient.send("/app/game",{},log)
+    if(shipsFilled){
+        log.type="SUBMIT_SHIPS"
+    }else{
+        log.type="NO_SHIPS"
+    }
+    http.stompClient.send("/app/submitShips",{},log)
+
+}
+function sendLog(type,pos){
+
 }
 export default http;
