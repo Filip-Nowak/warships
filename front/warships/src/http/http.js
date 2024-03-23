@@ -40,6 +40,11 @@ async function connect(onConnected,onError){
         console.log("connected");
         onConnected()
     }
+    if(http.stompClient.connected){
+        console.log("user already connected. Executing onConnected")
+        handleConnect();
+    }
+        else
     await http.stompClient.connect({},handleConnect,onError)
 }
 async function openRoomWs(onConnected,onError,handleRoomMessage){
@@ -54,7 +59,7 @@ async function openGameWs(onConnected,onError,handleGameLog){
         http.stompClient.subscribe("/user/"+http.userId+"/game",handleGameLog)
         onConnected();
     }
-    await http.connect(handleConnect,onError,handleGameLog)
+    await http.connect(handleConnect,onError)
 }
 async function createRoom(){
     http.stompClient.send("/app/createRoom",{},JSON.stringify({senderId:http.userId,roomId:"",message:""}))
@@ -76,19 +81,20 @@ function startGame(){
     http.stompClient.send("/app/start",{},msg)
 }
 function submitShips(shipsFilled){
+    console.log("xd")
     const log={
+        pos:{x:0,y:0},
         roomId:http.roomId,
         senderId:http.userId,
     }
+    console.log(log)
     if(shipsFilled){
         log.type="SUBMIT_SHIPS"
     }else{
         log.type="NO_SHIPS"
     }
-    http.stompClient.send("/app/submitShips",{},log)
+    http.stompClient.send("/app/submitShips",{},JSON.stringify(log))
 
 }
-function sendLog(type,pos){
 
-}
 export default http;

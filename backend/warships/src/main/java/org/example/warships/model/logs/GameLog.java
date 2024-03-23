@@ -7,7 +7,7 @@ import lombok.Data;
 @Builder
 public class GameLog {
     private String roomId;
-    private String sender;
+    private String senderId;
     private LogType type;
     private Pos pos;
 

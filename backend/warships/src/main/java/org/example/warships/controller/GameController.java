@@ -62,20 +62,32 @@ public class GameController {
     @MessageMapping("/submitShips")
     public void submitShips(@Payload GameLog gameLog){
         String roomId = gameLog.getRoomId();
-        roomService.setReady(roomId,gameLog.getSender(),true);
+        if(gameLog.getType()==LogType.SUBMIT_SHIPS){
+
+
+        roomService.setReady(roomId,gameLog.getSenderId(),true);
         RoomModel room = roomService.getRoom(roomId);
-        System.out.println(gameLog);
-        System.out.println(room);
         boolean allReady=true;
         for(UserModel player:room.getPlayers()){
             if(!player.isReady()){
+                System.out.println();
                 allReady=false;
                 break;
             }
         }
         if(allReady){
+            System.out.println("All ready");
+            String startPlayerId= room.getPlayers().get((int)(Math.random()*2)).getId();
             for(UserModel player:room.getPlayers()){
-                messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().type(LogType.LAUNCH).build());
+                messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().type(LogType.LAUNCH).senderId(startPlayerId).build());
+            }
+        }else{
+            System.out.println("Not all ready");
+        }
+    }else{
+            RoomModel room = roomService.getRoom(roomId);
+            for(UserModel player:room.getPlayers()){
+                messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().type(LogType.NO_SHIPS).build());
             }
         }
     }
