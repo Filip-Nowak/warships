@@ -1,12 +1,12 @@
 import {useContext, useEffect, useState} from "react";
-import OnlineGame from "../../http/OnlineGame";
+import Online from "../../http/Online";
 import OnlineContext from "../context/onlineContext";
 import CreatorMenu from "../creator/creatorMenu/CreatorMenu";
 import GameContext from "../context/gameContext";
 
 function OnlineLayout({userId,room}){
     const context=useContext(GameContext);
-    const [onlineGame, setOnlineGame] = useState(new OnlineGame(userId,room))
+    const [onlineGame, setOnlineGame] = useState(new Online(userId,room))
     const submitShips=(ships)=>{
         console.log("xddd")
         onlineGame.submitShips(ships);

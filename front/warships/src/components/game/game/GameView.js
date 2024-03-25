@@ -10,30 +10,29 @@ import InfoPanel from "../infoPanel/InfoPanel";
 import getEmptyFields from "../../utils/getEmptyFields";
 import GameContext from "../../context/gameContext";
 
-function GameView({createdShips}) {
+function GameView({playerShips,enemyShips,playerMisses,enemyMisses,infoPanelContent,handleConsoleFieldClick}) {
     // const [enemyFields, setEnemyFields] = useState(getEmptyFields())
     console.log("rendered gameview")
-    console.log(createdShips)
     const [game, setGame] = useState({})
-    const [enemyShips, setEnemyShips] = useState([])
-    const [misses, setMisses] = useState([])
-    const [playerShips, setPlayerShips] = useState([...createdShips])
-    const [enemyMisses, setEnemyMisses] = useState([])
-    const [infoPanelContent, setInfoPanelContent] = useState(
-        {
-            shooting:false,
-            pickingField:true,
-            pos:{x:null,y:null},
-            enemyTurn:false,
-            enemyResult:false
-        }
-    )
-    const enemyFields=getEmptyFields()
-    const playerFields=getEmptyFields()
-    useEffect(() => {
-        setGame(new Bot(handleEnemyHit))
-    }, []);
-    const [playerTurn, setPlayerTurn] = useState(true)
+    // const [enemyShips, setEnemyShips] = useState([])
+    // const [playerMisses, setPlayerMisses] = useState([])
+    // const [playerShips, setPlayerShips] = useState([...playerShips])
+    // const [enemyMisses, setEnemyMisses] = useState([])
+    // const [infoPanelContent, setInfoPanelContent] = useState(
+    //     {
+    //         shooting:false,
+    //         pickingField:true,
+    //         pos:{x:null,y:null},
+    //         enemyTurn:false,
+    //         enemyResult:false
+    //     }
+    // )
+    // const [playerTurn, setPlayerTurn] = useState(true)
+    // const enemyFields=getEmptyFields()
+    // const playerFields=getEmptyFields()
+    // useEffect(() => {
+    //     setGame(new Bot(handleEnemyHit))
+    // }, []);
     let playerFieldStyle = [
         fieldStyles.seaField,
         fieldStyles.ship,
@@ -48,84 +47,84 @@ function GameView({createdShips}) {
         fieldStyles.consoleMissed
 
     ]
-    const handleEnemyHit=(pos)=>{
-        let index;
-        let ships=[...playerShips]
-        ships.forEach(ship=>{
-            let sunkenShip=true
-            ship.fields.forEach((field,i)=>{
-                if(field.pos.x===pos.x&&field.pos.y===pos.y){
-                    index=i
-                    field.hit=true;
-                }
-                if(!field.hit){
-                    sunkenShip=false
-                }
-            })
-            ship.sunken=sunkenShip;
-        })
-        if(index===undefined){
-            setEnemyMisses(prevState => ([...prevState,pos]));
-            return {hit:false,sunken:false};
-        }else{
-            setPlayerShips(ships);
-            return {hit:true,sunken:ships[index].sunken}
-        }
-    }
+    // const handleEnemyHit=(pos)=>{
+    //     let index;
+    //     let ships=[...playerShips]
+    //     ships.forEach(ship=>{
+    //         let sunkenShip=true
+    //         ship.fields.forEach((field,i)=>{
+    //             if(field.pos.x===pos.x&&field.pos.y===pos.y){
+    //                 index=i
+    //                 field.hit=true;
+    //             }
+    //             if(!field.hit){
+    //                 sunkenShip=false
+    //             }
+    //         })
+    //         ship.sunken=sunkenShip;
+    //     })
+    //     if(index===undefined){
+    //         setEnemyMisses(prevState => ([...prevState,pos]));
+    //         return {hit:false,sunken:false};
+    //     }else{
+    //         setPlayerShips(ships);
+    //         return {hit:true,sunken:ships[index].sunken}
+    //     }
+    // }
 
-    const handleConsoleFieldClick = (x, y) => {
-        if (playerTurn) {
-            setInfoPanelContent(prevState => {
-                let obj={...prevState};
-                obj.pickingField=false
-                obj.shooting=true;
-                return obj
-            })
-            let result=game.takeShot({x:x,y:y});
-            if(result.hit){
-                addEnemyShip({x:x,y:y},result.sunken)
-            }else{
-                setMisses(prevState => (
-                    [...prevState,{x:x,y:y}]
-                ))
-            }
-        }
-    }
-    const addEnemyShip=(pos,sunken)=>{
-            let index;
-            let checked=false;
-            enemyShips.forEach((ship,i)=>{
-                ship.fields.forEach((field)=>{
-                    if(field.x===pos.x&&field.y===pos.y){
-                        checked=true
-                    }else
-                    if(field.x+1===pos.x&& field.y===pos.y){
-                        index=i;
-                    }else if(field.x-1===pos.x&& field.y===pos.y){
-                        index=i;
-                    }else if(field.x===pos.x&& field.y+1===pos.y){
-                        index=i;
-                    }else if(field.x===pos.x&& field.y-1===pos.y){
-                        index=i;
-                    }
-                })
-            })
-            if(checked){
-
-            }else
-            if(index===undefined){
-                setEnemyShips(prevState => (
-                    [...prevState,{fields:[pos],sunken:sunken}]
-                ))
-            }else{
-                setEnemyShips(prevState => {
-                    const arr=[...prevState];
-                    arr[index].fields.push(pos);
-                    arr[index].sunken=sunken;
-                    return arr;
-                })
-            }
-        }
+    // const handleConsoleFieldClick = (x, y) => {
+    //     if (playerTurn) {
+    //         setInfoPanelContent(prevState => {
+    //             let obj={...prevState};
+    //             obj.pickingField=false
+    //             obj.shooting=true;
+    //             return obj
+    //         })
+    //         let result=game.takeShot({x:x,y:y});
+    //         if(result.hit){
+    //             addEnemyShip({x:x,y:y},result.sunken)
+    //         }else{
+    //             setPlayerMisses(prevState => (
+    //                 [...prevState,{x:x,y:y}]
+    //             ))
+    //         }
+    //     }
+    // }
+    // const addEnemyShip=(pos,sunken)=>{
+    //         let index;
+    //         let checked=false;
+    //         enemyShips.forEach((ship,i)=>{
+    //             ship.fields.forEach((field)=>{
+    //                 if(field.x===pos.x&&field.y===pos.y){
+    //                     checked=true
+    //                 }else
+    //                 if(field.x+1===pos.x&& field.y===pos.y){
+    //                     index=i;
+    //                 }else if(field.x-1===pos.x&& field.y===pos.y){
+    //                     index=i;
+    //                 }else if(field.x===pos.x&& field.y+1===pos.y){
+    //                     index=i;
+    //                 }else if(field.x===pos.x&& field.y-1===pos.y){
+    //                     index=i;
+    //                 }
+    //             })
+    //         })
+    //         if(checked){
+    //
+    //         }else
+    //         if(index===undefined){
+    //             setEnemyShips(prevState => (
+    //                 [...prevState,{fields:[pos],sunken:sunken}]
+    //             ))
+    //         }else{
+    //             setEnemyShips(prevState => {
+    //                 const arr=[...prevState];
+    //                 arr[index].fields.push(pos);
+    //                 arr[index].sunken=sunken;
+    //                 return arr;
+    //             })
+    //         }
+    //     }
 
 
     console.log(playerShips)
@@ -136,7 +135,7 @@ function GameView({createdShips}) {
                 fields[field.y][field.x]=ship.sunken?2:1
             })
         })
-        misses.forEach(field=>{
+        playerMisses.forEach(field=>{
             fields[field.y][field.x]=3
         });
     }

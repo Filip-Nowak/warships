@@ -50,6 +50,7 @@ public class RoomService {
     }
 
     public RoomModel getRoom(String id) {
+
         return cacheManager.getCache("rooms").get(id, RoomModel.class);
     }
 

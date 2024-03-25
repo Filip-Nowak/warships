@@ -4,7 +4,7 @@ import ModeLayout from "./components/layouts/ModeLayout";
 import GameCreatorLayout from "./components/layouts/GameCreatorLayout";
 import GameLayout from "./components/game/gameLayout/GameLayout";
 import GameContext from "./components/context/gameContext";
-import MultiplayerLayout from "./components/layouts/MultiplayerLayout";
+import MultiplayerLayout from "./components/online/MultiplayerLayout";
 import "./App.css"
 import OnlineContext from "./components/context/onlineContext";
 import OnlineLayout from "./components/online/OnlineLayout";

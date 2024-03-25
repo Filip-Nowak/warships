@@ -1,5 +1,5 @@
 package org.example.warships.model;
 
 public enum RoomMessageType {
-    CREATED_ROOM, JOINED_ROOM, READY, ERROR,START
+    ROOM_CREATED, JOINED_ROOM, READY, ERROR, LAUNCH, NO_SHIPS, START
 }

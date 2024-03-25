@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from "react";
+import {useContext, useEffect, useRef, useState} from "react";
 import GameContext from "../../context/gameContext";
 import styles from "../creatorMenu.module.css";
 import fieldStyles from "../../board/field/fieldStyle.module.css"
@@ -10,14 +10,15 @@ import ShipSelector from "../shipSelector/ShipSelector";
 import board from "../../board/board/Board";
 import BottomPanel from "../bottomPanel/BottomPanel";
 import CreatedShipsContext from "../../context/createdShipsContext";
-function CreatorMenu({submitShips,online}){
+import BlinkingDots from "../../utils/BlinkingDots";
+function CreatorMenu({submitShips,online,fetching}){
     const [ships, setShips] = useState([])
     const [selectedShip, setSelectedShip] = useState(0)
     const [shipsLeft, setShipsLeft] = useState([1,2,3,4])
     const [deployingShip, setDeployingShip] = useState([])
     const [boardMode, setBoardMode] = useState(true)
     const [time, setTime] = useState(60)
-    let interval;
+    const interval = useRef(0);
     useEffect(() => {
         if(deployingShip.length===selectedShip&&selectedShip!==0){
             addShip()
@@ -25,24 +26,23 @@ function CreatorMenu({submitShips,online}){
         }
     }, [deployingShip]);
     useEffect(() => {
-
         if(online){
-            startTimer()
+            interval.current=setInterval(()=>{
+                setTime(prevState => prevState-1)
+            },1000)
         }
     }, []);
-    const startTimer=()=>{
-        interval=setInterval(()=>{
-            setTime(prevState => {
-                console.log(prevState)
-                if(prevState===0) {
-                    clearInterval(interval);
-                    submitShips(ships)
-                }
-                return prevState-1}
-            )
+    useEffect(() => {
+        console.log(time)
+        if(time===0){
+            clearInterval(interval.current)
+            if(ships.length!==0){
+                handleSubmitShips()
+            }
+        }
+    }, [time]);
 
-        },1000)
-    }
+
     const addShip=()=>{
         let fields=[]
         deployingShip.forEach(field=>{
@@ -122,7 +122,6 @@ function CreatorMenu({submitShips,online}){
                 }
             }
         }
-        console.log(ships)
         ships.forEach(ship => {
             ship.fields.forEach(field => {
                 let pos=field.pos;
@@ -212,8 +211,7 @@ function CreatorMenu({submitShips,online}){
         // ]
     }
     const handleSubmitShips=()=>{
-        console.log("dupa")
-        clearInterval(interval)
+        clearInterval(interval.current)
         submitShips(ships)
     }
     return <div>{time}<div className={styles.panel}>
@@ -226,6 +224,7 @@ function CreatorMenu({submitShips,online}){
         <CreatedShipsContext.Provider value={{ships:ships,handleSubmitShips:handleSubmitShips}}>
         <BottomPanel remainingShips={remainingShips}  showCancelButton={deployingShip.length!==0} changeMode={changeBoardMode} cancelShipDeploy={cancelShipDeploy}></BottomPanel>
         </CreatedShipsContext.Provider>
+        {fetching?<div className={styles.absoluteContainer}><div className={styles.absoluteChild}> loading<BlinkingDots blinkSpeed={100}></BlinkingDots> </div></div>:""}
     </div></div>
 }
 

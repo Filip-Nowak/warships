@@ -11,4 +11,5 @@ public class RoomModel {
     private String id;
     private String ownerId;
     private List<UserModel> players;
+    private boolean inGame;
 }
