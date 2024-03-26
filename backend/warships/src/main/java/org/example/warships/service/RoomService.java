@@ -3,6 +3,7 @@ package org.example.warships.service;
 import lombok.RequiredArgsConstructor;
 import org.example.warships.model.RoomModel;
 import org.example.warships.model.UserModel;
+import org.example.warships.model.ship.Ship;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
@@ -77,5 +78,19 @@ public class RoomService {
             }
         }
         cacheManager.getCache("rooms").put(roomId, room);
+    }
+
+    public void setShips(String roomId, String senderId, List<Ship> ships) {
+        RoomModel room = getRoom(roomId);
+        for (UserModel player : room.getPlayers()) {
+            if (player.getId().equals(senderId)) {
+                player.setShips(ships);
+            }
+        }
+        cacheManager.getCache("rooms").put(roomId, room);
+    }
+    public RoomModel updateRoom(RoomModel room){
+        cacheManager.getCache("rooms").put(room.getId(), room);
+        return getRoom(room.getId());
     }
 }

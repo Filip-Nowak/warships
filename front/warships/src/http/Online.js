@@ -18,7 +18,7 @@ class Online {
             this.roomMessageHandlers[type](obj)
         }
     }
-    #handleGameLog
+
 
     connect = async (username, onConnect, onError) => {
         console.log("connecting...")
@@ -70,13 +70,35 @@ class Online {
         const msg = JSON.stringify({senderId: this.#userId, roomId: this.#roomId})
         this.#stompClient.send("/app/start", {}, msg)
     }
-    submitShips = () => {
+    submitShips = (ships) => {
         const msg = {
             roomId: this.#roomId,
             senderId: this.#userId,
-            type:"SUBMIT_SHIPS"
+            type:"SUBMIT_SHIPS",
+            ships:ships
         }
     this.#stompClient.send("/app/submitShips", {}, JSON.stringify(msg))
+    }
+    gameLogHandlers={};
+
+    addGameLogHandler(eventName, callback) {
+        this.gameLogHandlers[eventName] = callback;
+    }
+    #handleGameLog(msg){
+        const obj = JSON.parse(msg.body);
+        const type = obj.type;
+        if (this.gameLogHandlers[type] !== undefined) {
+            this.gameLogHandlers[type](obj)
+        }
+    }
+
+    shoot(pos) {
+        const msg={
+            senderId: this.#userId,
+            pos:pos,
+            roomId: this.#roomId
+        }
+        this.#stompClient.send("/app/shoot", {}, JSON.stringify(msg))
     }
 }
 

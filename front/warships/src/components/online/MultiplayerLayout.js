@@ -8,6 +8,7 @@ import online from "../../http/Online";
 import CreatorMenu from "../creator/creatorMenu/CreatorMenu";
 import player from "../room/roomView/Player";
 import GameView from "../game/game/GameView";
+import OnlineGame from "./OnlineGame";
 
 // import WebSocketClient from "websocket"
 
@@ -19,7 +20,7 @@ function MultiplayerLayout({setOnlineInfo}) {
     const [ready, setReady] = useState(false)
     const [inGame, setInGame] = useState(false);
     const [inRoom, setInRoom] = useState(true)
-
+    const [createdShips, setCreatedShips] = useState([])
     const onConnected = () => {
         online.createUser().then(()=>{
             online.addRoomMessageHandler("ROOM_CREATED",onCreatedRoom)
@@ -101,7 +102,8 @@ function MultiplayerLayout({setOnlineInfo}) {
     }
     const submitShips=(ships)=>{
         setFetching(true)
-        online.submitShips()
+        setCreatedShips(ships)
+        online.submitShips(ships)
     }
     return (
         <>
@@ -116,7 +118,7 @@ function MultiplayerLayout({setOnlineInfo}) {
                     !inGame?
                         <CreatorMenu online={true} submitShips={submitShips} fetching={fetching}></CreatorMenu>
                         :
-                        <GameView createdShips={}></GameView>
+                        <OnlineGame createdShips={createdShips}></OnlineGame>
 
             }
 

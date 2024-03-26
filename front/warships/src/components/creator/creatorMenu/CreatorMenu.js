@@ -19,6 +19,11 @@ function CreatorMenu({submitShips,online,fetching}){
     const [boardMode, setBoardMode] = useState(true)
     const [time, setTime] = useState(60)
     const interval = useRef(0);
+    const handleSubmitShips=()=>{
+        clearInterval(interval.current)
+        console.log(ships)
+        submitShips(ships)
+    }
     useEffect(() => {
         if(deployingShip.length===selectedShip&&selectedShip!==0){
             addShip()
@@ -36,9 +41,8 @@ function CreatorMenu({submitShips,online,fetching}){
         console.log(time)
         if(time===0){
             clearInterval(interval.current)
-            if(ships.length!==0){
-                handleSubmitShips()
-            }
+            handleSubmitShips()
+
         }
     }, [time]);
 
@@ -210,10 +214,7 @@ function CreatorMenu({submitShips,online,fetching}){
         //     }
         // ]
     }
-    const handleSubmitShips=()=>{
-        clearInterval(interval.current)
-        submitShips(ships)
-    }
+
     return <div>{time}<div className={styles.panel}>
         <PanelMessage msg={(!boardMode)?"Pick ship to remove":selectedShip===0?"select ship to deploy":"pick location for selected ship"} mode={boardMode}/>
         <button onClick={fill}>fill</button>
