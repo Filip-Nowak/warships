@@ -1,0 +1,15 @@
+.playersInfo{
+    display: flex;
+}
+.player{
+    width: 45%;
+    text-align: center;
+}
+.vs{
+    text-align: center;
+    width: 10%
+}
+.starts{
+    font-size: 2rem;
+    color:#3c6c02;
+}

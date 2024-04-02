@@ -1,7 +1,7 @@
 import styles from "./roomView.module.css"
 import BlinkingDots from "../../utils/BlinkingDots";
 
-function Player({player}) {
+function RoomPlayer({player}) {
     return <div className={styles.player}>{player !== undefined ?
         <>
             <div>{player.nickname}</div>
@@ -11,4 +11,4 @@ function Player({player}) {
         <div style={{color: "#3c6c02"}}>waiting<BlinkingDots></BlinkingDots></div>}</div>
 }
 
-export default Player
+export default RoomPlayer

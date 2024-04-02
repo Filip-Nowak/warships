@@ -1,17 +1,17 @@
 import styles from "./fieldStyle.module.css"
 
-function Field({x, y, style, handleClick, isDisabled, fieldType, selectedFieldStyle,selectField,selected,value}) {
+function Field({x, y, style, handleClick, isDisabled, fieldType, selectedFieldStyle,selectField,selected,value,boardDisabled}) {
     const onMouseOver = () => {
-        if (!isDisabled(x, y,value)) {
+        if (!isDisabled(x, y,value)&&!boardDisabled) {
             selectField({x:x,y:y})
         }
     }
     const handleFieldClick = () => {
-        if (!isDisabled(x, y,value)) {
-            handleClick(x, y);
+        if (!boardDisabled&&!isDisabled(x, y,value)) {
+            handleClick({x:x,y:y});
         }
     }
-    return <div onMouseOver={onMouseOver} className={styles.field + " " + fieldType + " " + style + " "+(selected?selectedFieldStyle:"")} onClick={handleFieldClick}></div>
+    return <div onMouseOver={onMouseOver} className={styles.field + " " + fieldType + " " + style + " "+(selected&&!boardDisabled?selectedFieldStyle:"")} onClick={handleFieldClick}></div>
 }
 
 export default Field;

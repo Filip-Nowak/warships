@@ -6,6 +6,7 @@ class Online {
     #username
     #roomId
     #stompClient
+    gameLogHandlers={}
     roomMessageHandlers = {}
 
     addRoomMessageHandler = (eventName, callback) => {
@@ -16,6 +17,16 @@ class Online {
         const type = obj.type;
         if (this.roomMessageHandlers[type] !== undefined) {
             this.roomMessageHandlers[type](obj)
+        }
+    }
+    addGameLogHandler(eventName, callback) {
+        this.gameLogHandlers[eventName] = callback;
+    }
+    #handleGameLog=(msg)=>{
+        const obj = JSON.parse(msg.body);
+        const type = obj.type;
+        if (this.gameLogHandlers[type] !== undefined) {
+            this.gameLogHandlers[type](obj)
         }
     }
 
@@ -79,18 +90,8 @@ class Online {
         }
     this.#stompClient.send("/app/submitShips", {}, JSON.stringify(msg))
     }
-    gameLogHandlers={};
 
-    addGameLogHandler(eventName, callback) {
-        this.gameLogHandlers[eventName] = callback;
-    }
-    #handleGameLog(msg){
-        const obj = JSON.parse(msg.body);
-        const type = obj.type;
-        if (this.gameLogHandlers[type] !== undefined) {
-            this.gameLogHandlers[type](obj)
-        }
-    }
+
 
     shoot(pos) {
         const msg={
@@ -99,6 +100,30 @@ class Online {
             roomId: this.#roomId
         }
         this.#stompClient.send("/app/shoot", {}, JSON.stringify(msg))
+    }
+
+    startTurn() {
+        const msg={
+            senderId: this.#userId,
+            roomId:this.#roomId
+        }
+        this.#stompClient.send("/app/startTurn",{},JSON.stringify(msg))
+    }
+
+    sendTest() {
+        const msg={
+            senderId: this.#userId,
+            roomId:this.#roomId
+        }
+        this.#stompClient.send("/app/test",{},JSON.stringify(msg))
+    }
+
+    sendMove() {
+        const msg={
+            senderId: this.#userId,
+            roomId:this.#roomId
+        }
+        this.#stompClient.send("/app/makeMove",{},JSON.stringify(msg))
     }
 }
 

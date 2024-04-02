@@ -13,6 +13,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
+import javax.xml.validation.SchemaFactoryLoader;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -116,9 +117,8 @@ public class GameController {
         if (allReady) {
             room.setInGame(true);
             String startPlayerId = room.getPlayers().get((int) (Math.random() * 2)).getId();
-            for (UserModel player : room.getPlayers()) {
-                player.setShips(null);
-            }
+            room.setTurn(startPlayerId);
+            room =roomService.updateRoom(room);
             for (UserModel player : room.getPlayers()) {
                 int hp = 0;
                 for (Ship ship : player.getShips()) {
@@ -127,8 +127,18 @@ public class GameController {
                 player.setHp(hp);
                 roomService.updateRoom(room);
                 roomService.setReady(roomId, player.getId(), false);
-                messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().room(room).type(RoomMessageType.LAUNCH).userId(startPlayerId).build());
             }
+
+            for (UserModel player : room.getPlayers()) {
+                messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().room(RoomModel.builder().build()).type(RoomMessageType.LAUNCH).userId(startPlayerId).build());
+            }
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.schedule(() -> {
+                RoomModel room2 = roomService.getRoom(roomId);
+                for (UserModel player : room2.getPlayers()) {
+                    messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.STARTED_TURN).senderId(startPlayerId).build());
+                }
+            }, 2, TimeUnit.SECONDS);
         }
 
     }
@@ -138,72 +148,125 @@ public class GameController {
         System.out.println("shoot: " + gameLog);
         if (gameLog.getPos() == null) {
             for (UserModel player : roomService.getRoom(gameLog.getRoomId()).getPlayers()) {
-                messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.MISS).build());
+                messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().senderId(gameLog.getSenderId()).type(LogType.MISS).build());
             }
             return;
         }
-        RoomModel room = roomService.getRoom(gameLog.getRoomId());
-        boolean hit = false, sunken = false, win = false, alreadyHit = false;
-        for (UserModel player : room.getPlayers()) {
-            if (!player.getId().equals(gameLog.getSenderId())) {
-                List<Ship> ships = player.getShips();
-                for (Ship ship : ships) {
-                    if (!ship.isSunken()) {
-                        for (Field field : ship.getFields()) {
-                            if (field.getPos().equals(gameLog.getPos())) {
-                                if (field.isHit()) {
-                                    alreadyHit = true;
-                                    break;
-                                }
-                                player.setHp(player.getHp() - 1);
-                                if (player.getHp() == 0) {
-                                    win = true;
-                                }
-                                field.setHit(true);
-                                hit = true;
-                                boolean sunkenShip = true;
-                                for (Field f : ship.getFields()) {
-                                    if (!f.isHit()) {
-                                        sunkenShip = false;
+
+        RoomModel room2 = roomService.getRoom(gameLog.getRoomId());
+        for (UserModel player : room2.getPlayers()) {
+            messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.SHOOTING).build());
+        }
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.schedule(() -> {
+            RoomModel room = roomService.getRoom(gameLog.getRoomId());
+            boolean hit = false, sunken = false, win = false, alreadyHit = false;
+            for (UserModel player : room.getPlayers()) {
+                if (!player.getId().equals(gameLog.getSenderId())) {
+                    List<Ship> ships = player.getShips();
+                    for (Ship ship : ships) {
+                        if (!ship.isSunken()) {
+                            for (Field field : ship.getFields()) {
+                                if (field.getPos().equals(gameLog.getPos())) {
+                                    if (field.isHit()) {
+                                        alreadyHit = true;
                                         break;
                                     }
+                                    player.setHp(player.getHp() - 1);
+                                    if (player.getHp() == 0) {
+                                        win = true;
+                                    }
+                                    field.setHit(true);
+                                    hit = true;
+                                    boolean sunkenShip = true;
+                                    for (Field f : ship.getFields()) {
+                                        if (!f.isHit()) {
+                                            sunkenShip = false;
+                                            break;
+                                        }
+                                    }
+                                    sunken = sunkenShip;
                                 }
-                                sunken = sunkenShip;
                             }
                         }
                     }
                 }
             }
-        }
-        room = roomService.updateRoom(room);
-        if (hit) {
-            if (sunken) {
-                for (UserModel player : room.getPlayers()) {
-                    messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.SUNKEN).pos(gameLog.getPos()).build());
-                }
-                if (win) {
-                    for (UserModel player : room.getPlayers()) {
-                        messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.WIN).senderId(gameLog.getSenderId()).build());
+            room = roomService.updateRoom(room);
+            GameLog log;
+            if (hit) {
+                if (sunken) {
+                    log = GameLog.builder().type(LogType.SUNKEN).senderId(gameLog.getSenderId()).pos(gameLog.getPos()).build();
+                    if (win) {
+                        log = GameLog.builder().type(LogType.WIN).senderId(gameLog.getSenderId()).build();
                     }
-                }
-
-            } else {
-                for (UserModel player : room.getPlayers()) {
-                    messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.HIT).build());
-                }
-            }
-
-        } else {
-            if (alreadyHit) {
-                for (UserModel player : room.getPlayers()) {
-                    messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.ALREADY_HIT).build());
+                } else {
+                    log = GameLog.builder().type(LogType.HIT).senderId(gameLog.getSenderId()).pos(gameLog.getPos()).build();
                 }
             } else {
-                for (UserModel player : room.getPlayers()) {
-                    messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.MISS).build());
+                if (alreadyHit) {
+                    log = GameLog.builder().type(LogType.ALREADY_HIT).senderId(gameLog.getSenderId()).pos(gameLog.getPos()).build();
+                } else {
+                    log = GameLog.builder().type(LogType.MISS).senderId(gameLog.getSenderId()).pos(gameLog.getPos()).build();
                 }
             }
+            for (UserModel player : room.getPlayers()) {
+                messagingTemplate.convertAndSendToUser(player.getId(), "/game", log);
 
+            }
+            ScheduledExecutorService scheduler2 = Executors.newScheduledThreadPool(1);
+            scheduler2.schedule(() -> {
+                RoomModel room3 = roomService.getRoom(gameLog.getRoomId());
+                if (room3.getPlayers().get(0).getId().equals(room3.getTurn())) {
+                    room3.setTurn(room3.getPlayers().get(1).getId());
+                } else {
+                    room3.setTurn(room3.getPlayers().get(0).getId());
+                }
+                room3=roomService.updateRoom(room3);
+                for(UserModel player :room3.getPlayers()) {
+                    messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.STARTED_TURN).senderId(room3.getTurn()).build());
+                }
+
+            }, 2, TimeUnit.SECONDS);
+            scheduler2.shutdown();
+        }, 2, TimeUnit.SECONDS);
+        scheduler.shutdown();
+    }
+
+    @MessageMapping("/startTurn")
+    public void startedTurn(@Payload GameLog gameLog) {
+        System.out.println("startedTurn: " + gameLog);
+        RoomModel room = roomService.getRoom(gameLog.getRoomId());
+
+        for (UserModel player : room.getPlayers()) {
+            messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.STARTED_TURN).senderId(gameLog.getSenderId()).build());
         }
+    }
+    @MessageMapping("/test")
+    public void test(@Payload GameLog roomMessage) {
+        System.out.println("test: " + roomMessage);
+
+    }
+    @MessageMapping("/makeMove")
+    public void makeMove(@Payload GameLog roomMessage) {
+        System.out.println("makeMove: " + roomMessage);
+        RoomModel room = roomService.getRoom(roomMessage.getRoomId());
+        if (room.getPlayers().get(0).getId().equals(room.getTurn())) {
+            room.setTurn(room.getPlayers().get(1).getId());
+        } else {
+            room.setTurn(room.getPlayers().get(0).getId());
+        }
+        room=roomService.updateRoom(room);
+        for(UserModel player :room.getPlayers()) {
+            messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.MOVE).senderId(roomMessage.getSenderId()).build());
+        }
+        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.schedule(() -> {
+            RoomModel room2=roomService.getRoom(roomMessage.getRoomId());
+            for(UserModel player : room2.getPlayers()) {
+                messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.TEST).senderId(room2.getTurn()).build());
+            }
+        }, 2, TimeUnit.SECONDS);
+
     }
 }

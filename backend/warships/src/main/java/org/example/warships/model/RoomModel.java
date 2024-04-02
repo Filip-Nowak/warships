@@ -12,4 +12,5 @@ public class RoomModel {
     private String ownerId;
     private List<UserModel> players;
     private boolean inGame;
+    private String turn;
 }

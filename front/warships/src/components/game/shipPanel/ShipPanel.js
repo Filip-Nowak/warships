@@ -9,7 +9,8 @@ function ShipPanel({children}){
         </div>
         <div style={{display:"flex"}}>
             <div className={styles.panelBorder}>
-            {children}
+                <div style={{background:"black"}}>
+            {children}</div>
             </div>
         </div>
     </div>

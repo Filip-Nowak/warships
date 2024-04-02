@@ -6,7 +6,7 @@ import RoomView from "../room/roomView/RoomView";
 import io from "socket.io-client"
 import online from "../../http/Online";
 import CreatorMenu from "../creator/creatorMenu/CreatorMenu";
-import player from "../room/roomView/Player";
+import player from "../room/roomView/RoomPlayer";
 import GameView from "../game/game/GameView";
 import OnlineGame from "./OnlineGame";
 
@@ -21,6 +21,7 @@ function MultiplayerLayout({setOnlineInfo}) {
     const [inGame, setInGame] = useState(false);
     const [inRoom, setInRoom] = useState(true)
     const [createdShips, setCreatedShips] = useState([])
+    const [startingPlayer, setStartingPlayer] = useState("")
     const onConnected = () => {
         online.createUser().then(()=>{
             online.addRoomMessageHandler("ROOM_CREATED",onCreatedRoom)
@@ -52,13 +53,10 @@ function MultiplayerLayout({setOnlineInfo}) {
         online.createRoom()
     }
     const onCreatedRoom = (msg) => {
-        console.log("created room")
-        console.log(msg)
         setRoom(msg.room)
         setFetching(false)
     }
     const onJoinRoom=(msg)=>{
-        console.log("joined")
         online.setRoomId(msg.room.id)
         setRoom(msg.room)
         setFetching(false)
@@ -68,20 +66,16 @@ function MultiplayerLayout({setOnlineInfo}) {
     }
     const onNoShips=(msg)=>{
         let username;
-        console.log(msg)
         msg.room.players.forEach((player)=>{
-            console.log(player.id)
-            console.log(msg.userId)
             if(player.id===msg.userId){
                 username=player.nickname
             }
         })
-        console.log("player "+username+"no ships xd")
     }
     const onLaunch=(msg)=>{
         setFetching(false)
         setInGame(true)
-        console.log("launching")
+        setStartingPlayer(msg.userId)
     }
     const onPlayerReady=(msg)=>{
         setRoom(msg.room)
@@ -118,7 +112,7 @@ function MultiplayerLayout({setOnlineInfo}) {
                     !inGame?
                         <CreatorMenu online={true} submitShips={submitShips} fetching={fetching}></CreatorMenu>
                         :
-                        <OnlineGame createdShips={createdShips}></OnlineGame>
+                        <OnlineGame createdShips={createdShips} players={room.players} startingPlayer={startingPlayer}></OnlineGame>
 
             }
 
