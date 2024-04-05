@@ -99,6 +99,12 @@ function MultiplayerLayout({setOnlineInfo}) {
         setCreatedShips(ships)
         online.submitShips(ships)
     }
+    const returnToLobby=()=>{
+        setInRoom(true)
+        setInGame(false)
+        setStartingPlayer("")
+        setCreatedShips([])
+    }
     return (
         <>
             {
@@ -112,7 +118,7 @@ function MultiplayerLayout({setOnlineInfo}) {
                     !inGame?
                         <CreatorMenu online={true} submitShips={submitShips} fetching={fetching}></CreatorMenu>
                         :
-                        <OnlineGame createdShips={createdShips} players={room.players} startingPlayer={startingPlayer}></OnlineGame>
+                        <OnlineGame createdShips={createdShips} players={room.players} startingPlayer={startingPlayer} returnToLobby={returnToLobby}></OnlineGame>
 
             }
 

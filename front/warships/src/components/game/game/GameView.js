@@ -11,8 +11,9 @@ import getEmptyFields from "../../utils/getEmptyFields";
 import GameContext from "../../context/gameContext";
 import StartingScreen from "../startingScreen/StartingScreen";
 import online from "../../../http/Online";
+import EndingScreen from "../endingScreen/EndingScreen";
 
-function GameView({playerShips,enemyShips,playerMisses,enemyMisses,infoPanelContent,handleConsoleFieldClick,startingScreen,players,startingPlayer,countdown,playerTurn}) {
+function GameView({playerShips,enemyShips,playerMisses,enemyMisses,infoPanelContent,handleConsoleFieldClick,startingScreen,players,startingPlayer,countdown,playerTurn,shootingPos,winner,returnToLobby}) {
     let playerFieldStyle = [
         fieldStyles.seaField,
         fieldStyles.ship,
@@ -61,10 +62,11 @@ function GameView({playerShips,enemyShips,playerMisses,enemyMisses,infoPanelCont
                     <Board generateFields={generateEnemyFields} selectedFieldStyle={fieldStyles.selectedConsoleField} boardStyle={boardStyles.enemyBoard}
                            fieldType={fieldStyles.consoleField}
                            fieldStyles={enemyFieldStyle} isFieldDisabled={() => false}
-                           handleFieldClick={handleConsoleFieldClick} disabled={!playerTurn}/>
+                           handleFieldClick={handleConsoleFieldClick} disabled={!playerTurn || shootingPos!==null} shootingPos={shootingPos}/>
                 </ShipPanel>
             </div>
             {startingScreen?<StartingScreen players={players} startingId={startingPlayer} countdown={countdown}></StartingScreen>:""}
+            {winner!==null?<EndingScreen returnToRoom={returnToLobby} winner={winner}></EndingScreen>:""}
         </div>
     )
 }

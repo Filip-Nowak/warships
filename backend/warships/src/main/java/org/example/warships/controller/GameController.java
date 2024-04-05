@@ -138,7 +138,7 @@ public class GameController {
                 for (UserModel player : room2.getPlayers()) {
                     messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.STARTED_TURN).senderId(startPlayerId).build());
                 }
-            }, 2, TimeUnit.SECONDS);
+            }, 5, TimeUnit.SECONDS);
         }
 
     }
