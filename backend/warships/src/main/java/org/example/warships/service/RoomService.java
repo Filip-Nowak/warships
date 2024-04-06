@@ -93,4 +93,16 @@ public class RoomService {
         cacheManager.getCache("rooms").put(room.getId(), room);
         return getRoom(room.getId());
     }
+
+    public void endGame(String id) {
+        RoomModel room = getRoom(id);
+        room.setInGame(false);
+        room.setTurn(null);
+        for(UserModel player : room.getPlayers()){
+            player.setReady(false);
+            player.setHp(0);
+            player.setShips(null);
+        }
+        cacheManager.getCache("rooms").put(id, room);
+    }
 }

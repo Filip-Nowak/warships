@@ -11,9 +11,10 @@
     height:25rem;
     margin-right: auto;
     margin-left: auto;
-    margin-top: 5rem;
+    /*margin-top: 5rem;*/
 }
 .enemyBoard{
+    border:0.5rem black solid;
     width:20rem;
     height:20rem;
 }

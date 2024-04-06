@@ -18,7 +18,7 @@ function Board({
     const [selectedField, setSelectedField] = useState({x: null, y: null})
     const fields = getEmptyFields()
     generateFields(fields)
-    return <div style={{...additionalStyle,opacity:disabled?"50%":"100%"}} className={styles.board + " " + boardStyle}>{fields.map((row, y) => {
+    return <div style={{...additionalStyle}} className={styles.board + " " + boardStyle}>{fields.map((row, y) => {
         return row.map((fieldValue, x) => {
                 return <Field
                     x={x}
@@ -28,7 +28,7 @@ function Board({
                     style={fieldStyles[fieldValue]}
                     isDisabled={isFieldDisabled}
                     selectedFieldStyle={selectedFieldStyle}
-                    selected={selectedField.x === x && selectedField.y === y}
+                    selected={selectedField.x === x && selectedField.y === y && shootingPos===null}
                     selectField={setSelectedField}
                     value={fieldValue}
                     boardDisabled={disabled}

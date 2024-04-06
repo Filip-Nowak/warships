@@ -30,6 +30,7 @@ function MultiplayerLayout({setOnlineInfo}) {
             online.addRoomMessageHandler("START",onStartCreator)
             online.addRoomMessageHandler("NO_SHIPS",onNoShips)
             online.addRoomMessageHandler("LAUNCH",onLaunch)
+            online.addRoomMessageHandler("RETURN_TO_ROOM",handleReturnToLobby)
             setFetching(false)
         })
     }
@@ -99,9 +100,14 @@ function MultiplayerLayout({setOnlineInfo}) {
         setCreatedShips(ships)
         online.submitShips(ships)
     }
-    const returnToLobby=()=>{
+    const handleReturnToLobby=(msg)=>{
+        console.log("return")
         setInRoom(true)
         setInGame(false)
+        setReady(false)
+        setRoom(prevState => {
+            return msg.room
+        })
         setStartingPlayer("")
         setCreatedShips([])
     }
@@ -118,7 +124,7 @@ function MultiplayerLayout({setOnlineInfo}) {
                     !inGame?
                         <CreatorMenu online={true} submitShips={submitShips} fetching={fetching}></CreatorMenu>
                         :
-                        <OnlineGame createdShips={createdShips} players={room.players} startingPlayer={startingPlayer} returnToLobby={returnToLobby}></OnlineGame>
+                        <OnlineGame createdShips={createdShips} players={room.players} startingPlayer={startingPlayer}></OnlineGame>
 
             }
 

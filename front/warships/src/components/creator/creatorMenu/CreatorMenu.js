@@ -272,7 +272,8 @@ function CreatorMenu({submitShips, online, fetching}) {
                 <Board additionalStyle={additionalStyle} generateFields={generateFields} fieldStyles={fieldStyleList}
                        fieldType={fieldStyles.creatorField} boardStyle={boardStyles.creatorBoard}
                        isFieldDisabled={isFieldDisabled} handleFieldClick={handleFieldClick}
-                       selectedFieldStyle={!boardDisabled ? boardMode ? fieldStyles.creatorSelected : "" : ""}></Board>
+                       selectedFieldStyle={!boardDisabled ? boardMode ? fieldStyles.creatorSelected : "" : ""}
+                ></Board>
                 <ShipSelector shipsLeft={shipsLeft} selectedShip={selectedShip} disabled={shipSelectorDisabled}
                               selectShip={setSelectedShip}></ShipSelector>
             </div>

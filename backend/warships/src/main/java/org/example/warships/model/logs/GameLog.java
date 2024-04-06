@@ -11,5 +11,4 @@ public class GameLog {
     private String senderId;
     private LogType type;
     private Pos pos;
-
 }

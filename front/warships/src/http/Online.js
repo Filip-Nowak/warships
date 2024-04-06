@@ -125,6 +125,14 @@ class Online {
         }
         this.#stompClient.send("/app/makeMove",{},JSON.stringify(msg))
     }
+
+    returnToLobby() {
+        const msg={
+            senderId: this.#userId,
+            roomId:this.#roomId
+        }
+        this.#stompClient.send("/app/returnToRoom",{},JSON.stringify(msg))
+    }
 }
 
 

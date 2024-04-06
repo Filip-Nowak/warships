@@ -124,7 +124,7 @@ public class GameController {
                 for (Ship ship : player.getShips()) {
                     hp += ship.getFields().size();
                 }
-                player.setHp(hp);
+                player.setHp(1);
                 roomService.updateRoom(room);
                 roomService.setReady(roomId, player.getId(), false);
             }
@@ -198,7 +198,13 @@ public class GameController {
                 if (sunken) {
                     log = GameLog.builder().type(LogType.SUNKEN).senderId(gameLog.getSenderId()).pos(gameLog.getPos()).build();
                     if (win) {
-                        log = GameLog.builder().type(LogType.WIN).senderId(gameLog.getSenderId()).build();
+                        for(UserModel player : room.getPlayers())
+                        {
+                            messagingTemplate.convertAndSendToUser(player.getId(), "/game",log);
+                            messagingTemplate.convertAndSendToUser(player.getId(), "/game", ResponseModel.builder().room(room).type(RoomMessageType.WIN).userId(gameLog.getSenderId()).build());
+                        }
+                        roomService.endGame(room.getId());
+                        return;
                     }
                 } else {
                     log = GameLog.builder().type(LogType.HIT).senderId(gameLog.getSenderId()).pos(gameLog.getPos()).build();
@@ -267,6 +273,10 @@ public class GameController {
                 messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.TEST).senderId(room2.getTurn()).build());
             }
         }, 2, TimeUnit.SECONDS);
-
+    }
+    @MessageMapping("/returnToRoom")
+    public void returnToRoom(@Payload RoomMessage roomMessage){
+        RoomModel room = roomService.getRoom(roomMessage.getRoomId());
+        messagingTemplate.convertAndSendToUser(roomMessage.getSenderId(), "/room", ResponseModel.builder().room(room).type(RoomMessageType.RETURN_TO_ROOM).build());
     }
 }

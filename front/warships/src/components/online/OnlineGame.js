@@ -2,9 +2,8 @@ import GameView from "../game/game/GameView";
 import {useEffect, useState} from "react";
 import online from "../../http/Online";
 import useTimer from "../hooks/useTimer";
-import Test from "../utils/test/Test";
 
-function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
+function OnlineGame({createdShips,players,startingPlayer}){
     const [playerShips, setPlayerShips] = useState(createdShips)
     const [enemyShips, setEnemyShips] = useState([])
     const [playerMisses, setPlayerMisses] = useState([])
@@ -15,6 +14,9 @@ function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
     const [shootingPos, setShootingPos] = useState(null)
     const [endingScreen, setEndingScreen] = useState(false)
     const [winner, setWinner] = useState(null)
+    const [pickingField, setPickingField] = useState(false)
+    const [endingEnemyShips, setEndingEnemyShips] = useState([])
+    const [showEnemyShips, setShowEnemyShips] = useState(false)
     const handleTimer=()=>{
 
     }
@@ -25,14 +27,12 @@ function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
         online.addGameLogHandler("SUNKEN",handleSunken)
         online.addGameLogHandler("ALREADY_HIT",handleAlreadyHit)
         online.addGameLogHandler("MISS",handleMiss)
-        online.addGameLogHandler("WIN",handleWin)
         online.addGameLogHandler("STARTED_TURN",handleStartedTurn)
         online.addGameLogHandler("SHOOTING",handleShooting)
+        online.addGameLogHandler("WIN",handleWin)
         console.log("effect")
     }, []);
     const handleHit=(msg)=>{
-        setShootingPos(null)
-
         if(msg.senderId===online.getUserId()){
             setInfoContent("enemy ship got hit at ("+msg.pos.x+","+msg.pos.y+")")
             setEnemyShips(prevState => {
@@ -68,10 +68,9 @@ function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
                 return [...prevState]
             })
         }
+        setShootingPos(null)
     }
     const handleMiss=(msg)=>{
-        setShootingPos(null)
-
         if(msg.senderId===online.getUserId()){
             setInfoContent("you missed")
             if(msg.pos===null){
@@ -85,9 +84,9 @@ function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
             }else
             setEnemyMisses(prevState => [...prevState,msg.pos])
         }
+        setShootingPos(null)
     }
     const handleSunken=(msg)=>{
-        setShootingPos(null)
         if(msg.senderId===online.getUserId()){
             setInfoContent("enemy ship got sunken at ("+msg.pos.x+","+msg.pos.y+")")
             setEnemyShips(prevState=>{
@@ -122,6 +121,7 @@ function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
                 return [...prevState]
             })
         }
+        setShootingPos(null)
     }
     const handleAlreadyHit=(msg)=>{
         if(playerTurn===online.getUserId()){
@@ -133,10 +133,18 @@ function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
     }
     const handleConsoleClick=(pos)=>{
         setShootingPos(pos)
+        setPickingField(false)
         online.shoot(pos)
     }
     const handleWin=(msg)=>{
-        setWinner(msg.senderId)
+        console.log("handled")
+        console.log(msg)
+        setWinner(msg.userId)
+        for(let i=0;i<msg.room.players.length;i++){
+            if(msg.room.players[i].id!==online.getUserId()){
+                setEndingEnemyShips(msg.room.players[i].ships)
+            }
+        }
     }
     const handleShooting=(msg)=>{
         if(playerTurn){
@@ -151,11 +159,20 @@ function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
         setPlayerTurn(msg.senderId===online.getUserId())
         if(msg.senderId===online.getUserId()){
             setInfoContent("pick field to shoot")
+            setPickingField(true)
         }else{
             setInfoContent("enemy picking field")
         }
     }
-
+    const returnToLobby=()=>{
+        online.returnToLobby();
+    }
+    const handleShowEnemyShips=()=>{
+        setShowEnemyShips(true)
+    }
+    const hideEnemyShips=()=>{
+        setShowEnemyShips(false)
+    }
 
     return<GameView
             enemyMisses={enemyMisses}
@@ -173,6 +190,9 @@ function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
             endingScreen={endingScreen}
             winner={winner}
             returnToLobby={returnToLobby}
+            pickingField={pickingField} showEnemyShips={showEnemyShips} endingEnemyShips={endingEnemyShips}
+            handleShowEnemyShips={handleShowEnemyShips}
+            hideEnemyShips={hideEnemyShips}
     ></GameView>
     // return <Test start={startingPlayer}></Test>
 }
