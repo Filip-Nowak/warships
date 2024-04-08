@@ -197,15 +197,14 @@ public class GameController {
             if (hit) {
                 if (sunken) {
                     log = GameLog.builder().type(LogType.SUNKEN).senderId(gameLog.getSenderId()).pos(gameLog.getPos()).build();
-                    if (win) {
-                        for(UserModel player : room.getPlayers())
-                        {
-                            messagingTemplate.convertAndSendToUser(player.getId(), "/game",log);
-                            messagingTemplate.convertAndSendToUser(player.getId(), "/game", ResponseModel.builder().room(room).type(RoomMessageType.WIN).userId(gameLog.getSenderId()).build());
-                        }
-                        roomService.endGame(room.getId());
-                        return;
-                    }
+//                    if (win) {
+//                        for(UserModel player : room.getPlayers())
+//                        {
+//                            messagingTemplate.convertAndSendToUser(player.getId(), "/game",log);
+//                        }
+//                        roomService.endGame(room.getId());
+//                        return;
+//                    }
                 } else {
                     log = GameLog.builder().type(LogType.HIT).senderId(gameLog.getSenderId()).pos(gameLog.getPos()).build();
                 }
@@ -220,9 +219,17 @@ public class GameController {
                 messagingTemplate.convertAndSendToUser(player.getId(), "/game", log);
 
             }
+            final boolean didWin=win;
             ScheduledExecutorService scheduler2 = Executors.newScheduledThreadPool(1);
             scheduler2.schedule(() -> {
                 RoomModel room3 = roomService.getRoom(gameLog.getRoomId());
+                if(didWin){
+                    for(UserModel player : room3.getPlayers()){
+                        messagingTemplate.convertAndSendToUser(player.getId(), "/game", ResponseModel.builder().room(room3).type(RoomMessageType.WIN).userId(gameLog.getSenderId()).build());
+                    }
+                    roomService.endGame(room3.getId());
+                    return;
+                }
                 if (room3.getPlayers().get(0).getId().equals(room3.getTurn())) {
                     room3.setTurn(room3.getPlayers().get(1).getId());
                 } else {

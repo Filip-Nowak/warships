@@ -69,6 +69,8 @@ class Online {
     }
     setReady = (value) => {
         const msg = JSON.stringify({senderId: this.#userId, message: value, roomId: this.#roomId})
+        console.log(this.#roomId)
+        console.log(msg)
         this.#stompClient.send("/app/ready", {}, msg);
     }
     getUserId = () => {

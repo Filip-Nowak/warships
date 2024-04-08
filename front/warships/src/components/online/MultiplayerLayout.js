@@ -54,6 +54,7 @@ function MultiplayerLayout({setOnlineInfo}) {
         online.createRoom()
     }
     const onCreatedRoom = (msg) => {
+        online.setRoomId(msg.room.id)
         setRoom(msg.room)
         setFetching(false)
     }
@@ -66,12 +67,9 @@ function MultiplayerLayout({setOnlineInfo}) {
         enterCreator()
     }
     const onNoShips=(msg)=>{
-        let username;
-        msg.room.players.forEach((player)=>{
-            if(player.id===msg.userId){
-                username=player.nickname
-            }
-        })
+        setInRoom(true)
+        setRoom(msg.room)
+        setReady(false)
     }
     const onLaunch=(msg)=>{
         setFetching(false)
