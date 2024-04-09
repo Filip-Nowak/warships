@@ -1,6 +1,6 @@
 import { useRef, useState} from "react";
 import styles from "./submitInput.module.css"
-function SubmitInput({msg,handleButtonClick,containerStyle}){
+function SubmitInput({msg,handleButtonClick,containerStyle,buttonMessageStyle,inputStyle}){
     const input=useRef()
     const [disabled,setDisabled]=useState(true)
     const handleClick=()=>{
@@ -18,8 +18,8 @@ function SubmitInput({msg,handleButtonClick,containerStyle}){
     }
     return (
         <div className={styles.submitContainer} style={containerStyle}>
-            <input ref={input} autoFocus={true} maxLength={15} className={styles.input} onChange={handleChange}/>
-            <button className={styles.button} disabled={disabled} onClick={handleClick}>{msg}</button>
+            <input style={inputStyle} ref={input} autoFocus={true} maxLength={15} className={styles.input} onChange={handleChange}/>
+            <button style={buttonMessageStyle} className={styles.button} disabled={disabled} onClick={handleClick}>{msg}</button>
         </div>
     )
 }

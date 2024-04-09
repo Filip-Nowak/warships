@@ -1,0 +1,38 @@
+.container{
+    margin-top:5rem;
+    width:60%;
+    height:20rem;
+    background-color:#00000000
+}
+.onlineContainer{
+    height:30rem;
+    padding-top: 3rem;
+}
+.vsComputerContainer{
+
+}
+.vsComputerLabel{
+    text-align: center;
+    font-size: 3rem;
+}
+.vsLabel{
+    font-size:2rem;
+    align-items:center;
+    justify-content:center;
+    display:flex;
+
+}
+.onlineLabel{
+    text-align: center;
+    font-size: 6rem;
+}
+.typeNicknameLabel{
+
+    text-align: center;
+    font-size: 2rem;
+}
+.banner{
+    font-size: 10rem;
+    text-align: center;
+    letter-spacing: 2rem;
+}
