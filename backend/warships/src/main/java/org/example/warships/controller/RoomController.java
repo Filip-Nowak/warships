@@ -19,6 +19,9 @@ public class RoomController {
     }
     @PostMapping("/createUser")
     public ResponseEntity<ResponseModel> createUser(@RequestBody UserModel userModel){
-        return ResponseEntity.ok(ResponseModel.builder().userId(roomService.createUser(userModel.getNickname()).getId()).build());
+        System.out.println("Creating user");
+        UserModel user = roomService.createUser(userModel.getNickname());
+        System.out.println(user);
+        return ResponseEntity.ok(ResponseModel.builder().userId(user.getId()).build());
     }
 }

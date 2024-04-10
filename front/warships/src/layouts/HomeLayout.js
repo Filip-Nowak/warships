@@ -3,15 +3,22 @@ import styles from "./homeLayout.module.css"
 import MenuButton from "../components/utils/menuButton/MenuButton";
 import SubmitInput from "../components/utils/SubmitInput/SubmitInput";
 import SubmitMessageInput from "../components/utils/SubmitMessageInput/SubmitMessageInput";
+import {useNavigate} from "react-router";
+import onlineContext from "../components/context/OnlineContext";
+import {useContext} from "react";
+import Online from "../http/Online";
+import OnlineContext from "../components/context/OnlineContext";
 
 function HomeLayout() {
+    const navigate = useNavigate()
+    const onlineContext=useContext(OnlineContext);
     return <div>
         <div className={styles.banner}>warships</div>
         <Menu className={styles.container}>
 
             <Menu className={styles.onlineContainer}>
                 <div className={styles.onlineLabel}>play online</div>
-                <SubmitMessageInput inputStyle={{fontSize:"5rem"}} buttonMessage={"play"} buttonMessageStyle={{fontSize:"4rem"}} message={"type in your nickname"} containerStyle={{marginTop:"5rem",width:"100%"}} messageStyle={{fontSize:"2rem"}} inputContainerStyle={{height:"5rem",fontSize:"1rem",width:"70%",marginTop:"2rem"}}></SubmitMessageInput>
+                <SubmitMessageInput handleButtonClick={(value)=>{onlineContext.setUsername(value);navigate("/create-room")}} inputStyle={{fontSize:"5rem"}} buttonMessage={"play"} buttonMessageStyle={{fontSize:"4rem"}} message={"type in your nickname"} containerStyle={{marginTop:"5rem",width:"100%"}} messageStyle={{fontSize:"2rem"}} inputContainerStyle={{height:"5rem",fontSize:"1rem",width:"70%",marginTop:"2rem"}}></SubmitMessageInput>
             </Menu>
             <div className={styles.vsLabel}>
                 <div>or</div>

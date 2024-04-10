@@ -1,8 +1,13 @@
-import {createContext} from "react";
+import {createContext, useContext} from "react";
 
 const OnlineContext=createContext({
-    room:{roomId:"",players:[]},
-    userId:""
-
+    username:"",
+    setUsername:(username)=>{},
+    room:{
+        id:"",
+        players:[],
+        ownerId:""
+    },
+    setRoom:()=>{},
 })
 export default OnlineContext

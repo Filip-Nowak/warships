@@ -1,6 +1,6 @@
 import {useContext, useEffect, useState} from "react";
 import Online from "../../http/Online";
-import OnlineContext from "../context/onlineContext";
+import OnlineContext from "../context/OnlineContext";
 import CreatorMenu from "../creator/creatorMenu/CreatorMenu";
 import GameContext from "../context/gameContext";
 

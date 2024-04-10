@@ -21,6 +21,7 @@ function OnlineGame({createdShips,players,startingPlayer}){
 
     }
    const [countdown,setCountDown]=useTimer(handleTimer)
+
     useEffect(() => {
        setCountDown(5);
         online.addGameLogHandler("HIT",handleHit)
@@ -30,8 +31,13 @@ function OnlineGame({createdShips,players,startingPlayer}){
         online.addGameLogHandler("STARTED_TURN",handleStartedTurn)
         online.addGameLogHandler("SHOOTING",handleShooting)
         online.addGameLogHandler("WIN",handleWin)
+        online.addGameLogHandler("PLAYER_LEFT",handlePlayerLeft )
         console.log("effect")
     }, []);
+
+    function handlePlayerLeft(msg) {
+
+    }
     const handleHit=(msg)=>{
         if(msg.senderId===online.getUserId()){
             setInfoContent("enemy ship got hit at ("+msg.pos.x+","+msg.pos.y+")")

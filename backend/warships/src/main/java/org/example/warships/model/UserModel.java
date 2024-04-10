@@ -14,4 +14,5 @@ public class UserModel {
     private boolean ready;
     private List<Ship> ships;
     private int hp;
+    private String roomId;
 }

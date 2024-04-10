@@ -6,23 +6,27 @@ import GameLayout from "./components/game/gameLayout/GameLayout";
 import GameContext from "./components/context/gameContext";
 import MultiplayerLayout from "./components/online/MultiplayerLayout";
 import "./App.css"
-import OnlineContext from "./components/context/onlineContext";
+// import OnlineContext from "./components/context/onlineContext";
 import OnlineLayout from "./components/online/OnlineLayout";
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom"
 import homeLayout from "./layouts/HomeLayout";
 import HomeLayout from "./layouts/HomeLayout";
 import CreateRoomLayout from "./layouts/CreateRoomLayout";
 import RootLayout from "./layouts/RootLayout";
+import RoomView from "./components/room/roomView/RoomView";
+import RoomLayout, {roomLoader} from "./layouts/RoomLayout";
 function App() {
-    const router=createBrowserRouter(
+    const router = createBrowserRouter(
         createRoutesFromElements(
             <Route path={"/"} element={<RootLayout/>}>
                 <Route index element={<HomeLayout/>}/>
                 <Route path={"create-room"} element={<CreateRoomLayout/>}/>
+                <Route path={"room/:roomId"} loader={roomLoader} element={<RoomLayout/>}/>
             </Route>
         )
     )
-    return <RouterProvider router={router}/>
+    return<RouterProvider router={router}/>
+}
 
 
     // const [layout, setLayout] = useState("welcome")
@@ -102,6 +106,5 @@ function App() {
     //         {content}
     //     </GameContext.Provider>
     // </div>
-}
 
 export default App;

@@ -30,7 +30,8 @@ public class GameController {
     public void createRoom(@Payload RoomMessage roomMessage) {
         System.out.println("createRoom: " + roomMessage);
         RoomModel room = roomService.createRoom(roomMessage.getSenderId());
-        messagingTemplate.convertAndSendToUser(roomMessage.getSenderId(), "/room", ResponseModel.builder().room(room).type(RoomMessageType.ROOM_CREATED).build());
+        System.out.println(room);
+        messagingTemplate.convertAndSendToUser(roomMessage.getSenderId(), "/room", ResponseModel.builder().room(room).type(RoomMessageType.JOINED_ROOM).build());
     }
 
     @MessageMapping("/joinRoom")

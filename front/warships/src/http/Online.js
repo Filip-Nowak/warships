@@ -34,29 +34,50 @@ class Online {
     connect = async (username, onConnect, onError) => {
         console.log("connecting...")
         this.#username = username
-        let socket = new SockJS("http://localhost:8080/ws")
+        let socket = new SockJS("http://localhost:8080/ws?userid="+encodeURIComponent(this.#userId))
         this.#stompClient = over(socket);
-        await this.#stompClient.connect({}, onConnect, onError)
+        await this.#stompClient.connect({}, ()=>{
+            this.#stompClient.subscribe("/user/" + this.#userId + "/room", this.#handleRoomMessage)
+            this.#stompClient.subscribe("/user/" + this.#userId + "/game", this.#handleGameLog)
+            onConnect()
+        }, onError)
+
+
     }
 
 
-    createUser = async () => {
-        console.log("creatingUser")
-        const body = JSON.stringify({nickname: this.#username});
+    createUser=async (nickname)=>{
+        console.log("creating user")
+        this.#username=nickname
+            const body = JSON.stringify({nickname: this.#username});
         const response = await fetch("http://localhost:8080/createUser", {
-            method: "POST",
-            body: body,
-            headers: {
-                "Content-Type": "application/json"
-            }
-        })
-        const data = await response.json();
-        console.log("created user:")
-        console.log(data)
-        this.#userId = data.userId;
-        this.#stompClient.subscribe("/user/" + this.#userId + "/room", this.#handleRoomMessage)
-        this.#stompClient.subscribe("/user/" + this.#userId + "/game", this.#handleGameLog)
+                    method: "POST",
+                    body: body,
+                    headers: {
+                        "Content-Type": "application/json"
+                    }
+                })
+        const data=await response.json();
+        this.#userId=data.userId;
     }
+    // createUser = async () => {
+    //     console.log("creatingUser")
+    //     const body = JSON.stringify({nickname: this.#username});
+    //     console.log(body)
+    //     const response = await fetch("http://localhost:8080/createUser", {
+    //         method: "POST",
+    //         body: body,
+    //         headers: {
+    //             "Content-Type": "application/json"
+    //         }
+    //     })
+    //     const data = await response.json();
+    //     console.log("created user:")
+    //     console.log(data)
+    //     this.#userId = data.userId;
+    //     this.#stompClient.subscribe("/user/" + this.#userId + "/room", this.#handleRoomMessage)
+    //     this.#stompClient.subscribe("/user/" + this.#userId + "/game", this.#handleGameLog)
+    // }
     createRoom = () => {
         this.#stompClient.send("/app/createRoom", {}, JSON.stringify({senderId: this.#userId}))
     }
@@ -134,6 +155,10 @@ class Online {
             roomId:this.#roomId
         }
         this.#stompClient.send("/app/returnToRoom",{},JSON.stringify(msg))
+    }
+
+    getRoomId() {
+        return this.#roomId
     }
 }
 
