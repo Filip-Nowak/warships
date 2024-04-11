@@ -28,14 +28,19 @@ function RoomLayout() {
         online.addRoomMessageHandler("RETURN_TO_ROOM", handleReturnToLobby)
         online.addRoomMessageHandler("PLAYER_LEFT",onPlayerLeft)
     }, []);
+    console.log(inRoom)
 
     function onPlayerLeft(msg){
+        console.log("on player left")
+        let currentInRoom;
+        setInRoom(prevState => {currentInRoom=prevState;return prevState})
         onlineContext.setRoom(msg.room)
-        if(!inRoom){
+        if(!currentInRoom){
             if(inGame){
 
             }else{
                 setInRoom(true)
+                setReady(false)
             }
         }
     }
@@ -49,6 +54,7 @@ function RoomLayout() {
     }
 
     function onStartCreator() {
+        console.log("started")
         setInRoom(false)
     }
 

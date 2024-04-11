@@ -1,9 +1,10 @@
 import GameView from "../game/game/GameView";
-import {useEffect, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import online from "../../http/Online";
 import useTimer from "../hooks/useTimer";
+import OnlineContext from "../context/OnlineContext";
 
-function OnlineGame({createdShips,players,startingPlayer}){
+function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
     const [playerShips, setPlayerShips] = useState(createdShips)
     const [enemyShips, setEnemyShips] = useState([])
     const [playerMisses, setPlayerMisses] = useState([])
@@ -17,6 +18,7 @@ function OnlineGame({createdShips,players,startingPlayer}){
     const [pickingField, setPickingField] = useState(false)
     const [endingEnemyShips, setEndingEnemyShips] = useState([])
     const [showEnemyShips, setShowEnemyShips] = useState(false)
+    const onlineContext=useContext(OnlineContext)
     const handleTimer=()=>{
 
     }
@@ -36,7 +38,14 @@ function OnlineGame({createdShips,players,startingPlayer}){
     }, []);
 
     function handlePlayerLeft(msg) {
-
+        console.log("in game")
+        onlineContext.setRoom(msg.room)
+        setWinner(msg.userId)
+        for(let i=0;i<msg.room.players.length;i++){
+            if(msg.room.players[i].id!==online.getUserId()){
+                setEndingEnemyShips(msg.room.players[i].ships)
+            }
+        }
     }
     const handleHit=(msg)=>{
         if(msg.senderId===online.getUserId()){

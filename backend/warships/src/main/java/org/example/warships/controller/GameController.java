@@ -71,22 +71,6 @@ public class GameController {
             roomService.setReady(roomId, player.getId(), false);
             messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().room(room).type(RoomMessageType.START).build());
         }
-        System.out.println("start");
-        ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-//        scheduler.schedule(() -> {
-//            System.out.println(roomService.getRoom(roomId));
-//            RoomModel room2 = roomService.getRoom(roomId);
-//            if (!room2.isInGame()) {
-//                System.out.println("No ships");
-//                for (UserModel player : room2.getPlayers()) {
-//                    roomService.setReady(roomId, player.getId(), false);
-//                    roomService.setShips(roomId, player.getId(), null);
-//                    messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().room(room).type(RoomMessageType.NO_SHIPS).build());
-//                }
-//            }
-//
-//        }, 62 * 1000, TimeUnit.MILLISECONDS);
-        scheduler.shutdown();
     }
 
     @MessageMapping("/submitShips")
