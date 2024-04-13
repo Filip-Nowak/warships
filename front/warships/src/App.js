@@ -7,7 +7,7 @@ import GameContext from "./components/context/gameContext";
 import MultiplayerLayout from "./components/online/MultiplayerLayout";
 import "./App.css"
 // import OnlineContext from "./components/context/onlineContext";
-import OnlineLayout from "./components/online/OnlineLayout";
+// import OnlineLayout from "./components/online/OnlineLayout";
 import {createBrowserRouter, createRoutesFromElements, Route, RouterProvider} from "react-router-dom"
 import homeLayout from "./layouts/HomeLayout";
 import HomeLayout from "./layouts/HomeLayout";

@@ -160,6 +160,14 @@ class Online {
     getRoomId() {
         return this.#roomId
     }
+
+    forfeit() {
+        const msg={
+            senderId:this.#userId,
+            roomId:this.#roomId
+        }
+        this.#stompClient.send("/app/forfeit",{},JSON.stringify(msg))
+    }
 }
 
 

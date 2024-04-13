@@ -18,6 +18,8 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
     const [pickingField, setPickingField] = useState(false)
     const [endingEnemyShips, setEndingEnemyShips] = useState([])
     const [showEnemyShips, setShowEnemyShips] = useState(false)
+    const [playerLeft, setPlayerLeft] = useState(false)
+    const [forfeited, setForfeited] = useState(false)
     const onlineContext=useContext(OnlineContext)
     const handleTimer=()=>{
 
@@ -34,13 +36,24 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
         online.addGameLogHandler("SHOOTING",handleShooting)
         online.addGameLogHandler("WIN",handleWin)
         online.addGameLogHandler("PLAYER_LEFT",handlePlayerLeft )
+        online.addGameLogHandler("FORFEIT",handleForfeit)
         console.log("effect")
     }, []);
 
+    function handleForfeit(msg) {
+        setForfeited(true);
+        setWinner(msg.userId)
+        for(let i=0;i<msg.room.players.length;i++){
+            if(msg.room.players[i].id!==online.getUserId()){
+                setEndingEnemyShips(msg.room.players[i].ships)
+            }
+        }
+    }
+
     function handlePlayerLeft(msg) {
         console.log("in game")
-        onlineContext.setRoom(msg.room)
-        setWinner(msg.userId)
+        setPlayerLeft(true)
+        setWinner(online.getUserId())
         for(let i=0;i<msg.room.players.length;i++){
             if(msg.room.players[i].id!==online.getUserId()){
                 setEndingEnemyShips(msg.room.players[i].ships)
@@ -189,6 +202,10 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
         setShowEnemyShips(false)
     }
 
+    const forfeit=()=>{
+        online.forfeit()
+    }
+
     return<GameView
             enemyMisses={enemyMisses}
             enemyShips={enemyShips}
@@ -208,6 +225,9 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
             pickingField={pickingField} showEnemyShips={showEnemyShips} endingEnemyShips={endingEnemyShips}
             handleShowEnemyShips={handleShowEnemyShips}
             hideEnemyShips={hideEnemyShips}
+            forfeit={forfeit}
+            forfeited={forfeited}
+            playerLeft={playerLeft}
     ></GameView>
     // return <Test start={startingPlayer}></Test>
 }

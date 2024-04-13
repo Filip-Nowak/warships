@@ -1,18 +1,45 @@
 import styles from "./shipPanel.module.css"
-function ShipPanel({children}){
+import MenuButton from "../../utils/menuButton/MenuButton";
+
+function ShipPanel({children, time, forfeit}) {
     return <div>
-        <div style={{width:"24rem",height:"2.5rem"}}>
-            <div style={{height:"100%",width:"75%",marginLeft:"auto",marginRight:"auto",display:"flex",justifyContent:"space-between"}}>
+        <div style={{width: "24rem", height: "2.5rem"}}>
+            <div style={{
+                height: "100%",
+                width: "75%",
+                marginLeft: "auto",
+                marginRight: "auto",
+                display: "flex",
+                justifyContent: "space-between"
+            }}>
                 <div className={styles.verticalConnect}></div>
                 <div className={styles.verticalConnect}></div>
             </div>
         </div>
-        <div style={{display:"flex"}}>
+        <div style={{display: "flex"}}>
             <div className={styles.panelBorder}>
-                <div style={{background:"black"}}>
-            {children}</div>
+                <div style={{background: "black"}}>
+                    {children}</div>
+                <div className={styles.bottomPanel}>
+                    <div style={{display:"flex",alignItems:"center",width:"40%",justifyContent:"center"}}>
+                        <MenuButton containerStyle={{
+                            borderRadius: 0,
+                            color: "#0d2502",
+                            backgroundColor: "red",
+                            fontSize: "1.5rem",
+                            width:"70%",
+                            margin:0
+
+                        }} message={"forfeit"} handleClick={forfeit}></MenuButton>
+                    </div>
+                    <div style={{background:"lime",width:"2%",backgroundColor:"#420000"}}></div>
+                    <div className={styles.timer}>
+                        <div>{time}0 : 00</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 }
+
 export default ShipPanel

@@ -33,7 +33,10 @@ function GameView({
                       showEnemyShips,
                       endingEnemyShips,
                       handleShowEnemyShips,
-                      hideEnemyShips
+                      hideEnemyShips,
+                      forfeit,
+                      forfeited,
+                      playerLeft
                   }) {
     let playerFieldStyle = [
         fieldStyles.seaField,
@@ -71,13 +74,13 @@ function GameView({
         })
     }
     const getEnemyNickname = () => {
-        for(let i=0;i<players.length;i++)
-        {
+        for (let i = 0; i < players.length; i++) {
             if (players[i].id !== online.getUserId())
                 return players[i].nickname
         }
 
     }
+
     return (
         <div className={styles.game}>
             <div style={{width: "50%"}}>
@@ -88,7 +91,7 @@ function GameView({
                        isFieldDisabled={() => true}
                        additionalStyle={{backgroundColor: "#2777ee", border: "solid 1em #2777ee"}}/></div>
             <div style={{width: "50%"}}>
-                <ShipPanel>
+                <ShipPanel forfeit={forfeit}>
                     <InfoPanel info={infoPanelContent}></InfoPanel>
                     <Board generateFields={generateEnemyFields} selectedFieldStyle={fieldStyles.selectedConsoleField}
                            boardStyle={boardStyles.enemyBoard}
@@ -100,9 +103,11 @@ function GameView({
             </div>
             {startingScreen ? <StartingScreen players={players} startingId={startingPlayer}
                                               countdown={countdown}></StartingScreen> : ""}
-            {winner !== null ? <EndingScreen returnToRoom={returnToLobby} winner={winner}
-                                             showEnemyShips={handleShowEnemyShips}></EndingScreen> : ""}
-            {showEnemyShips ? <EnemyShips hideEnemyShips={hideEnemyShips} ships={endingEnemyShips} nickname={getEnemyNickname()}></EnemyShips> : ""}
+            {winner !== null ?
+                <EndingScreen forfeited={forfeited} playerLeft={playerLeft} returnToRoom={returnToLobby} winner={winner}
+                              showEnemyShips={handleShowEnemyShips}></EndingScreen> : ""}
+            {showEnemyShips ? <EnemyShips hideEnemyShips={hideEnemyShips} ships={endingEnemyShips}
+                                          nickname={getEnemyNickname()}></EnemyShips> : ""}
         </div>
     )
 }

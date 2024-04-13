@@ -109,7 +109,7 @@ public class GameController {
                 for (Ship ship : player.getShips()) {
                     hp += ship.getFields().size();
                 }
-                player.setHp(1);
+                player.setHp(hp);
                 roomService.updateRoom(room);
                 roomService.setReady(roomId, player.getId(), false);
             }
@@ -270,5 +270,14 @@ public class GameController {
     public void returnToRoom(@Payload RoomMessage roomMessage){
         RoomModel room = roomService.getRoom(roomMessage.getRoomId());
         messagingTemplate.convertAndSendToUser(roomMessage.getSenderId(), "/room", ResponseModel.builder().room(room).type(RoomMessageType.RETURN_TO_ROOM).build());
+    }
+    @MessageMapping("/forfeit")
+    public void forfeit(@Payload RoomMessage roomMessage) {
+        RoomModel room = roomService.getRoom(roomMessage.getRoomId());
+        UserModel user = roomService.getUser(roomMessage.getSenderId());
+        for(UserModel player : room.getPlayers()){
+            messagingTemplate.convertAndSendToUser(player.getId(), "/game", ResponseModel.builder().room(room).type(RoomMessageType.FORFEIT).userId(user.getId()).build());
+        }
+        roomService.endGame(room.getId());
     }
 }

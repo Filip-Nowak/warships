@@ -122,35 +122,36 @@ public class RoomService {
         cacheManager.getCache("rooms").put(id, room);
     }
 
-    public void forfeit(RoomModel room, UserModel user, RoomMessageType forfeitType) {
-        for (UserModel player : room.getPlayers()) {
-            System.out.println("forfeit: " + player.getId() + " " + forfeitType);
-            messagingTemplate.convertAndSendToUser(player.getId(), "/game", ResponseModel.builder().room(room).userId(user.getId()).type(forfeitType).build());
-        }
-        endGame(room.getId());
 
-    }
 
     public void removeUser(String id) {
         UserModel user = getUser(id);
         if (user.getRoomId() != null) {
             RoomModel room = getRoom(user.getRoomId());
             boolean inGame = room.isInGame();
-            if (room.isInGame()) {
-                forfeit(room, user, RoomMessageType.PLAYER_LEFT);
-            }
             List<UserModel> players = new ArrayList<>(room.getPlayers());
             players.remove(user);
             System.out.println("players: " + players);
             if (players.isEmpty()) {
                 cacheManager.getCache("rooms").evict(room.getId());
             } else {
-                room.setOwnerId(players.get(0).getId());
-                room.setPlayers(players);
-                updateRoom(room);
 
-                for (UserModel player : players) {
-                    messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().room(room).type(RoomMessageType.PLAYER_LEFT).build());
+                if(room.isInGame()){
+                    for (UserModel player : players) {
+                        messagingTemplate.convertAndSendToUser(player.getId(), "/game", ResponseModel.builder().room(room).type(RoomMessageType.PLAYER_LEFT).userId(id).build());
+                    }
+                    endGame(room.getId());
+                    room.setOwnerId(players.get(0).getId());
+                    room.setPlayers(players);
+                    updateRoom(room);
+                }else
+                {
+                    room.setOwnerId(players.get(0).getId());
+                    room.setPlayers(players);
+                    updateRoom(room);
+                    for (UserModel player : players) {
+                        messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().room(room).type(RoomMessageType.PLAYER_LEFT).build());
+                    }
                 }
             }
             System.out.println("updated room: " + getRoom(user.getRoomId()));
