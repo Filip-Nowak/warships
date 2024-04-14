@@ -24,7 +24,6 @@ function GameView({
                       startingScreen,
                       players,
                       startingPlayer,
-                      countdown,
                       playerTurn,
                       shootingPos,
                       winner,
@@ -101,8 +100,7 @@ function GameView({
                            additionalStyle={pickingField ? {borderColor: "lime"} : {}}/>
                 </ShipPanel>
             </div>
-            {startingScreen ? <StartingScreen players={players} startingId={startingPlayer}
-                                              countdown={countdown}></StartingScreen> : ""}
+            {startingScreen&&winner===null ? <StartingScreen players={players} startingId={startingPlayer}></StartingScreen> : ""}
             {winner !== null ?
                 <EndingScreen forfeited={forfeited} playerLeft={playerLeft} returnToRoom={returnToLobby} winner={winner}
                               showEnemyShips={handleShowEnemyShips}></EndingScreen> : ""}

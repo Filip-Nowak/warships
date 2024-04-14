@@ -21,13 +21,8 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
     const [playerLeft, setPlayerLeft] = useState(false)
     const [forfeited, setForfeited] = useState(false)
     const onlineContext=useContext(OnlineContext)
-    const handleTimer=()=>{
-
-    }
-   const [countdown,setCountDown]=useTimer(handleTimer)
 
     useEffect(() => {
-       setCountDown(5);
         online.addGameLogHandler("HIT",handleHit)
         online.addGameLogHandler("SUNKEN",handleSunken)
         online.addGameLogHandler("ALREADY_HIT",handleAlreadyHit)
@@ -42,7 +37,13 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
 
     function handleForfeit(msg) {
         setForfeited(true);
-        setWinner(msg.userId)
+        for(let i=0;i<players.length;i++){
+            if(msg.userId!==players[i].id){
+                setWinner(players[i].id)
+            }
+        }
+
+
         for(let i=0;i<msg.room.players.length;i++){
             if(msg.room.players[i].id!==online.getUserId()){
                 setEndingEnemyShips(msg.room.players[i].ships)
@@ -216,7 +217,6 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
             startingScreen={startingScreen}
             players={players}
             startingPlayer={startingPlayer}
-            countdown={countdown}
             playerTurn={playerTurn}
             shootingPos={shootingPos}
             endingScreen={endingScreen}

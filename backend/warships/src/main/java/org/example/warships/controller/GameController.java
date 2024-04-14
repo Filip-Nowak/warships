@@ -1,12 +1,14 @@
 package org.example.warships.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.apache.catalina.authenticator.AuthenticatorBase;
 import org.example.warships.model.*;
 import org.example.warships.model.logs.GameLog;
 import org.example.warships.model.logs.LogType;
 import org.example.warships.model.ship.Field;
 import org.example.warships.model.ship.Ship;
 import org.example.warships.service.RoomService;
+import org.springframework.cache.CacheManager;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -14,6 +16,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 
 import javax.xml.validation.SchemaFactoryLoader;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -25,6 +28,7 @@ import java.util.concurrent.TimeUnit;
 public class GameController {
     private final RoomService roomService;
     private final SimpMessagingTemplate messagingTemplate;
+    private final CacheManager cacheManager;
 
     @MessageMapping("/createRoom")
     public void createRoom(@Payload RoomMessage roomMessage) {
@@ -279,5 +283,30 @@ public class GameController {
             messagingTemplate.convertAndSendToUser(player.getId(), "/game", ResponseModel.builder().room(room).type(RoomMessageType.FORFEIT).userId(user.getId()).build());
         }
         roomService.endGame(room.getId());
+    }
+    @MessageMapping("/leaveRoom")
+    public void leaveRoom(@Payload RoomMessage roomMessage) {
+        System.out.println("leaveRoom: " + roomMessage);
+        RoomModel room = roomService.getRoom(roomMessage.getRoomId());
+        UserModel user = roomService.getUser(roomMessage.getSenderId());
+        for(UserModel player : room.getPlayers()){
+            if(!player.getId().equals(roomMessage.getSenderId())){
+                room.setOwnerId(player.getId());
+            }
+        }
+        List<UserModel> players = new ArrayList<>(room.getPlayers());
+        players.remove(user);
+        room.setPlayers(players);
+        roomService.updateRoom(room);
+        user.setRoomId(null);
+        user.setReady(false);
+        roomService.updatePlayer(user);
+        messagingTemplate.convertAndSendToUser(user.getId(), "/room", ResponseModel.builder().userId(user.getId()).type(RoomMessageType.PLAYER_LEFT).build());
+        for(UserModel player : room.getPlayers()){
+            messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().room(room).type(RoomMessageType.PLAYER_LEFT).userId(user.getId()).build());
+        }
+        if(players.isEmpty()){
+            cacheManager.getCache("rooms").evict(room.getId());
+        }
     }
 }

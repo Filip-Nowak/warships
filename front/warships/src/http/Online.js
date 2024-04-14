@@ -2,7 +2,7 @@ import SockJS from "sockjs-client";
 import {over} from "stompjs";
 
 class Online {
-    #userId
+    #userId=null
     #username
     #roomId
     #stompClient
@@ -124,31 +124,6 @@ class Online {
         }
         this.#stompClient.send("/app/shoot", {}, JSON.stringify(msg))
     }
-
-    startTurn() {
-        const msg={
-            senderId: this.#userId,
-            roomId:this.#roomId
-        }
-        this.#stompClient.send("/app/startTurn",{},JSON.stringify(msg))
-    }
-
-    sendTest() {
-        const msg={
-            senderId: this.#userId,
-            roomId:this.#roomId
-        }
-        this.#stompClient.send("/app/test",{},JSON.stringify(msg))
-    }
-
-    sendMove() {
-        const msg={
-            senderId: this.#userId,
-            roomId:this.#roomId
-        }
-        this.#stompClient.send("/app/makeMove",{},JSON.stringify(msg))
-    }
-
     returnToLobby() {
         const msg={
             senderId: this.#userId,
@@ -167,6 +142,21 @@ class Online {
             roomId:this.#roomId
         }
         this.#stompClient.send("/app/forfeit",{},JSON.stringify(msg))
+    }
+
+    leave() {
+        const msg={
+            senderId:this.#userId,
+            roomId:this.#roomId
+        }
+        this.#stompClient.send("/app/leaveRoom",{},JSON.stringify(msg))
+    }
+
+    deleteSession() {
+        this.#stompClient.disconnect(()=>{
+            this.#userId=null
+            this.#username=null
+        });
     }
 }
 

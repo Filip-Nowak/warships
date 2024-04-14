@@ -1,4 +1,4 @@
-import {useParams} from "react-router";
+import {useNavigate, useParams} from "react-router";
 import online from "../http/Online";
 import RoomView from "../components/room/roomView/RoomView";
 import {useContext, useEffect, useState} from "react";
@@ -8,6 +8,8 @@ import CreatorMenu from "../components/creator/creatorMenu/CreatorMenu";
 import GameView from "../components/game/game/GameView";
 import OnlineGame from "../components/online/OnlineGame";
 import createdShipsContext from "../components/context/createdShipsContext";
+import Menu from "../components/utils/Menu/Menu";
+import MenuButton from "../components/utils/menuButton/MenuButton";
 
 function RoomLayout() {
     const [inRoom, setInRoom] = useState(true)
@@ -17,7 +19,7 @@ function RoomLayout() {
     const [ships, setShips] = useState([])
     const [startingPlayer, setStartingPlayer] = useState("")
     const onlineContext = useContext(OnlineContext)
-
+    const navigate=useNavigate()
     useEffect(() => {
         online.roomMessageHandlers = {}
         online.addRoomMessageHandler("JOINED_ROOM", onJoinRoom)
@@ -29,20 +31,28 @@ function RoomLayout() {
         online.addRoomMessageHandler("PLAYER_LEFT",onPlayerLeft)
     }, []);
     console.log(inRoom)
-
+    console.log("render")
     function onPlayerLeft(msg){
-        console.log("on player left")
-        let currentInRoom;
-        setInRoom(prevState => {currentInRoom=prevState;return prevState})
-        onlineContext.setRoom(msg.room)
-        if(!currentInRoom){
-            if(inGame){
-
-            }else{
+        console.log("player left ")
+        console.log(msg)
+        if(msg.userId===online.getUserId()){
+            online.setRoomId(null)
+            console.log("leaving")
+            navigate("/create-room")
+            setFetching(false)
+            onlineContext.setRoom(null)
+        }else{
+            onlineContext.setRoom(msg.room)
+            let inRoom;
+            console.log(inGame)
+            setInRoom(prevState => {inRoom=prevState;return prevState})
+            setFetching(false)
+            if(!inRoom && !inGame){
                 setInRoom(true)
                 setReady(false)
             }
         }
+
     }
 
     function onJoinRoom(msg) {
@@ -90,10 +100,16 @@ function RoomLayout() {
         setShips(ships)
         setFetching(true)
     }
+    const leave=()=>{
+        setFetching(true)
+        online.leave();
+    }
     return (
         <>
             {inRoom?
-                <RoomView handleReadyClick={setPlayerReady} startGame={startCreator} ready={ready}></RoomView>
+                <>
+                <MenuButton message={"leave"} handleClick={leave}></MenuButton>
+                <RoomView handleReadyClick={setPlayerReady} startGame={startCreator} ready={ready}></RoomView></>
                 :
                 !inGame?<CreatorMenu online={true} submitShips={submitShips} fetching={fetching}></CreatorMenu>
                     :

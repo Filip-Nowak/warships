@@ -43,7 +43,7 @@ public class RoomService {
         String id;
         do {
             random = new Random();
-            id = String.valueOf(random.nextInt(10000, 99999));
+            id = String.valueOf(random.nextInt(0, 3));
         } while (cacheManager.getCache("rooms").get(id) != null);
         return id;
     }
@@ -149,6 +149,7 @@ public class RoomService {
                     room.setOwnerId(players.get(0).getId());
                     room.setPlayers(players);
                     updateRoom(room);
+                    endGame(room.getId());
                     for (UserModel player : players) {
                         messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().room(room).type(RoomMessageType.PLAYER_LEFT).build());
                     }
