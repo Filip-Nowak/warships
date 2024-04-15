@@ -58,7 +58,7 @@ class Online {
                     }
                 })
         const data=await response.json();
-        this.#userId=data.userId;
+        this.#userId=data.message;
     }
     // createUser = async () => {
     //     console.log("creatingUser")
@@ -79,7 +79,7 @@ class Online {
     //     this.#stompClient.subscribe("/user/" + this.#userId + "/game", this.#handleGameLog)
     // }
     createRoom = () => {
-        this.#stompClient.send("/app/createRoom", {}, JSON.stringify({senderId: this.#userId}))
+        this.#stompClient.send("/app/createRoom", {}, JSON.stringify({senderId:this.#userId}))
     }
 
 

@@ -1,7 +1,6 @@
 package org.example.warships.config;
 
 import lombok.RequiredArgsConstructor;
-import org.example.warships.service.RoomService;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

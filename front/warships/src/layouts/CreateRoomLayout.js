@@ -29,9 +29,11 @@ function CreateRoomLayout() {
     }
     const onJoinRoom = (msg) => {
         setFetching(false)
-        onlineContext.setRoom(msg.room)
-        online.setRoomId(msg.room.id)
-        navigate("/room/" + msg.room.id)
+        const room=JSON.parse(msg.message)
+        console.log(room)
+        onlineContext.setRoom(room)
+        online.setRoomId(room.id);
+        navigate("/room/" + room.id)
         console.log("created")
     }
     const createRoom = () => {

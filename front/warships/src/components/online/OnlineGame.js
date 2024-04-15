@@ -44,9 +44,9 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
         }
 
 
-        for(let i=0;i<msg.room.players.length;i++){
-            if(msg.room.players[i].id!==online.getUserId()){
-                setEndingEnemyShips(msg.room.players[i].ships)
+        for(let i=0; i<msg.room.users.length; i++){
+            if(msg.room.users[i].id!==online.getUserId()){
+                setEndingEnemyShips(msg.room.users[i].ships)
             }
         }
     }
@@ -55,9 +55,9 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
         console.log("in game")
         setPlayerLeft(true)
         setWinner(online.getUserId())
-        for(let i=0;i<msg.room.players.length;i++){
-            if(msg.room.players[i].id!==online.getUserId()){
-                setEndingEnemyShips(msg.room.players[i].ships)
+        for(let i=0; i<msg.room.users.length; i++){
+            if(msg.room.users[i].id!==online.getUserId()){
+                setEndingEnemyShips(msg.room.users[i].ships)
             }
         }
     }
@@ -169,9 +169,9 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
         console.log("handled")
         console.log(msg)
         setWinner(msg.userId)
-        for(let i=0;i<msg.room.players.length;i++){
-            if(msg.room.players[i].id!==online.getUserId()){
-                setEndingEnemyShips(msg.room.players[i].ships)
+        for(let i=0; i<msg.room.users.length; i++){
+            if(msg.room.users[i].id!==online.getUserId()){
+                setEndingEnemyShips(msg.room.users[i].ships)
             }
         }
     }

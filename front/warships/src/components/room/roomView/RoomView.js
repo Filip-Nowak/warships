@@ -9,7 +9,7 @@ import online from "../../../http/Online";
 function RoomView({ready,handleReadyClick,startGame}) {
     const onlineContext=useContext(OnlineContext);
     let allPlayersReady=true;
-    onlineContext.room.players.forEach((player)=>{
+    onlineContext.room.users.forEach((player)=>{
         if(!player.ready)
             allPlayersReady=false;
     })
@@ -20,7 +20,7 @@ function RoomView({ready,handleReadyClick,startGame}) {
         <div className={styles.buttonContainer}>
             <MenuButton handleClick={handleReadyClick} containerStyle={{width:"80%",marginLeft:"auto",marginRight:"auto", ...ready?{backgroundColor:"#00000000",border:"0.25rem solid #8FFF00"}:{border:"0.25rem solid #1d4f02"}}} message={ready?"cancel":"ready"}></MenuButton>
             {
-                onlineContext.room.players.length<2?<div className={styles.roomStatus}>waiting for other players</div>:
+                onlineContext.room.users.length<2?<div className={styles.roomStatus}>waiting for other players</div>:
                     !allPlayersReady?<div className={styles.roomStatus}>players are not ready</div>:
                         onlineContext.room.ownerId!==online.getUserId()?<div className={styles.roomStatus}>room owner can start</div>:
                             <MenuButton handleClick={startGame} containerStyle={{width:"80%",marginLeft:"auto",marginRight:"auto",border:"0.25rem solid #1d4f02",marginTop:"2rem"}} message={"start game"}></MenuButton>

@@ -1,13 +1,12 @@
-package org.example.warships.model;
+package org.example.warships.messages;
 
 import lombok.Builder;
 import lombok.Data;
+import org.example.warships.model.RoomModel;
 
 @Data
 @Builder
 public class ResponseModel {
-    private RoomModel room;
-    private String userId;
-    private String error;
+    private String message;
     private RoomMessageType type;
 }

@@ -20,6 +20,7 @@ function RoomLayout() {
     const [startingPlayer, setStartingPlayer] = useState("")
     const onlineContext = useContext(OnlineContext)
     const navigate=useNavigate()
+
     useEffect(() => {
         online.roomMessageHandlers = {}
         online.addRoomMessageHandler("JOINED_ROOM", onJoinRoom)
@@ -29,7 +30,9 @@ function RoomLayout() {
         online.addRoomMessageHandler("LAUNCH", onLaunch)
         online.addRoomMessageHandler("RETURN_TO_ROOM", handleReturnToLobby)
         online.addRoomMessageHandler("PLAYER_LEFT",onPlayerLeft)
+        online.addRoomMessageHandler("NOT_READY",onNotReady)
     }, []);
+
     console.log(inRoom)
     console.log("render")
     function onPlayerLeft(msg){
@@ -54,13 +57,35 @@ function RoomLayout() {
         }
 
     }
+    function onNotReady(msg) {
+        onlineContext.setRoom(prevState=>{
+            const room={...prevState}
+            for(let i=0;i<room.users.length;i++){
+                if(room.users[i].id===msg.message){
+                    room.users[i].ready=false;
+                    return room
+                }
+            }
+        })
+    }
 
     function onJoinRoom(msg) {
-        onlineContext.setRoom(msg.room)
+        onlineContext.setRoom(JSON.parse(msg.message))
     }
 
     function onPlayerReady(msg) {
-        onlineContext.setRoom(msg.room)
+        console.log(msg.message)
+        onlineContext.setRoom(prevState=>{
+            console.log(prevState)
+            const room={...prevState}
+            for(let i=0;i<room.users.length;i++){
+                if(room.users[i].id===msg.message){
+                    room.users[i].ready=true;
+                    console.log()
+                    return room
+                }
+            }
+        })
     }
 
     function onStartCreator() {
@@ -75,7 +100,7 @@ function RoomLayout() {
     function onLaunch(msg) {
         setFetching(false)
         setInGame(true)
-        setStartingPlayer(msg.userId)
+        setStartingPlayer(msg.message)
     }
 
     function handleReturnToLobby(msg){
@@ -113,7 +138,7 @@ function RoomLayout() {
                 :
                 !inGame?<CreatorMenu online={true} submitShips={submitShips} fetching={fetching}></CreatorMenu>
                     :
-                    <OnlineGame createdShips={ships} players={onlineContext.room.players} startingPlayer={startingPlayer}  ></OnlineGame>
+                    <OnlineGame createdShips={ships} players={onlineContext.room.users} startingPlayer={startingPlayer}  ></OnlineGame>
             }</>
 
     )

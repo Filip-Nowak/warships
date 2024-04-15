@@ -5,9 +5,9 @@ const OnlineContext=createContext({
     setUsername:(username)=>{},
     room:{
         id:"",
-        players:[],
+        users:[{id:"",nickname:"",ready:""}],
         ownerId:""
     },
-    setRoom:()=>{},
+    setRoom:(room)=>{},
 })
 export default OnlineContext
