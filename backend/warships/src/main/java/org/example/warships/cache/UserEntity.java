@@ -20,6 +20,9 @@ public class UserEntity implements UserModel, PlayerModel {
     private int hp;
     private List<ShipModel> ships;
     public ShipModel getShip(int x,int y){
+        System.out.println("UserEntity.getShip");
+        System.out.println(this.ships);
+        System.out.println(ships.get(0));
         for(ShipModel ship:this.ships){
             for(Field field:ship.getFields()){
                 if(field.getPos().getX()==x && field.getPos().getY()==y){

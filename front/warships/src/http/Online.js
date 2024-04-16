@@ -109,7 +109,7 @@ class Online {
             roomId: this.#roomId,
             senderId: this.#userId,
             type:"SUBMIT_SHIPS",
-            ships:ships
+            message:JSON.stringify(ships)
         }
     this.#stompClient.send("/app/submitShips", {}, JSON.stringify(msg))
     }
@@ -119,7 +119,7 @@ class Online {
     shoot(pos) {
         const msg={
             senderId: this.#userId,
-            pos:pos,
+            message:pos.x+";"+pos.y,
             roomId: this.#roomId
         }
         this.#stompClient.send("/app/shoot", {}, JSON.stringify(msg))

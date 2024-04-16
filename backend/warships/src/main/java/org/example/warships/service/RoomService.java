@@ -44,4 +44,15 @@ public class RoomService {
     public RoomModel getRoom(String roomId) {
         return cacheService.getRoom(roomId);
     }
+
+    public RoomModel leaveRoom(ProfileEntity user, RoomModel room) {
+        user.setRoomId(null);
+        List<UserModel> users = new ArrayList<>(room.getUsers());
+        users.remove(room.getUserById(user.getId()));
+        room.setUsers(users);
+        System.out.println("User left room");
+        System.out.println("Room: "+room);
+        cacheService.updateUser(user);
+        return cacheService.updateRoom(room);
+    }
 }

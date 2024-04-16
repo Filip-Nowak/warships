@@ -4,7 +4,7 @@ import online from "../../http/Online";
 import useTimer from "../hooks/useTimer";
 import OnlineContext from "../context/OnlineContext";
 
-function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
+function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
     const [playerShips, setPlayerShips] = useState(createdShips)
     const [enemyShips, setEnemyShips] = useState([])
     const [playerMisses, setPlayerMisses] = useState([])
@@ -37,18 +37,13 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
 
     function handleForfeit(msg) {
         setForfeited(true);
-        for(let i=0;i<players.length;i++){
-            if(msg.userId!==players[i].id){
-                setWinner(players[i].id)
+        const info=JSON.parse(msg.message)
+        onlineContext.room.users.forEach(player=>{
+            if(player.id!==info.id){
+                setWinner(player.id)
             }
-        }
-
-
-        for(let i=0; i<msg.room.users.length; i++){
-            if(msg.room.users[i].id!==online.getUserId()){
-                setEndingEnemyShips(msg.room.users[i].ships)
-            }
-        }
+        })
+        setEndingEnemyShips(info.ships)
     }
 
     function handlePlayerLeft(msg) {
@@ -166,14 +161,9 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
         online.shoot(pos)
     }
     const handleWin=(msg)=>{
-        console.log("handled")
-        console.log(msg)
-        setWinner(msg.userId)
-        for(let i=0; i<msg.room.users.length; i++){
-            if(msg.room.users[i].id!==online.getUserId()){
-                setEndingEnemyShips(msg.room.users[i].ships)
-            }
-        }
+        const info=JSON.parse(msg.message)
+        setWinner(info.id)
+        setEndingEnemyShips(info.ships)
     }
     const handleShooting=(msg)=>{
         if(playerTurn){
@@ -193,9 +183,9 @@ function OnlineGame({createdShips,players,startingPlayer,onPlayerLeft}){
             setInfoContent("enemy picking field")
         }
     }
-    const returnToLobby=()=>{
-        online.returnToLobby();
-    }
+    // const returnToLobby=()=>{
+    //     online.returnToLobby();
+    // }
     const handleShowEnemyShips=()=>{
         setShowEnemyShips(true)
     }

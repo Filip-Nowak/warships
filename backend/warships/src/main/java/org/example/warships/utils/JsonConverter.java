@@ -1,6 +1,10 @@
 package org.example.warships.utils;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import java.lang.reflect.Type;
+import java.util.Arrays;
+import java.util.List;
 
 public class JsonConverter {
     private static JsonConverter converter;
@@ -18,5 +22,9 @@ public class JsonConverter {
         String msg=gson.toJson(object);
         System.out.println(msg);
         return msg;
+    }
+    public <T> List<T> fromJsonToList(String json, Class<T[]> classOfT){
+        T[] arr = new Gson().fromJson(json, classOfT);
+        return Arrays.asList(arr);
     }
 }

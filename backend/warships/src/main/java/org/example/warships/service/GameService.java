@@ -6,6 +6,8 @@ import org.example.warships.messages.logs.GameLog;
 import org.example.warships.messages.logs.LogType;
 import org.example.warships.model.GameModel;
 import org.example.warships.model.PlayerModel;
+import org.example.warships.model.RoomModel;
+import org.example.warships.model.UserModel;
 import org.example.warships.model.ship.Field;
 import org.example.warships.model.ship.ShipModel;
 import org.springframework.stereotype.Service;
@@ -23,13 +25,21 @@ public class GameService {
 
     public void startCreator(GameModel game) {
         game.setInCreator(true);
+        RoomModel room = cacheService.getRoom(game.getId());
+        for(UserModel user:room.getUsers()){
+            user.setReady(false);
+        }
+        cacheService.updateRoom(room);
         cacheService.updateGame(game);
     }
 
     public boolean submitShips(ProfileEntity user, GameModel game, List<ShipModel> ships) {
         PlayerModel player = game.getPlayerById(user.getId());
+        System.out.println("Ships submitted");
+        System.out.println(player);
         player.setShips(ships);
         game.updatePlayer(player);
+        System.out.println(game);
         cacheService.updateGame(game);
         for(PlayerModel p : game.getPlayers()){
             if(p.getShips()==null || p.getShips().isEmpty()){
@@ -47,16 +57,19 @@ public class GameService {
             player.setHp(player.getShips().size());
             player.setHp(1);
         }
+        System.out.println("Game launched");
+        System.out.println(game);
         return cacheService.updateGame(game);
     }
 
-    public LogType shoot(ProfileEntity user, GameModel game, GameLog gameLog) {
-        final int x=gameLog.getPos().getX(),y=gameLog.getPos().getY();
+    public LogType shoot(ProfileEntity user, GameModel game, int x,int y) {
         LogType logType = LogType.MISS;
         for(PlayerModel player:  game.getPlayers()){
-            if(player.equals(user.getId())){
+            if(player.getId().equals(user.getId())){
                 continue;
             }
+            System.out.println("shooting to");
+            System.out.println(player);
             ShipModel ship = player.getShip(x,y);
             if(ship!=null){
                 if(ship.getField(x,y).isHit()){

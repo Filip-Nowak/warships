@@ -19,6 +19,9 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Controller
 @RequiredArgsConstructor
 public class RoomController {
@@ -66,5 +69,15 @@ public class RoomController {
             for(PlayerModel playerModel:game.getPlayers()){
                 messagingTemplate.convertAndSendToUser(playerModel.getId(),"/room", ResponseModel.builder().message("").type(RoomMessageType.START).build());
             }
+    }
+    @MessageMapping("/leaveRoom")
+    public void leaveRoom(@Payload RoomMessage message){
+        ProfileEntity user = userService.getUser(message.getSenderId());
+        RoomModel room = roomService.getRoom(user.getRoomId());
+        List<UserModel> players=new ArrayList<>(room.getUsers());
+        roomService.leaveRoom(user,room);
+        for(UserModel userModel:players){
+            messagingTemplate.convertAndSendToUser(userModel.getId(),"/room", ResponseModel.builder().message(user.getId()).type(RoomMessageType.PLAYER_LEFT).build());
+        }
     }
 }

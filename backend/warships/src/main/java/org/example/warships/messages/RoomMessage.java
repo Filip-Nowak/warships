@@ -12,5 +12,4 @@ public class RoomMessage {
     String senderId;
     String roomId;
     String message;
-    private List<ShipModel> ships;
 }

@@ -38,19 +38,24 @@ function RoomLayout() {
     function onPlayerLeft(msg){
         console.log("player left ")
         console.log(msg)
-        if(msg.userId===online.getUserId()){
+        if(msg.message===online.getUserId()){
+            console.log("you left")
             online.setRoomId(null)
             console.log("leaving")
             navigate("/create-room")
             setFetching(false)
             onlineContext.setRoom(null)
         }else{
-            onlineContext.setRoom(msg.room)
+            onlineContext.setRoom(prevState=>{
+                prevState.users = prevState.users.filter(player=>player.id!==msg.message)
+                return {...prevState}
+            })
             let inRoom;
             console.log(inGame)
             setInRoom(prevState => {inRoom=prevState;return prevState})
             setFetching(false)
             if(!inRoom && !inGame){
+                console.log("chuj")
                 setInRoom(true)
                 setReady(false)
             }
@@ -90,6 +95,13 @@ function RoomLayout() {
 
     function onStartCreator() {
         console.log("started")
+        console.log(onlineContext.room)
+        onlineContext.setRoom(prevState=>{
+            prevState.users.forEach(player=>{
+                player.ready=false;
+            })
+            return {...prevState}
+        })
         setInRoom(false)
     }
 
@@ -129,6 +141,13 @@ function RoomLayout() {
         setFetching(true)
         online.leave();
     }
+    const returnToRoom=()=>{
+        setInRoom(true)
+        setInGame(false)
+        setReady(false)
+        setStartingPlayer("")
+        setShips([])
+    }
     return (
         <>
             {inRoom?
@@ -138,7 +157,7 @@ function RoomLayout() {
                 :
                 !inGame?<CreatorMenu online={true} submitShips={submitShips} fetching={fetching}></CreatorMenu>
                     :
-                    <OnlineGame createdShips={ships} players={onlineContext.room.users} startingPlayer={startingPlayer}  ></OnlineGame>
+                    <OnlineGame returnToLobby={returnToRoom} createdShips={ships} players={onlineContext.room.users} startingPlayer={startingPlayer}  ></OnlineGame>
             }</>
 
     )
