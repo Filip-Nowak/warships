@@ -158,6 +158,13 @@ class Online {
             this.#username=null
         });
     }
+
+    back() {
+        const msg={
+            senderId:this.#userId
+        }
+        this.#stompClient.send("/app/back",{},JSON.stringify(msg))
+    }
 }
 
 

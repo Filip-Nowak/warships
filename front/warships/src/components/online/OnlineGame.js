@@ -47,14 +47,15 @@ function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
     }
 
     function handlePlayerLeft(msg) {
-        console.log("in game")
+        const info=JSON.parse(msg.message)
         setPlayerLeft(true)
         setWinner(online.getUserId())
-        for(let i=0; i<msg.room.users.length; i++){
-            if(msg.room.users[i].id!==online.getUserId()){
-                setEndingEnemyShips(msg.room.users[i].ships)
-            }
-        }
+        setEndingEnemyShips(info.ships)
+        onlineContext.setRoom(prevState=>{
+            prevState.users = prevState.users.filter(player=>player.id!==info.id)
+            prevState.ownerId=online.getRoomId()
+            return {...prevState}
+        })
     }
     const handleHit=(msg)=>{
         if(msg.senderId===online.getUserId()){

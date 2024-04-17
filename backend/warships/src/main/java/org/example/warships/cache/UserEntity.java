@@ -2,10 +2,8 @@ package org.example.warships.cache;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
-import org.example.warships.model.PlayerModel;
-import org.example.warships.model.UserModel;
+import org.example.warships.model.user.PlayerModel;
+import org.example.warships.model.user.UserModel;
 import org.example.warships.model.ship.Field;
 import org.example.warships.model.ship.ShipModel;
 

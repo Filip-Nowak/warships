@@ -31,6 +31,7 @@ function RoomLayout() {
         online.addRoomMessageHandler("RETURN_TO_ROOM", handleReturnToLobby)
         online.addRoomMessageHandler("PLAYER_LEFT",onPlayerLeft)
         online.addRoomMessageHandler("NOT_READY",onNotReady)
+        online.addRoomMessageHandler("BACK",onBack)
     }, []);
 
     console.log(inRoom)
@@ -41,24 +42,23 @@ function RoomLayout() {
         if(msg.message===online.getUserId()){
             console.log("you left")
             online.setRoomId(null)
-            console.log("leaving")
             navigate("/create-room")
             setFetching(false)
             onlineContext.setRoom(null)
         }else{
             onlineContext.setRoom(prevState=>{
                 prevState.users = prevState.users.filter(player=>player.id!==msg.message)
+                prevState.ownerId=online.getRoomId()
                 return {...prevState}
             })
-            let inRoom;
-            console.log(inGame)
-            setInRoom(prevState => {inRoom=prevState;return prevState})
             setFetching(false)
-            if(!inRoom && !inGame){
-                console.log("chuj")
-                setInRoom(true)
-                setReady(false)
-            }
+            setInRoom(prevState => {
+                if(!prevState && !inGame){
+                    console.log("chuj")
+                    setReady(false)
+                }
+                return true;
+            })
         }
 
     }
@@ -102,6 +102,8 @@ function RoomLayout() {
             })
             return {...prevState}
         })
+        setFetching(false)
+        setReady(false)
         setInRoom(false)
     }
 
@@ -113,6 +115,10 @@ function RoomLayout() {
         setFetching(false)
         setInGame(true)
         setStartingPlayer(msg.message)
+    }
+    const onBack=()=>{
+        setShips([])
+        setInRoom(true)
     }
 
     function handleReturnToLobby(msg){
@@ -148,6 +154,9 @@ function RoomLayout() {
         setStartingPlayer("")
         setShips([])
     }
+    const back=()=>{
+        online.back();
+    }
     return (
         <>
             {inRoom?
@@ -155,7 +164,7 @@ function RoomLayout() {
                 <MenuButton message={"leave"} handleClick={leave}></MenuButton>
                 <RoomView handleReadyClick={setPlayerReady} startGame={startCreator} ready={ready}></RoomView></>
                 :
-                !inGame?<CreatorMenu online={true} submitShips={submitShips} fetching={fetching}></CreatorMenu>
+                !inGame?<CreatorMenu back={back} online={true} submitShips={submitShips} fetching={fetching}></CreatorMenu>
                     :
                     <OnlineGame returnToLobby={returnToRoom} createdShips={ships} players={onlineContext.room.users} startingPlayer={startingPlayer}  ></OnlineGame>
             }</>

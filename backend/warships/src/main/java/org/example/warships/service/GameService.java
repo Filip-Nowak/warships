@@ -2,12 +2,11 @@ package org.example.warships.service;
 
 import lombok.RequiredArgsConstructor;
 import org.example.warships.cache.ProfileEntity;
-import org.example.warships.messages.logs.GameLog;
 import org.example.warships.messages.logs.LogType;
-import org.example.warships.model.GameModel;
-import org.example.warships.model.PlayerModel;
-import org.example.warships.model.RoomModel;
-import org.example.warships.model.UserModel;
+import org.example.warships.model.room.GameModel;
+import org.example.warships.model.user.PlayerModel;
+import org.example.warships.model.room.RoomModel;
+import org.example.warships.model.user.UserModel;
 import org.example.warships.model.ship.Field;
 import org.example.warships.model.ship.ShipModel;
 import org.springframework.stereotype.Service;
@@ -118,5 +117,13 @@ public class GameService {
             break;
         }
         return cacheService.updateGame(game);
+    }
+
+    public void back(GameModel game) {
+        game.setInCreator(false);
+        for(PlayerModel player:game.getPlayers()){
+            player.setShips(null);
+        }
+        cacheService.updateGame(game);
     }
 }

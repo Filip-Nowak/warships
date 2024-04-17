@@ -2,11 +2,10 @@ package org.example.warships.cache;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.Setter;
-import org.example.warships.model.GameModel;
-import org.example.warships.model.PlayerModel;
-import org.example.warships.model.RoomModel;
-import org.example.warships.model.UserModel;
+import org.example.warships.model.room.GameModel;
+import org.example.warships.model.user.PlayerModel;
+import org.example.warships.model.room.RoomModel;
+import org.example.warships.model.user.UserModel;
 
 import java.util.ArrayList;
 import java.util.List;

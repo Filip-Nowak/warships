@@ -12,8 +12,9 @@ import BottomPanel from "../bottomPanel/BottomPanel";
 import CreatedShipsContext from "../../context/createdShipsContext";
 import BlinkingDots from "../../utils/BlinkingDots";
 import FullScreenInfo from "../../utils/loading/FullScreenInfo";
+import MenuButton from "../../utils/menuButton/MenuButton";
 
-function CreatorMenu({submitShips, online, fetching}) {
+function CreatorMenu({submitShips, online, fetching,back}) {
     const [ships, setShips] = useState([])
     const [selectedShip, setSelectedShip] = useState(0)
     const [shipsLeft, setShipsLeft] = useState([1, 2, 3, 4])
@@ -262,7 +263,9 @@ function CreatorMenu({submitShips, online, fetching}) {
         setShipsLeft([0,0,0,0])
     }
 
-    return <div>{time}
+    return <div>
+        <MenuButton message={"back"} handleClick={back}></MenuButton>
+            {time}
         <div className={styles.panel}>
             <PanelMessage
                 msg={(!boardMode) ? "Pick ship to remove" : selectedShip === 0 ? "select ship to deploy" : "pick location for selected ship"}

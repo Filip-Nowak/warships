@@ -1,4 +1,4 @@
-package org.example.warships.controller;
+package org.example.warships.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,8 +1,6 @@
-package org.example.warships.model;
+package org.example.warships.model.room;
 
-import lombok.Builder;
-import lombok.Data;
-import org.example.warships.cache.UserEntity;
+import org.example.warships.model.user.UserModel;
 
 import java.util.List;
 public interface RoomModel {

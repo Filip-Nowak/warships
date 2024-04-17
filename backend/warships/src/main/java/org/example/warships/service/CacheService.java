@@ -1,11 +1,13 @@
 package org.example.warships.service;
 
 import lombok.RequiredArgsConstructor;
-import org.example.warships.UserNotFound;
+import org.example.warships.exception.UserNotFound;
 import org.example.warships.cache.ProfileEntity;
 import org.example.warships.cache.RoomEntity;
 import org.example.warships.cache.UserEntity;
-import org.example.warships.model.*;
+import org.example.warships.exception.RoomNotFound;
+import org.example.warships.model.room.GameModel;
+import org.example.warships.model.room.RoomModel;
 import org.springframework.cache.CacheManager;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +20,7 @@ import java.util.Random;
 public class CacheService {
     private final CacheManager cacheManager;
 
-    public ProfileEntity createUser(String username){
+    public ProfileEntity createUser(String username) {
         String id = generateUserId();
         ProfileEntity user = ProfileEntity.builder().id(id).nickname(username).build();
         putUser(user);
@@ -58,14 +60,14 @@ public class CacheService {
     public ProfileEntity getUser(String id) throws UserNotFound {
         ProfileEntity user = getUserById(id);
         if(user==null){
-            throw new UserNotFound("User with id "+id+" not found");
+            throw new UserNotFound();
         }
         return user;
     }
-    public RoomModel getRoom(String id){
+    public RoomModel getRoom(String id) throws RoomNotFound {
         RoomEntity room = getRoomById(id);
         if(room==null){
-            throw new RoomNotFound("Room with id "+id+" not found");
+            throw new RoomNotFound();
         }
         return room;
     }
@@ -82,7 +84,7 @@ public class CacheService {
         random = new Random();
         String id;
         do {
-            id = String.valueOf(random.nextInt(10000, 99999));
+            id = String.valueOf(random.nextInt(0, 3));
         } while (getRoomById(id) != null);
         return id;
     }
@@ -91,7 +93,7 @@ public class CacheService {
         random = new Random();
         String id;
         do {
-            id = String.valueOf(random.nextInt(10000, 99999));
+            id = String.valueOf(random.nextInt(0, 3));
         } while (getUserById(id) != null);
         return id;
     }
@@ -113,5 +115,17 @@ public class CacheService {
     private void putRoom(RoomEntity room){
         cacheManager.getCache("rooms").put(room.getId(), room);
         System.out.println("Room added to cache");
+    }
+
+    public void deleteRoom(String id) {
+        cacheManager.getCache("rooms").evict(id);
+        System.out.println("Room deleted from cache");
+        System.out.println(cacheManager.getCache("rooms").get(id));
+    }
+
+    public void deleteUser(String userId) {
+        cacheManager.getCache("users").evict(userId);
+        System.out.println("User deleted from cache");
+        System.out.println(cacheManager.getCache("users").get(userId));
     }
 }

@@ -8,8 +8,8 @@ import org.example.warships.messages.RoomMessage;
 import org.example.warships.messages.RoomMessageType;
 import org.example.warships.messages.logs.GameLog;
 import org.example.warships.messages.logs.LogType;
-import org.example.warships.model.GameModel;
-import org.example.warships.model.PlayerModel;
+import org.example.warships.model.room.GameModel;
+import org.example.warships.model.user.PlayerModel;
 import org.example.warships.model.ship.Pos;
 import org.example.warships.model.ship.ShipModel;
 import org.example.warships.service.GameService;
@@ -34,28 +34,37 @@ public class GameController {
     private final JsonConverter jsonConverter=JsonConverter.getInstance();
     @MessageMapping("/submitShips")
     public void submitShips(RoomMessage message){
-        System.out.println("submitShips");
-        ProfileEntity user = userService.getUser(message.getSenderId());
-        GameModel game = gameService.getGame(user.getRoomId());
-        List<ShipModel> ships=jsonConverter.fromJsonToList(message.getMessage(),ShipModel[].class);
-        System.out.println(ships);
-        System.out.println(ships.getClass());
-        if(ships.isEmpty()){
-            return;
-        }
-        boolean ready=gameService.submitShips(user,game,ships);
-        if(ready){
-            game=gameService.launch(game);
-            for(PlayerModel p:game.getPlayers()){
-                messagingTemplate.convertAndSendToUser(p.getId(),"/room", ResponseModel.builder().message(game.getTurn()).type(RoomMessageType.LAUNCH).build());
-            }
-            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-            scheduler.schedule(() -> {
-                GameModel startedGame = gameService.getGame(user.getRoomId());
-                for (PlayerModel player : startedGame.getPlayers()) {
-                    messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.STARTED_TURN).senderId(startedGame.getTurn()).build());
+        try {
+            System.out.println("submitShips");
+            ProfileEntity user = userService.getUser(message.getSenderId());
+            GameModel game = gameService.getGame(user.getRoomId());
+            List<ShipModel> ships = jsonConverter.fromJsonToList(message.getMessage(), ShipModel[].class);
+            System.out.println(ships);
+            System.out.println(ships.getClass());
+            if (ships.isEmpty()) {
+                gameService.back(game);
+                for (PlayerModel player : game.getPlayers()) {
+                    messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().type(RoomMessageType.BACK).build());
                 }
-            }, 5, TimeUnit.SECONDS);
+                return;
+            }
+            boolean ready = gameService.submitShips(user, game, ships);
+            if (ready) {
+                game = gameService.launch(game);
+                for (PlayerModel p : game.getPlayers()) {
+                    messagingTemplate.convertAndSendToUser(p.getId(), "/room", ResponseModel.builder().message(game.getTurn()).type(RoomMessageType.LAUNCH).build());
+                }
+                ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+                scheduler.schedule(() -> {
+                    GameModel startedGame = gameService.getGame(user.getRoomId());
+                    for (PlayerModel player : startedGame.getPlayers()) {
+                        messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().type(LogType.STARTED_TURN).senderId(startedGame.getTurn()).build());
+                    }
+                }, 5, TimeUnit.SECONDS);
+            }
+        }catch (RuntimeException e){
+            e.printStackTrace();
+            messagingTemplate.convertAndSendToUser(message.getSenderId(),"/room",ResponseModel.builder().type(RoomMessageType.ERROR).message(e.getMessage()).build());
         }
     }
     @MessageMapping("/shoot")
@@ -129,4 +138,5 @@ public class GameController {
         }
         gameService.endGame(game);
     }
+
 }
