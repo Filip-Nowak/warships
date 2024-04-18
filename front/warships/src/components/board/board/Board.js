@@ -3,12 +3,11 @@ import styles from "./boardStyle.module.css"
 import {useState} from "react";
 import getEmptyFields from "../../utils/getEmptyFields";
 
-function Board({boardInfo,handleFieldClick}) {
+function Board({boardInfo,handleFieldClick,fields}) {
     const [selectedField, setSelectedField] = useState({x: null, y: null})
     // const fields = getEmptyFields()
     // generateFields(fields)
-    const {boardStyle,boardClassname,fields,fieldType,fieldClassnames,isFieldDisabled,selectedFieldStyle}=boardInfo;
-    console.log(boardInfo)
+    const {boardStyle,boardClassname,fieldType,fieldClassnames,isFieldDisabled,selectedFieldStyle}=boardInfo;
     return <div style={boardStyle} className={styles.board + " " + boardClassname}>{fields.map((row, y) => {
         return row.map((fieldValue, x) => {
                 return <Field

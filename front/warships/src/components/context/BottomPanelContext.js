@@ -1,7 +1,7 @@
 import {createContext} from "react";
 
 const BottomPanelContext=createContext({
-    ships:[],
+    fields:[],
     handleSubmitShips:()=>{},
     remainingShips:0,
     showCancelButton:true,

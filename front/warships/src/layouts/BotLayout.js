@@ -14,13 +14,15 @@ function BotLayout() {
     const back = () => {
         navigate("/")
     }
+
     return <>
-        {
-            inGame ?
-                <CreatorMenu back={back} submitShips={submitShips} online={false}/>
-                :
-                <BotGame/>
-        }
+        {/*{*/}
+        {/*    inGame ?*/}
+        {/*        <CreatorMenu back={back} submitShips={submitShips} online={false}/>*/}
+        {/*        :*/}
+        {/*        <BotGame/>*/}
+        {/*}*/}
+        <CreatorMenu back={back} submitShips={submitShips} online={false}/>
     </>
 }
 
