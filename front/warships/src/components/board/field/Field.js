@@ -32,12 +32,12 @@ function Field({x, y, style, handleClick, isDisabled, fieldType, selectedFieldSt
         }
     }, [shooting]);
     const onMouseOver = () => {
-        if (!isDisabled(x, y,value)&&!boardDisabled) {
+        if (!isDisabled({x:x,y:y},value)&&!boardDisabled) {
             selectField({x:x,y:y})
         }
     }
     const handleFieldClick = () => {
-        if (!boardDisabled&&!isDisabled(x, y,value)) {
+        if (!boardDisabled&&!isDisabled({x:x,y:y},value)) {
             handleClick({x:x,y:y});
         }
     }

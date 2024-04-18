@@ -7,8 +7,6 @@ import OnlineCreator from "../components/online/OnlineCreator";
 import CreatorMenu from "../components/creator/creatorMenu/CreatorMenu";
 import GameView from "../components/game/game/GameView";
 import OnlineGame from "../components/online/OnlineGame";
-import createdShipsContext from "../components/context/createdShipsContext";
-import Menu from "../components/utils/Menu/Menu";
 import MenuButton from "../components/utils/menuButton/MenuButton";
 
 function RoomLayout() {

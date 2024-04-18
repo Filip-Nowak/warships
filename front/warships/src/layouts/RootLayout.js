@@ -1,13 +1,13 @@
 import {Outlet} from "react-router";
-import UsernameContext from "../components/context/OnlineContext";
-import {useEffect, useState} from "react";
-import online from "../http/Online";
-
+import OnlineContext from "../components/context/OnlineContext";
+import {useState} from "react";
+import LoadingContext from "../components/context/LoadingContext"
+import FullScreenInfo from "../components/utils/loading/FullScreenInfo";
 function RootLayout(){
-    const [username, setUsername] = useState("")
-    const [room, setRoom] = useState({})
-    return <UsernameContext.Provider value={{username:username,setUsername:setUsername,room: room,setRoom:setRoom}}>
+    const [loading, setLoading] = useState(false)
+    return <LoadingContext.Provider value={{loading: loading,setLoading:setLoading}} >
         <Outlet/>
-    </UsernameContext.Provider>
+        {loading?<FullScreenInfo loading={loading}>loading</FullScreenInfo>:"" }
+    </LoadingContext.Provider>
 }
 export default RootLayout

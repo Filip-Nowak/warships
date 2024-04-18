@@ -3,8 +3,10 @@ import styles from "./switchButton.module.css"
 function SwitchButton({leftMsg,rightMsg,handleSwitch,containerStyle}){
     const [selected, setSelected] = useState(true)
     const onClick=()=>{
-        handleSwitch(!selected)
-        setSelected(prevState => !prevState)
+        setSelected(prevState => {
+            handleSwitch(!prevState)
+            return !prevState
+        })
     }
     return <div className={styles.container} style={{display:"flex",...containerStyle}} >
         <Button selected={selected} handleClick={onClick} msg={leftMsg}></Button>

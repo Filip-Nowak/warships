@@ -24,7 +24,6 @@ function GameView({
                       startingScreen,
                       players,
                       startingPlayer,
-                      playerTurn,
                       shootingPos,
                       winner,
                       returnToLobby,

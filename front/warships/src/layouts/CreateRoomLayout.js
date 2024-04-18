@@ -13,12 +13,6 @@ function CreateRoomLayout() {
     useEffect(() => {
         connect();
     }, []);
-    // const onConnected = (frame) => {
-    //     online.createUser().then((userId)=>{
-    //         // online.addRoomMessageHandler("ROOM_CREATED",onCreatedRoom)
-    //         online.addRoomMessageHandler("JOINED_ROOM",onJoinRoom)
-    //         setFetching(false)
-    //     })
     const onConnected = () => {
         online.addRoomMessageHandler("JOINED_ROOM", onJoinRoom)
         setFetching(false)

@@ -1,32 +1,22 @@
-import {useContext, useEffect, useRef, useState} from "react";
-import GameContext from "../../context/gameContext";
+import {useContext, useEffect, useState} from "react";
 import styles from "../creatorMenu.module.css";
-import fieldStyles from "../../board/field/fieldStyle.module.css"
-import boardStyles from "../../board/board/boardStyle.module.css"
-import PanelMessage from "../panelMessage/PanelMessage";
-import Board from "../../board/board/Board";
-import ShipPanel from "../../game/shipPanel/ShipPanel";
-import ShipSelector from "../shipSelector/ShipSelector";
-import board from "../../board/board/Board";
+import TopPanel from "../topPanel/TopPanel";
 import BottomPanel from "../bottomPanel/BottomPanel";
-import CreatedShipsContext from "../../context/createdShipsContext";
-import BlinkingDots from "../../utils/BlinkingDots";
+import BottomPanelContext from "../../context/BottomPanelContext";
 import FullScreenInfo from "../../utils/loading/FullScreenInfo";
 import MenuButton from "../../utils/menuButton/MenuButton";
+import MainPanel from "../mainPanel/MainPanel";
+import useTimer from "../../hooks/useTimer";
+import LoadingContext from "../../context/LoadingContext";
 
-function CreatorMenu({submitShips, online, fetching,back}) {
+function CreatorMenu({submitShips, online,back}) {
     const [ships, setShips] = useState([])
     const [selectedShip, setSelectedShip] = useState(0)
     const [shipsLeft, setShipsLeft] = useState([1, 2, 3, 4])
     const [deployingShip, setDeployingShip] = useState([])
-    const [boardMode, setBoardMode] = useState(true)
-    const [time, setTime] = useState(60)
-    const interval = useRef(0);
-    const handleSubmitShips = () => {
-        clearInterval(interval.current)
-        console.log(ships)
-        submitShips(ships)
-    }
+    const [removeMode, setRemoveMode] = useState(false)
+    const [time, setTime] = useTimer(()=>{if (time === 0) {handleSubmitShips();}})
+    const loadingContext=useContext(LoadingContext)
     useEffect(() => {
         if (deployingShip.length === selectedShip && selectedShip !== 0) {
             addShip()
@@ -35,19 +25,13 @@ function CreatorMenu({submitShips, online, fetching,back}) {
     }, [deployingShip]);
     useEffect(() => {
         if (online) {
-            interval.current = setInterval(() => {
-                setTime(prevState => prevState - 1)
-            }, 1000)
+            setTime(60)
         }
     }, []);
-    useEffect(() => {
-        console.log(time)
-        if (time === 0) {
-            clearInterval(interval.current)
-            handleSubmitShips()
-
-        }
-    }, [time]);
+    const handleSubmitShips = () => {
+        loadingContext.setLoading(true);
+        submitShips(ships)
+    }
 
 
     const addShip = () => {
@@ -75,7 +59,7 @@ function CreatorMenu({submitShips, online, fetching,back}) {
         ));
     }
     const changeBoardMode = (mode) => {
-        setBoardMode(mode)
+        setRemoveMode(!mode)
         setSelectedShip(0);
     }
     const cancelShipDeploy = () => {
@@ -93,7 +77,6 @@ function CreatorMenu({submitShips, online, fetching,back}) {
             })
         })
         if (shipId === -1) {
-            console.log("ship doesnt exist")
             return
         }
         const size = ships[shipId].fields.length;
@@ -108,113 +91,19 @@ function CreatorMenu({submitShips, online, fetching,back}) {
 
     }
 
-    const generateFields = (fields) => {
-        const getField = (pos) => {
-            return fields[pos.y][pos.x]
-        }
-        const setField = (pos, value) => {
-            fields[pos.y][pos.x] = value;
-        }
-        const checkField = (x, y) => {
-            return !(x < 0 || y < 0 || x > 9 || y > 9)
-        }
-        const setForbiddenFields = (x, y) => {
-            for (let i = -1; i < 2; i++) {
-                for (let j = -1; j < 2; j++) {
-                    if (checkField(x + i, y + j)) {
-                        if (getField({x: x + i, y: y + j}) !== 1) {
-                            setField({x: x + i, y: y + j}, 4);
-                        }
-                    }
-                }
-            }
-        }
-        ships.forEach(ship => {
-            ship.fields.forEach(field => {
-                let pos = field.pos;
-                setField({x: pos.x, y: pos.y}, 1)
-                setForbiddenFields(pos.x, pos.y);
-            })
-        })
-        for (let i = 0; i < deployingShip.length; i++) {
-            setField({x: deployingShip[i].x, y: deployingShip[i].y}, 2);
-        }
-        deployingShip.forEach(pos => {
-            if (pos.x > 0) {
-                if (getField({x: pos.x - 1, y: pos.y}) === 0) {
-                    setField({x: pos.x - 1, y: pos.y}, 3);
-                }
-            }
-            if (pos.y > 0) {
-                if (getField({x: pos.x, y: pos.y - 1}) === 0) {
-                    setField({x: pos.x, y: pos.y - 1}, 3);
-                }
-            }
-            if (pos.x < 9) {
-                if (getField({x: pos.x + 1, y: pos.y}) === 0) {
-                    setField({x: pos.x + 1, y: pos.y}, 3);
-                }
-
-            }
-            if (pos.y < 9) {
-                if (getField({x: pos.x, y: pos.y + 1}) === 0) {
-                    setField({x: pos.x, y: pos.y + 1}, 3);
-                }
-            }
-        })
-
-    }
     const handleFieldClick = (pos) => {
-        if (boardMode) {
+        if (!removeMode) {
             pickField(pos)
         } else {
             removeShip(pos)
         }
     }
-    const fieldStyleList = [
-        fieldStyles.creatorField,
-        (boardMode ? fieldStyles.creatorPicked : fieldStyles.creatorRemovable),
-        fieldStyles.creatorDeploy,
-        fieldStyles.creatorPossible,
-        (boardMode ? fieldStyles.creatorForbidden : "")
-    ]
-    const additionalStyle = {}
 
-    let boardDisabled = (boardMode && selectedShip === 0)
-    if (boardDisabled) {
-        additionalStyle.opacity = "50%";
-        additionalStyle.borderColor = "#001801";
-    }
-    if (!boardMode) {
-        additionalStyle.borderColor = "red"
-    }
-    let shipSelectorDisabled = !boardMode || (boardMode && deployingShip.length !== 0)
-    const isFieldDisabled = (x, y, value) => {
-        let enabled;
-        if (boardDisabled)
-            return true
-        if (boardMode) {
-            if (deployingShip.length === 0) {
-                enabled = value === 0
-            } else {
-                enabled = value === 3;
-            }
-        } else {
-            enabled = value === 1
-        }
-        return !enabled
-    }
     let remainingShips = 0;
     shipsLeft.forEach(value => {
         remainingShips += value;
     })
     const fill = () => {
-        // context.createdShips=[
-        //     {
-        //         fields:[{x:0,y:0,hit:false},{x:1,y:0,hit:false},{x:2,y:0,hit:false},{x:3,y:0,hit:false}],
-        //         sunken:false
-        //     }
-        // ]
         setShips(
             [
                 {
@@ -263,30 +152,19 @@ function CreatorMenu({submitShips, online, fetching,back}) {
         setShipsLeft([0,0,0,0])
     }
 
-    return <div>
+    return <>
         <MenuButton message={"back"} handleClick={back}></MenuButton>
-            {time}
         <div className={styles.panel}>
-            <PanelMessage
-                msg={(!boardMode) ? "Pick ship to remove" : selectedShip === 0 ? "select ship to deploy" : "pick location for selected ship"}
-                mode={boardMode}/>
+            <TopPanel
+                msg={(removeMode) ? "Pick ship to remove" : selectedShip === 0 ? "select ship to deploy" : "pick location"}
+                mode={!removeMode} time={time} disabled={!online}/>
             <button onClick={fill}>fill</button>
-            <div style={{display: "flex", marginTop: "1rem"}}>
-                <Board additionalStyle={additionalStyle} generateFields={generateFields} fieldStyles={fieldStyleList}
-                       fieldType={fieldStyles.creatorField} boardStyle={boardStyles.creatorBoard}
-                       isFieldDisabled={isFieldDisabled} handleFieldClick={handleFieldClick}
-                       selectedFieldStyle={!boardDisabled ? boardMode ? fieldStyles.creatorSelected : "" : ""}
-                ></Board>
-                <ShipSelector shipsLeft={shipsLeft} selectedShip={selectedShip} disabled={shipSelectorDisabled}
-                              selectShip={setSelectedShip}></ShipSelector>
-            </div>
-            <CreatedShipsContext.Provider value={{ships: ships, handleSubmitShips: handleSubmitShips}}>
-                <BottomPanel remainingShips={remainingShips} showCancelButton={deployingShip.length !== 0}
-                             changeMode={changeBoardMode} cancelShipDeploy={cancelShipDeploy}></BottomPanel>
-            </CreatedShipsContext.Provider>
-            {fetching ?<FullScreenInfo loading={true}>loading</FullScreenInfo> : ""}
+            <MainPanel shipsLeft={shipsLeft} deployingShip={deployingShip} handleFieldClick={handleFieldClick} ships={ships} selectShip={setSelectedShip} selectedShip={selectedShip} removeMode={removeMode}/>
+            <BottomPanelContext.Provider value={{ships: ships, handleSubmitShips: handleSubmitShips,remainingShips: remainingShips,showCancelButton:deployingShip.length !== 0,changeMode:changeBoardMode,cancelShipDeploy:cancelShipDeploy}}>
+                <BottomPanel ></BottomPanel>
+            </BottomPanelContext.Provider>
         </div>
-    </div>
+    </>
 }
 
 export default CreatorMenu

@@ -1,10 +1,13 @@
 import styles from "./bottmPanel.module.css"
 import CancelButton from "./CancelButton";
 import DefaultPanel from "./DefaultPanel";
-function BottomPanel({showCancelButton,cancelShipDeploy,changeMode,remainingShips}) {
+import {useContext} from "react";
+import BottomPanelContext from "../../context/BottomPanelContext";
+function BottomPanel() {
+    const context=useContext(BottomPanelContext)
     return <div className={styles.container}>
-        {showCancelButton ? <CancelButton handleClick={cancelShipDeploy}></CancelButton> :
-        <DefaultPanel remainingShips={remainingShips} changeMode={changeMode}></DefaultPanel>}
+        {context.showCancelButton ? <CancelButton handleClick={context.cancelShipDeploy}></CancelButton> :
+        <DefaultPanel></DefaultPanel>}
     </div>
 }
 
