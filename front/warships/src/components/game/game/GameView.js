@@ -10,7 +10,7 @@ import InfoPanel from "../infoPanel/InfoPanel";
 import getEmptyFields from "../../utils/getEmptyFields";
 import GameContext from "../../context/gameContext";
 import StartingScreen from "../startingScreen/StartingScreen";
-import online from "../../../http/Online";
+import online from "../../../gameUtils.js/Online";
 import EndingScreen from "../endingScreen/EndingScreen";
 import EnemyShips from "../endingScreen/EnemyShips";
 
@@ -89,15 +89,15 @@ function GameView({
                        isFieldDisabled={() => true}
                        additionalStyle={{backgroundColor: "#2777ee", border: "solid 1em #2777ee"}}/></div>
             <div style={{width: "50%"}}>
-                <ShipPanel forfeit={forfeit}>
-                    <InfoPanel info={infoPanelContent}></InfoPanel>
-                    <Board generateFields={generateEnemyFields} selectedFieldStyle={fieldStyles.selectedConsoleField}
-                           boardStyle={boardStyles.enemyBoard}
-                           fieldType={fieldStyles.consoleField}
-                           fieldStyles={enemyFieldStyle} isFieldDisabled={() => shootingPos !== null}
-                           handleFieldClick={handleConsoleFieldClick} disabled={!pickingField} shootingPos={shootingPos}
-                           additionalStyle={pickingField ? {borderColor: "lime"} : {}}/>
-                </ShipPanel>
+                {/*<ShipPanel forfeit={forfeit}>*/}
+                {/*    <InfoPanel info={infoPanelContent}></InfoPanel>*/}
+                {/*    <Board generateFields={generateEnemyFields} selectedFieldStyle={fieldStyles.selectedConsoleField}*/}
+                {/*           boardStyle={boardStyles.enemyBoard}*/}
+                {/*           fieldType={fieldStyles.consoleField}*/}
+                {/*           fieldStyles={enemyFieldStyle} isFieldDisabled={() => shootingPos !== null}*/}
+                {/*           handleFieldClick={handleConsoleFieldClick} disabled={!pickingField} shootingPos={shootingPos}*/}
+                {/*           additionalStyle={pickingField ? {borderColor: "lime"} : {}}/>*/}
+                {/*</ShipPanel>*/}
             </div>
             {startingScreen&&winner===null ? <StartingScreen players={players} startingId={startingPlayer}></StartingScreen> : ""}
             {winner !== null ?

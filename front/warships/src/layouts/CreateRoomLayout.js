@@ -1,9 +1,9 @@
 import JoinRoom from "../components/room/joinRoom/JoinRoom";
-import online from "../http/Online";
+import online from "../gameUtils.js/Online";
 import {useContext, useEffect, useState} from "react";
 import OnlineContext from "../components/context/OnlineContext";
 import {useNavigate} from "react-router";
-import Online from "../http/Online";
+import Online from "../gameUtils.js/Online";
 import MenuButton from "../components/utils/menuButton/MenuButton";
 
 function CreateRoomLayout() {

@@ -6,7 +6,7 @@ import SubmitMessageInput from "../components/utils/SubmitMessageInput/SubmitMes
 import {useNavigate} from "react-router";
 import onlineContext from "../components/context/OnlineContext";
 import {useContext} from "react";
-import Online from "../http/Online";
+import Online from "../gameUtils.js/Online";
 import OnlineContext from "../components/context/OnlineContext";
 
 function HomeLayout() {

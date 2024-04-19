@@ -1,5 +1,5 @@
 import {useNavigate, useParams} from "react-router";
-import online from "../http/Online";
+import online from "../gameUtils.js/Online";
 import RoomView from "../components/room/roomView/RoomView";
 import {useContext, useEffect, useState} from "react";
 import OnlineContext from "../components/context/OnlineContext";

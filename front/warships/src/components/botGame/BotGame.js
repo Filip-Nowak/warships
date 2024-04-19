@@ -1,9 +1,11 @@
 import GameView from "../game/game/GameView";
-import {useState} from "react";
+import {useRef, useState} from "react";
+import BotEnemy from "../../gameUtils.js/BotEnemy";
 
-function BotGame({ships}){
-    const [playerShips, setPlayerShips] = useState(ships)
+function BotGame({playerFields,setPlayerFields}){
     const [consoleFields, setConsoleFields] = useState()
+    const enemy = useRef(new BotEnemy())
+
     return <GameView />
 }
 export default BotGame

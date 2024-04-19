@@ -169,22 +169,22 @@ class Online {
 
 
 // function setReady(value) {
-//     const msg = JSON.stringify({senderId: http.userId, message: value, roomId: http.roomId})
-//     //http.stompClient.send("/app/ready",{},msg);
-//     http.stompClient.send("/app/ready", {}, msg);
+//     const msg = JSON.stringify({senderId: gameUtils.js.userId, message: value, roomId: gameUtils.js.roomId})
+//     //gameUtils.js.stompClient.send("/app/ready",{},msg);
+//     gameUtils.js.stompClient.send("/app/ready", {}, msg);
 // }
 //
 // function startGame() {
-//     const msg = JSON.stringify({senderId: http.userId, roomId: http.roomId})
-//     http.stompClient.send("/app/start", {}, msg)
+//     const msg = JSON.stringify({senderId: gameUtils.js.userId, roomId: gameUtils.js.roomId})
+//     gameUtils.js.stompClient.send("/app/start", {}, msg)
 // }
 //
 // function submitShips(shipsFilled) {
 //     console.log("xd")
 //     const log = {
 //         pos: {x: 0, y: 0},
-//         roomId: http.roomId,
-//         senderId: http.userId,
+//         roomId: gameUtils.js.roomId,
+//         senderId: gameUtils.js.userId,
 //     }
 //     console.log(log)
 //     if (shipsFilled) {
@@ -192,7 +192,7 @@ class Online {
 //     } else {
 //         log.type = "NO_SHIPS"
 //     }
-//     http.stompClient.send("/app/submitShips", {}, JSON.stringify(log))
+//     gameUtils.js.stompClient.send("/app/submitShips", {}, JSON.stringify(log))
 //
 // }
 const online = new Online()

@@ -5,7 +5,7 @@ import MenuButton from "../../utils/menuButton/MenuButton";
 import styles from "./roomView.module.css"
 import {useContext, useEffect} from "react";
 import OnlineContext from "../../context/OnlineContext";
-import online from "../../../http/Online";
+import online from "../../../gameUtils.js/Online";
 function RoomView({ready,handleReadyClick,startGame}) {
     const onlineContext=useContext(OnlineContext);
     let allPlayersReady=true;

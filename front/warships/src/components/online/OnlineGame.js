@@ -1,6 +1,6 @@
 import GameView from "../game/game/GameView";
 import {useContext, useEffect, useState} from "react";
-import online from "../../http/Online";
+import online from "../../gameUtils.js/Online";
 import useTimer from "../hooks/useTimer";
 import OnlineContext from "../context/OnlineContext";
 

@@ -1,10 +1,10 @@
 import JoinRoom from "../room/joinRoom/JoinRoom";
-// import http from "../../http/http";
+// import gameUtils.js from "../../gameUtils.js/gameUtils.js";
 import {useContext, useEffect, useState} from "react";
 import GameContext from "../context/gameContext";
 import RoomView from "../room/roomView/RoomView";
 import io from "socket.io-client"
-import online from "../../http/Online";
+import online from "../../gameUtils.js/Online";
 import CreatorMenu from "../creator/creatorMenu/CreatorMenu";
 import player from "../room/roomView/RoomPlayer";
 import GameView from "../game/game/GameView";
