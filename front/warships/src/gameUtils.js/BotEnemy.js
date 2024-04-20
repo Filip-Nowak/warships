@@ -10,11 +10,11 @@ class BotEnemy{
         this.generateRandomFields()
     }
 
-    makeMove = async () => {
+    takeShot = () => {
         setTimeout(() => {
             let x = getRandomNumber(10);
             let y = getRandomNumber(10);
-            console.log(this.handleEnemyHit({x: x, y: y}))
+            this.handleEnemyHit({x: x, y: y})
         },500)
     }
 
@@ -29,6 +29,7 @@ class BotEnemy{
         this.addShip(1)
         this.addShip(1)
         this.addShip(1)
+        console.log(this.fields)
     }
     addShip = (size) => {
         let ship = [];
@@ -92,7 +93,9 @@ class BotEnemy{
     setField = (pos, value) => {
         this.fields[pos.y][pos.x] = value
     }
+    //todo already hit
     shoot = (pos) => {
+        console.log(this.fields)
         let output={}
         if (this.getField(pos) === 1) {
             let index;
@@ -120,7 +123,6 @@ class BotEnemy{
             console.log("missed")
             output= {hit: false, sunken: false}
         }
-        this.makeMove()
         return output
     }
     printFields = () => {

@@ -3,8 +3,8 @@ import checkField from "../checkField";
 import fieldStyles from "../../board/field/fieldStyle.module.css";
 import boardStyles from "../../board/board/boardStyle.module.css";
 
-class BoardFactory {
-    getCreatorBoard = ( disabled, removeMode, deployingShip) => {
+export default class BoardFactory {
+    static getCreatorBoard = ( disabled, removeMode, deployingShip) => {
         const board = {}
         const isFieldDisabled =
             disabled ?
@@ -44,9 +44,9 @@ class BoardFactory {
         console.log(board)
         return board;
     }
-    getSeaBoard =()=>{
+    static getSeaBoard =()=>{
         const board={}
-        board.isFieldDisabled(()=>true)
+        board.isFieldDisabled=()=>true
         board.fieldType=fieldStyles.seaField
         board.fieldClassnames =[
             fieldStyles.seaField,
@@ -58,8 +58,22 @@ class BoardFactory {
         board.boardClassname=boardStyles.seaBoard
         board.selectedFieldStyle=""
         board.boardStyle={backgroundColor: "#2777ee", border: "solid 1em #2777ee"}
+        return board
+    }
+    static getConsoleBoard=(playerTurn)=>{
+        const board={}
+        board.isFieldDisabled=()=>{return !playerTurn}
+        board.fieldType=fieldStyles.consoleField
+        board.fieldClassnames=[
+                fieldStyles.consoleField,
+                fieldStyles.consoleHit,
+                fieldStyles.consoleSunken,
+                fieldStyles.consoleMissed
+        ]
+        board.boardClassname=boardStyles.consoleBoard
+        //todo shooting
+        board.selectedFieldStyle=fieldStyles.selectedConsoleField
+        return board;
     }
 }
 
-const boardFactory = new BoardFactory()
-export default boardFactory

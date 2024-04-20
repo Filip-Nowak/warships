@@ -190,14 +190,30 @@ function CreatorMenu({submitShips, online, back}) {
         remainingShips += value;
     })
 
-
+    const fill=()=>{
+        setShipsLeft([0,0,0,0])
+        setFields(
+            [
+                [1,0,0,0,0,1,0,1,0,0,],
+                [1,0,0,0,0,0,0,0,0,0,],
+                [1,0,0,0,0,0,0,1,0,0,],
+                [1,0,0,0,0,1,0,0,0,0,],
+                [0,0,0,0,0,0,0,0,0,0,],
+                [1,0,0,0,1,1,0,0,0,0,],
+                [1,0,0,0,0,0,0,0,0,0,],
+                [1,0,0,0,1,1,0,0,0,0,],
+                [0,0,0,0,0,0,0,0,0,0,],
+                [1,1,1,0,1,1,0,0,0,0,],
+            ]
+        )
+    }
     return <>
         <MenuButton message={"back"} handleClick={back}></MenuButton>
         <div className={styles.panel}>
             <TopPanel
                 msg={(removeMode) ? "Pick ship to remove" : selectedShip === 0 ? "select ship to deploy" : "pick location"}
                 mode={!removeMode} time={time} disabled={!online}/>
-            {/*<button onClick={fill}>fill</button>*/}
+            <button onClick={fill}>fill</button>
             <MainPanel shipsLeft={shipsLeft} deployingShip={deployingShip} handleFieldClick={handleFieldClick}
                        ships={null} selectShip={setSelectedShip} selectedShip={selectedShip} removeMode={removeMode}
                        fields={fields}/>
