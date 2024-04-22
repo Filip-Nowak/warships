@@ -72,7 +72,8 @@ export default class BoardFactory {
         ]
         board.boardClassname=boardStyles.consoleBoard
         //todo shooting
-        board.selectedFieldStyle=fieldStyles.selectedConsoleField
+        board.selectedFieldStyle=playerTurn?fieldStyles.selectedConsoleField:""
+        board.boardStyle=playerTurn?{borderColor:"lime"}:{}
         return board;
     }
 }

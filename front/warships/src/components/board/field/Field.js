@@ -2,7 +2,7 @@ import styles from "./fieldStyle.module.css"
 import {useEffect, useState} from "react";
 import useTimer from "../../hooks/useTimer";
 
-function Field({x, y, style, handleClick, isDisabled, fieldType, selectedFieldStyle,selectField,selected,value,boardDisabled,shooting}) {
+function Field({x, y, classname, handleClick, isDisabled, fieldType, selectedFieldStyle,selectField,selected,value,boardDisabled,shooting,style}) {
     const [border, setBorder] = useState(false)
     const [timer, setTimer] = useState(0)// const handleCountdown=()=>{
     //     console.log("countdown")
@@ -42,7 +42,7 @@ function Field({x, y, style, handleClick, isDisabled, fieldType, selectedFieldSt
         }
     }
 
-    return <div style={border?{border:"0.25rem solid #1BC000"}:{}} onMouseOver={onMouseOver} className={styles.field + " " + fieldType + " " + style + " "+(selected&&!boardDisabled?selectedFieldStyle:"")} onClick={handleFieldClick}></div>
+    return <div style={style} onMouseOver={onMouseOver} className={styles.field + " " + fieldType + " " + classname + " "+(selected&&!boardDisabled?selectedFieldStyle:"")} onClick={handleFieldClick}></div>
 }
 
 export default Field;

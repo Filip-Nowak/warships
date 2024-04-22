@@ -60,24 +60,7 @@ class Online {
         const data=await response.json();
         this.#userId=data.message;
     }
-    // createUser = async () => {
-    //     console.log("creatingUser")
-    //     const body = JSON.stringify({nickname: this.#username});
-    //     console.log(body)
-    //     const response = await fetch("http://localhost:8080/createUser", {
-    //         method: "POST",
-    //         body: body,
-    //         headers: {
-    //             "Content-Type": "application/json"
-    //         }
-    //     })
-    //     const data = await response.json();
-    //     console.log("created user:")
-    //     console.log(data)
-    //     this.#userId = data.userId;
-    //     this.#stompClient.subscribe("/user/" + this.#userId + "/room", this.#handleRoomMessage)
-    //     this.#stompClient.subscribe("/user/" + this.#userId + "/game", this.#handleGameLog)
-    // }
+
     createRoom = () => {
         this.#stompClient.send("/app/createRoom", {}, JSON.stringify({senderId:this.#userId}))
     }
@@ -168,32 +151,5 @@ class Online {
 }
 
 
-// function setReady(value) {
-//     const msg = JSON.stringify({senderId: gameUtils.js.userId, message: value, roomId: gameUtils.js.roomId})
-//     //gameUtils.js.stompClient.send("/app/ready",{},msg);
-//     gameUtils.js.stompClient.send("/app/ready", {}, msg);
-// }
-//
-// function startGame() {
-//     const msg = JSON.stringify({senderId: gameUtils.js.userId, roomId: gameUtils.js.roomId})
-//     gameUtils.js.stompClient.send("/app/start", {}, msg)
-// }
-//
-// function submitShips(shipsFilled) {
-//     console.log("xd")
-//     const log = {
-//         pos: {x: 0, y: 0},
-//         roomId: gameUtils.js.roomId,
-//         senderId: gameUtils.js.userId,
-//     }
-//     console.log(log)
-//     if (shipsFilled) {
-//         log.type = "SUBMIT_SHIPS"
-//     } else {
-//         log.type = "NO_SHIPS"
-//     }
-//     gameUtils.js.stompClient.send("/app/submitShips", {}, JSON.stringify(log))
-//
-// }
 const online = new Online()
 export default online

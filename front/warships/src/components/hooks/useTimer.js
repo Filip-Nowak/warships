@@ -1,21 +1,31 @@
-import {useEffect, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 
-function useTimer(callback) {
+function useTimer(callback, d = 1000) {
     console.log("useTimer")
-    const [countdown, setCountdown] = useState(-1);
+    const [countdown, setCountdown] = useState(0);
+    const time=useRef(null)
     useEffect(() => {
+        let timeoutId;
         console.log("in effect")
-        if (countdown >= 0) {
-            if (countdown === 0) {
-                callback()
-            } else {
-                setTimeout(
-                    () => setCountdown(prevState => {
-                            return prevState - 1
-                        }
-                    ), 1000
-                )
+        console.log(time)
+        if(time.current!==null|| countdown!==0){
+            if(time.current===null){
+                time.current=countdown
             }
+            if(time.current>0){
+                setTimeout(()=> {
+                    time.current -= (d/1000);
+                    setCountdown(time.current)
+                },d)
+            }else{
+                setCountdown(0)
+                callback()
+                time.current=null
+            }
+        }
+        return () => {
+            console.log("destroy")
+            clearTimeout(timeoutId)
         }
     }, [callback, countdown]);
     return [countdown, setCountdown];

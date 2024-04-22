@@ -95,7 +95,6 @@ class BotEnemy{
     }
     //todo already hit
     shoot = (pos) => {
-        console.log(this.fields)
         let output={}
         if (this.getField(pos) === 1) {
             let index;
@@ -114,13 +113,8 @@ class BotEnemy{
                     sunken = false;
                 }
             }
-            if (sunken)
-                console.log("sunken")
-            else
-                console.log("hit")
             output={hit: true, sunken: sunken}
         } else {
-            console.log("missed")
             output= {hit: false, sunken: false}
         }
         return output

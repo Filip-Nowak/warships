@@ -34,12 +34,15 @@ function BotLayout() {
     const back = () => {
         navigate("/")
     }
+    const returnToLobby=()=>{
+        navigate("/")
+    }
     return <>
         {
             !inGame ?
                 <CreatorMenu back={back} submitShips={submitShips} online={false}/>
                 :
-                <Game game={game.current} playerFields={playerFields} setPlayerFields={setPlayerFields} startingPlayer={0}   />
+                <Game game={game.current} playerFields={playerFields} setPlayerFields={setPlayerFields} startingPlayer={0} returnToLobby={returnToLobby}   />
         }
     </>
 }

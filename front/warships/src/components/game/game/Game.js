@@ -2,9 +2,9 @@ import GameView from "./GameView";
 import {useContext, useEffect, useState} from "react";
 import LoadingContext from "../../context/LoadingContext";
 import getEmptyFields from "../../utils/getEmptyFields";
-import {forCrossFields, getField, printFields} from "../../utils/board/boardUitils";
+import {forCrossFields, getField} from "../../utils/board/boardUitils";
 
-function Game({game, startingPlayer, playerFields, setPlayerFields}) {
+function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby}) {
     const [playerTurn, setPlayerTurn] = useState(false);
     const [startingScreen, setStartingScreen] = useState(true)
     const [forfeited, setForfeited] = useState(false)
@@ -12,7 +12,10 @@ function Game({game, startingPlayer, playerFields, setPlayerFields}) {
     const [winner, setWinner] = useState(null)
     const [infoPanel, setInfoPanel] = useState("co sie gapisz")
     const [enemyFields, setEnemyFields] = useState(getEmptyFields)
+    const [endingEnemyFields, setEndingEnemyFields] = useState(null)
+    const [showEnemyShips, setShowEnemyShips] = useState(false)
     const loadingContext = useContext(LoadingContext)
+    const [shootingPos, setShootingPos] = useState(null)
     useEffect(() => {
         loadingContext.setLoading(false)
         game.gameEvents.onStart = onStart;
@@ -31,15 +34,20 @@ function Game({game, startingPlayer, playerFields, setPlayerFields}) {
         game.gameEvents.onPlayerForfeit=onPlayerForfeit
 
     }, []);
+    useEffect(() => {
+        if(shootingPos!==null){
+            game.shoot(shootingPos)
+        }
+    }, [shootingPos]);
     const onEnemyMiss = (pos) => {
         if (pos === null) {
             setInfoPanel("enemy didnt shoot")
         } else {
-            setInfoPanel("enemy missed at " + pos.x + " : " + pos.y)
-            setPlayerFields(prevFields => {
-                prevFields[pos.y][pos.x] = 4;
-                return [...prevFields]
+            setPlayerFields(prevState=>{
+                prevState[pos.y][pos.x]=4
+                return [...prevState]
             })
+            setInfoPanel("enemy missed at " + pos.x + " : " + pos.y)
         }
     }
     const onPlayerStartedTurn=()=>{
@@ -53,7 +61,6 @@ function Game({game, startingPlayer, playerFields, setPlayerFields}) {
     const onEnemyHit = (pos) => {
         setInfoPanel("enemy hit at "+pos.x+" : "+pos.y)
         setPlayerFields(prevState=>{
-            console.log(prevState)
             prevState[pos.y][pos.x]=2;
             return [...prevState]
         })
@@ -69,6 +76,7 @@ function Game({game, startingPlayer, playerFields, setPlayerFields}) {
         setInfoPanel("enemy hit at "+pos.x+" : "+pos.y+" (already hit)")
     }
     const onPlayerHit = ({x, y}) => {
+        console.log("hit")
         setInfoPanel("enemy ship hit at " + x + ":" + y)
         setEnemyFields(prevState => {
             prevState[y][x] = 1
@@ -76,6 +84,8 @@ function Game({game, startingPlayer, playerFields, setPlayerFields}) {
         })
     }
     const onPlayerMiss = (pos) => {
+        console.log("miss")
+        console.log(pos)
         setInfoPanel("you missed")
         if (pos == null) {
             setInfoPanel("you didnt shot")
@@ -87,15 +97,25 @@ function Game({game, startingPlayer, playerFields, setPlayerFields}) {
         }
     }
     const onPlayerSunken = (pos) => {
+        console.log("sunken")
         setInfoPanel("enemy ship got sunken at (" + pos.x + "," + pos.y + ")")
         setEnemyFields(prevState => {
             return sunkShip(pos,prevState,1,2)
         })
     }
-
     const onPlayerShooting = () => {
+        console.log("shooting")
         setInfoPanel("shooting")
+        setEnemyFields(prevState=>{
+            setShootingPos(pos=>{
+                prevState[pos.y][pos.x]+=10;
+                return pos
+            })
+            return [...prevState]
+        })
     }
+    console.log("game")
+    console.log(enemyFields)
     const onEnemyShooting = () => {
         setInfoPanel("enemy shooting")
     }
@@ -105,28 +125,46 @@ function Game({game, startingPlayer, playerFields, setPlayerFields}) {
     }
     const handleConsoleClick = (pos) => {
         setPlayerTurn(false)
-        game.shoot(pos)
+        setShootingPos(pos)
     }
     const onWin=()=>{
         setWinner(true)
         console.log("win")
     }
     const handleShowEnemyShips = () => {
-
+        setShowEnemyShips(true)
     }
-    const onPlayerForfeit=()=>{
+    const onPlayerForfeit=(enemyShips)=>{
+        setShootingPos(prevState=>{
+            if(prevState!==null)
+            {
+                setEnemyFields(prevFields=>{
+                    prevFields[prevState.y][prevState.x]-=10
+                    return [...prevFields]
+                })
+            }
+            return prevState
+        })
+        const fields=getEmptyFields()
+        for(let i=0;i<fields.length;i++){
+            for(let j=0;j<fields[i].length;j++){
+                if(enemyShips[i][j]===2)
+                    continue
+                fields[i][j]=enemyShips[i][j]
+            }
+        }
+        setEndingEnemyFields(enemyShips)
+        setShootingPos(null)
         setForfeited(true)
         setWinner(false)
-    }
-    const returnToLobby = () => {
 
+        game.endGame();
     }
     const forfeit = () => {
         game.forfeit()
     }
     const sunkShip=({x,y},fields,hit,sunken)=>{
         const callback = (x, y, fields) => {
-            printFields(fields)
             if (getField(x, y, fields) === hit) {
                 fields[y][x] = sunken
                 forCrossFields(x, y, fields, callback)
@@ -136,11 +174,15 @@ function Game({game, startingPlayer, playerFields, setPlayerFields}) {
         forCrossFields(x, y, fields, callback)
         return [...fields];
     }
+    const hideEnemyShips=()=>{
+        setShowEnemyShips(false)
+    }
+
     return <GameView startingScreen={startingScreen} startingPlayer={startingPlayer}
                      forfeited={forfeited} handleConsoleFieldClick={handleConsoleClick}
                      handleShowEnemyShips={handleShowEnemyShips} playerFields={playerFields} playerLeft={playerLeft}
                      returnToLobby={returnToLobby} winner={winner} players={game.players} infoPanelContent={infoPanel}
-                     enemyFields={enemyFields} forfeit={forfeit} playerTurn={playerTurn}/>
+                     enemyFields={enemyFields} forfeit={forfeit} playerTurn={playerTurn} enemyNickname={game.players[game.enemyIndex]} hideEnemyShips={hideEnemyShips} showEnemyShips={showEnemyShips} endingEnemyFields={endingEnemyFields}/>
 }
 
 export default Game
