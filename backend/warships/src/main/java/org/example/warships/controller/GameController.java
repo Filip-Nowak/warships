@@ -10,8 +10,7 @@ import org.example.warships.messages.logs.GameLog;
 import org.example.warships.messages.logs.LogType;
 import org.example.warships.model.room.GameModel;
 import org.example.warships.model.user.PlayerModel;
-import org.example.warships.model.ship.Pos;
-import org.example.warships.model.ship.ShipModel;
+import org.example.warships.model.Pos;
 import org.example.warships.service.GameService;
 import org.example.warships.service.UserService;
 import org.example.warships.utils.JsonConverter;
@@ -21,6 +20,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Controller;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -38,17 +38,16 @@ public class GameController {
             System.out.println("submitShips");
             ProfileEntity user = userService.getUser(message.getSenderId());
             GameModel game = gameService.getGame(user.getRoomId());
-            List<ShipModel> ships = jsonConverter.fromJsonToList(message.getMessage(), ShipModel[].class);
-            System.out.println(ships);
-            System.out.println(ships.getClass());
-            if (ships.isEmpty()) {
+//            List<ShipModel> ships = jsonConverter.fromJsonToList(message.getMessage(), ShipModel[].class);
+            if (Objects.equals(message.getMessage(), "")) {
                 gameService.back(game);
                 for (PlayerModel player : game.getPlayers()) {
                     messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().type(RoomMessageType.BACK).build());
                 }
                 return;
             }
-            boolean ready = gameService.submitShips(user, game, ships);
+            int[][] fields = jsonConverter.fromJson(message.getMessage(), int[][].class);
+            boolean ready=gameService.submitShips(user, game, fields);
             if (ready) {
                 game = gameService.launch(game);
                 for (PlayerModel p : game.getPlayers()) {
@@ -82,22 +81,30 @@ public class GameController {
         int x= Integer.parseInt(message.getMessage().split(";")[0]);
         int y= Integer.parseInt(message.getMessage().split(";")[1]);
         Pos pos=Pos.builder().x(x).y(y).build();
-        LogType result=gameService.shoot(user,game,x,y);
+        int result=gameService.shoot(user,game,x,y);
         ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
         scheduler.schedule(() -> {
-            if(result==LogType.WIN || result==LogType.SUNKEN){
-                for(PlayerModel player:game.getPlayers()){
-                    messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().pos(pos).type(LogType.SUNKEN).senderId(user.getId()).build());
+            if(result==5 || result==2) {
+                for (PlayerModel player : game.getPlayers()) {
+                    messagingTemplate.convertAndSendToUser(player.getId(), "/game", GameLog.builder().pos(pos).type(LogType.SUNKEN).senderId(user.getId()).build());
                 }
-            }else if(result==LogType.MISS || result==LogType.ALREADY_HIT || result==LogType.HIT){
+            }else if(result==0){
                 for(PlayerModel player:game.getPlayers()){
-                    messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().type(result).senderId(user.getId()).pos(pos).build());
+                    messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().type(LogType.MISS).senderId(user.getId()).pos(pos).build());
+                }
+            }else if(result==3){
+                for(PlayerModel player:game.getPlayers()){
+                    messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().type(LogType.ALREADY_HIT).senderId(user.getId()).pos(pos).build());
+                }
+            }else if(result==1){
+                for(PlayerModel player:game.getPlayers()){
+                    messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().type(LogType.HIT).senderId(user.getId()).pos(pos).build());
                 }
             }
             ScheduledExecutorService scheduler1 = Executors.newScheduledThreadPool(1);
             scheduler1.schedule(() -> {
                 GameModel updatedGame = gameService.getGame(user.getRoomId());
-                if(result==LogType.WIN){
+                if(result==5){
                     System.out.println("WIN");
                     System.out.println(updatedGame.getPlayers());
                     List<PlayerModel> players=updatedGame.getPlayers();
@@ -105,7 +112,7 @@ public class GameController {
                     for(PlayerModel player:updatedGame.getPlayers()){
                         for(PlayerModel enemy:players){
                             if(!enemy.getId().equals(player.getId())){
-                                playerInfo.setShips(enemy.getShips());
+                                playerInfo.setFields(enemy.getFields());
                                 break;
                             }
                         }
@@ -130,7 +137,7 @@ public class GameController {
         for(PlayerModel player:game.getPlayers()){
             for(PlayerModel enemy:players){
                 if(!enemy.getId().equals(player.getId())){
-                    playerInfo.setShips(enemy.getShips());
+                    playerInfo.setFields(enemy.getFields());
                     break;
                 }
             }

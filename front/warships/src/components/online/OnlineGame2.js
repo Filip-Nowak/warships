@@ -3,7 +3,7 @@ import {useContext, useEffect, useState} from "react";
 import online from "../../gameUtils.js/Online";
 import OnlineContext from "../context/OnlineContext";
 
-function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
+function OnlineGame2({createdShips,players,startingPlayer,returnToLobby}){
     const [playerShips, setPlayerShips] = useState(createdShips)
     const [enemyShips, setEnemyShips] = useState([])
     const [playerMisses, setPlayerMisses] = useState([])
@@ -221,4 +221,4 @@ function OnlineGame({createdShips,players,startingPlayer,returnToLobby}){
     ></GameView>
     // return <Test start={startingPlayer}></Test>
 }
-export default OnlineGame
+export default OnlineGame2

@@ -3,12 +3,11 @@ package org.example.warships.service;
 import lombok.RequiredArgsConstructor;
 import org.example.warships.cache.ProfileEntity;
 import org.example.warships.messages.logs.LogType;
+import org.example.warships.model.Board;
 import org.example.warships.model.room.GameModel;
 import org.example.warships.model.user.PlayerModel;
 import org.example.warships.model.room.RoomModel;
 import org.example.warships.model.user.UserModel;
-import org.example.warships.model.ship.Field;
-import org.example.warships.model.ship.ShipModel;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,16 +31,17 @@ public class GameService {
         cacheService.updateGame(game);
     }
 
-    public boolean submitShips(ProfileEntity user, GameModel game, List<ShipModel> ships) {
+    public boolean submitShips(ProfileEntity user, GameModel game, int[][]fields) {
         PlayerModel player = game.getPlayerById(user.getId());
         System.out.println("Ships submitted");
         System.out.println(player);
-        player.setShips(ships);
+        player.setFields(fields);
         game.updatePlayer(player);
         System.out.println(game);
         cacheService.updateGame(game);
-        for(PlayerModel p : game.getPlayers()){
-            if(p.getShips()==null || p.getShips().isEmpty()){
+
+        for(PlayerModel p:game.getPlayers()){
+            if(p.getFields()==null){
                 return false;
             }
         }
@@ -53,56 +53,40 @@ public class GameService {
         Random random = new Random();
         game.setTurn(game.getPlayers().get(random.nextInt(game.getPlayers().size())).getId());
         for(PlayerModel player:game.getPlayers()){
-            player.setHp(player.getShips().size());
-            player.setHp(1);
+            Board board = new Board(player.getFields());
+            player.setHp(board.countHp());
         }
         System.out.println("Game launched");
         System.out.println(game);
         return cacheService.updateGame(game);
     }
 
-    public LogType shoot(ProfileEntity user, GameModel game, int x,int y) {
-        LogType logType = LogType.MISS;
+    public int shoot(ProfileEntity user, GameModel game, int x,int y) {
         for(PlayerModel player:  game.getPlayers()){
             if(player.getId().equals(user.getId())){
                 continue;
             }
             System.out.println("shooting to");
             System.out.println(player);
-            ShipModel ship = player.getShip(x,y);
-            if(ship!=null){
-                if(ship.getField(x,y).isHit()){
-                    return LogType.ALREADY_HIT;
-                }
-                logType = LogType.HIT;
-                ship.getField(x,y).setHit(true);
-                boolean sunken=true;
-                for(Field field:ship.getFields()){
-                    if(!field.isHit()){
-                        sunken=false;
-                        break;
-                    }
-                }
-                if(sunken){
-                    ship.setSunken(true);
-                    logType = LogType.SUNKEN;
-                    player.setHp(player.getHp()-1);
-                    if(player.getHp()==0){
-                        logType = LogType.WIN;
-                    }
+            Board board = new Board(player.getFields());
+            int result = board.shoot(x,y);
+            if(result==1 || result==2){
+                player.setHp(player.getHp()-1);
+                cacheService.updateGame(game);
+                if(player.getHp()==0){
+                    return 5;
                 }
             }
+            return result;
         }
-        cacheService.updateGame(game);
-
-        return logType;
+        return 0;
     }
 
     public void endGame(GameModel game) {
         game.setInGame(false);
         game.setInCreator(false);
         for(PlayerModel player:game.getPlayers()){
-            player.setShips(null);
+            player.setFields(null);
             player.setHp(0);
         }
         game.setTurn(null);
@@ -122,7 +106,7 @@ public class GameService {
     public void back(GameModel game) {
         game.setInCreator(false);
         for(PlayerModel player:game.getPlayers()){
-            player.setShips(null);
+            player.setFields(null);
         }
         cacheService.updateGame(game);
     }

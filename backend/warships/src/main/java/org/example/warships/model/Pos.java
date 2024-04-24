@@ -1,4 +1,4 @@
-package org.example.warships.model.ship;
+package org.example.warships.model;
 
 import lombok.Builder;
 import lombok.Data;

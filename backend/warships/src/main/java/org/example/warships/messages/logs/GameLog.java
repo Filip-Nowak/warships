@@ -2,7 +2,7 @@ package org.example.warships.messages.logs;
 
 import lombok.Builder;
 import lombok.Data;
-import org.example.warships.model.ship.Pos;
+import org.example.warships.model.Pos;
 
 @Data
 @Builder

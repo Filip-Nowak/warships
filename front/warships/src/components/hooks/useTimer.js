@@ -27,7 +27,7 @@ function useTimer(callback, d = 1000) {
             console.log("destroy")
             clearTimeout(timeoutId)
         }
-    }, [callback, countdown]);
+    }, [countdown]);
     return [countdown, setCountdown];
 }
 

@@ -8,7 +8,7 @@ import online from "../../gameUtils.js/Online";
 import CreatorMenu from "../creator/creatorMenu/CreatorMenu";
 import player from "../room/roomView/RoomPlayer";
 import GameView from "../game/game/GameView";
-import OnlineGame from "./OnlineGame";
+import OnlineGame2 from "./OnlineGame2";
 
 // import WebSocketClient from "websocket"
 
@@ -122,7 +122,7 @@ function MultiplayerLayout({setOnlineInfo}) {
                     !inGame?
                         <CreatorMenu online={true} submitShips={submitShips} fetching={fetching}></CreatorMenu>
                         :
-                        <OnlineGame createdShips={createdShips} players={room.players} startingPlayer={startingPlayer}></OnlineGame>
+                        <OnlineGame2 createdShips={createdShips} players={room.players} startingPlayer={startingPlayer}></OnlineGame2>
 
             }
 

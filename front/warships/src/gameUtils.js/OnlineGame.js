@@ -8,6 +8,7 @@ export default class OnlineGame{
     enemyIndex
     players=[]
     constructor(players) {
+        console.log(players)
         if(players[0].id===online.getUserId()){
             this.playerIndex=0
             this.enemyIndex=1
@@ -72,6 +73,9 @@ export default class OnlineGame{
     }
     handleForfeit=(msg)=>{
 
+    }
+    shoot=(pos)=>{
+        online.shoot(pos)
     }
     gameEvents={
         onStart:()=>{},

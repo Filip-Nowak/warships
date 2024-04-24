@@ -9,9 +9,8 @@ import {useContext} from "react";
 import Online from "../gameUtils.js/Online";
 import OnlineContext from "../components/context/OnlineContext";
 
-function HomeLayout() {
+function HomeLayout({setUsername}) {
     const navigate = useNavigate()
-    const onlineContext = useContext(OnlineContext);
     return <div>
         <div className={styles.banner}>warships</div>
         <Menu className={styles.container}>
@@ -19,7 +18,8 @@ function HomeLayout() {
                 <div className={styles.onlineLabel}>play online</div>
                 <SubmitMessageInput
                     handleButtonClick={(value) => {
-                        onlineContext.setUsername(value);
+                        console.log(value)
+                        setUsername(value);
                         navigate("/online/create-room")
                     }}
                     inputStyle={{fontSize: "5rem"}} buttonMessage={"play"} buttonMessageStyle={{fontSize: "4rem"}}

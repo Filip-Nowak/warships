@@ -27,4 +27,8 @@ public class JsonConverter {
         T[] arr = new Gson().fromJson(json, classOfT);
         return Arrays.asList(arr);
     }
+
+    public <T> T fromJson(String json, Class<T> classOfT){
+        return gson.fromJson(json, classOfT);
+    }
 }
