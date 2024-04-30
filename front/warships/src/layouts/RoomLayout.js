@@ -11,24 +11,26 @@ import MenuButton from "../components/utils/menuButton/MenuButton";
 import Game from "../components/game/game/Game";
 import getEmptyFields from "../components/utils/getEmptyFields";
 import OnlineGame from "../gameUtils.js/OnlineGame";
+import LoadingContext from "../components/context/LoadingContext";
+
 
 function RoomLayout() {
     const [inRoom, setInRoom] = useState(true)
     const [inGame, setInGame] = useState(false)
     const [ready, setReady] = useState(false)
     const [fetching, setFetching] = useState(false)
-    const [playerFields, setPlayerFields] = useState(getEmptyFields())
+    const [playerFields, setPlayerFields] = useState([])
     const [startingPlayer, setStartingPlayer] = useState("")
     const onlineContext = useContext(OnlineContext)
     const game = useRef(null);
     const navigate=useNavigate()
+    const loadingContext = useContext(LoadingContext)
 
     useEffect(() => {
         online.roomMessageHandlers = {}
         online.addRoomMessageHandler("JOINED_ROOM", onJoinRoom)
         online.addRoomMessageHandler("READY", onPlayerReady)
         online.addRoomMessageHandler("START", onStartCreator)
-        online.addRoomMessageHandler("NO_SHIPS", onNoShips)
         online.addRoomMessageHandler("LAUNCH", onLaunch)
         online.addRoomMessageHandler("RETURN_TO_ROOM", handleReturnToLobby)
         online.addRoomMessageHandler("PLAYER_LEFT",onPlayerLeft)
@@ -108,20 +110,23 @@ function RoomLayout() {
         setInRoom(false)
     }
 
-    function onNoShips() {
-
-    }
 
     function onLaunch(msg) {
         console.log(onlineContext.room)
+        let players;
+        onlineContext.setRoom(prevState=>{
+            players=prevState.users;
+            return prevState;
+        })
         setFetching(false)
         setInGame(true)
         setStartingPlayer(msg.message)
-        game.current=new OnlineGame(onlineContext.room.users)
+        game.current=new OnlineGame(players,onlineContext.setRoom)
     }
     const onBack=()=>{
-        setPlayerFields(getEmptyFields())
+        setPlayerFields([])
         setInRoom(true)
+        loadingContext.setLoading(false)
     }
 
     function handleReturnToLobby(msg){
@@ -130,7 +135,7 @@ function RoomLayout() {
         setReady(false)
         onlineContext.setRoom(msg.room)
         setStartingPlayer("")
-        setPlayerFields(getEmptyFields())
+        setPlayerFields([])
     }
 
     const setPlayerReady = () => {
@@ -142,15 +147,23 @@ function RoomLayout() {
 
     }
     const submitShips=(fields)=>{
-        for(let i=0;i<fields.length;i++){
-            for(let j=0;j<fields[i].length;j++){
-                if(fields[i][j]===4)
-                    fields[i][j]=0
-            }
-        }
-        setPlayerFields(fields);
-        online.submitShips(fields)
         setFetching(true)
+        if(playerFields.length!==0){
+            return;
+        }
+        online.submitShips(fields)
+        if(fields.length!==0)
+        {
+            for(let i=0;i<fields.length;i++){
+                for(let j=0;j<fields[i].length;j++){
+                    if(fields[i][j]===4) {
+                        fields[i][j] = 0
+                    }
+                }
+            }
+            setPlayerFields(fields);
+            setPlayerFields(fields);
+        }
     }
     const leave=()=>{
         setFetching(true)
@@ -161,7 +174,7 @@ function RoomLayout() {
         setInGame(false)
         setReady(false)
         setStartingPlayer("")
-        setPlayerFields(getEmptyFields())
+        setPlayerFields([])
     }
     const back=()=>{
         online.back();

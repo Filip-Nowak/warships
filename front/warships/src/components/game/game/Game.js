@@ -32,6 +32,9 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
         game.gameEvents.onEnemyStartedTurn=onEnemyStartedTurn;
         game.gameEvents.onWin=onWin
         game.gameEvents.onPlayerForfeit=onPlayerForfeit
+        game.gameEvents.onEnemyForfeit=onEnemyForfeit
+        game.gameEvents.onPlayerLeft=onPlayerLeft;
+        game.gameEvents.onLost=onLost;
 
     }, []);
     useEffect(() => {
@@ -51,10 +54,12 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
         }
     }
     const onPlayerStartedTurn=()=>{
+        setStartingScreen(false)
         setInfoPanel("pick field")
         setPlayerTurn(true)
     }
     const onEnemyStartedTurn=()=>{
+        setStartingScreen(false)
         setInfoPanel("enemy picking field")
         setPlayerTurn(false)
     }
@@ -127,14 +132,19 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
         setPlayerTurn(false)
         setShootingPos(pos)
     }
-    const onWin=()=>{
+    const onWin=(enemyFields)=>{
         setWinner(true)
-        console.log("win")
+        setEndingEnemyFields(enemyFields);
+    }
+    const onLost=(enemyFields)=>{
+        setWinner(false)
+        setEndingEnemyFields(enemyFields);
     }
     const handleShowEnemyShips = () => {
         setShowEnemyShips(true)
     }
     const onPlayerForfeit=(enemyShips)=>{
+        console.log("you forfeited")
         setShootingPos(prevState=>{
             if(prevState!==null)
             {
@@ -143,7 +153,7 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
                     return [...prevFields]
                 })
             }
-            return prevState
+            return null
         })
         const fields=getEmptyFields()
         for(let i=0;i<fields.length;i++){
@@ -154,10 +164,26 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
             }
         }
         setEndingEnemyFields(enemyShips)
-        setShootingPos(null)
         setForfeited(true)
         setWinner(false)
 
+        game.endGame();
+    }
+    const onEnemyForfeit=(enemyShips)=>{
+        console.log("enemy forfeit")
+        setShootingPos(prevState=>{
+            if(prevState!==null)
+            {
+                setEnemyFields(prevFields=>{
+                    prevFields[prevState.y][prevState.x]-=10
+                    return [...prevFields]
+                })
+            }
+            return prevState
+        })
+        setEndingEnemyFields(enemyShips)
+        setForfeited(true)
+        setWinner(true)
         game.endGame();
     }
     const forfeit = () => {
@@ -176,6 +202,22 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
     }
     const hideEnemyShips=()=>{
         setShowEnemyShips(false)
+    }
+    const onPlayerLeft=(fields)=>{
+        setShootingPos(prevState=>{
+            if(prevState!==null)
+            {
+                setEnemyFields(prevFields=>{
+                    prevFields[prevState.y][prevState.x]-=10
+                    return [...prevFields]
+                })
+            }
+            return prevState
+        })
+        setEndingEnemyFields(fields)
+        setPlayerLeft(true)
+        setWinner(true)
+        game.endGame();
     }
 
     return <GameView startingScreen={startingScreen} startingPlayer={startingPlayer}

@@ -23,6 +23,8 @@ class Online {
         this.gameLogHandlers[eventName] = callback;
     }
     #handleGameLog=(msg)=>{
+        console.log("handling message")
+        console.log(msg)
         const obj = JSON.parse(msg.body);
         const type = obj.type;
         if (this.gameLogHandlers[type] !== undefined) {
@@ -88,11 +90,30 @@ class Online {
         this.#stompClient.send("/app/start", {}, msg)
     }
     submitShips = (ships) => {
+        let fields;
+        console.log(ships)
+        let noShips=true;
+        for(let i=0;i<ships.length;i++){
+            for(let j=0;j<ships[i].length;j++){
+                if(ships[i][j]!==0){
+                    noShips=false;
+                    break;
+                }
+            }
+            if(!noShips)
+                break
+        }
+
+        if(noShips){
+            fields=""
+        }else{
+            fields=JSON.stringify(ships);
+        }
         const msg = {
             roomId: this.#roomId,
             senderId: this.#userId,
             type:"SUBMIT_SHIPS",
-            message:JSON.stringify(ships)
+            message:fields
         }
     this.#stompClient.send("/app/submitShips", {}, JSON.stringify(msg))
     }

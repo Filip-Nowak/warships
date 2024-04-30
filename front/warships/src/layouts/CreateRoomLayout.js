@@ -11,7 +11,6 @@ function CreateRoomLayout() {
     const onlineContext = useContext(OnlineContext);
     const navigate = useNavigate()
     useEffect(() => {
-        console.log(onlineContext.username)
         connect();
     }, []);
     const onConnected = () => {

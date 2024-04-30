@@ -7,7 +7,7 @@ import {useEffect} from "react";
 function StartingScreen({players, startingId}) {
     const [countdown,setCountdown]=useTimer(()=>{})
     useEffect(() => {
-        // setCountdown(1)
+        setCountdown(5)
     }, []);
     return <FullScreenInfo>
             <Menu containerStyle={{width:"50rem", height:"13rem",marginTop:"20rem",paddingTop:"2rem"}}>
