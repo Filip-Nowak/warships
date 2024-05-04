@@ -14,6 +14,9 @@ function EndingScreen({winner,showEnemyShips,returnToRoom, forfeited, playerLeft
     }else if(playerLeft){
         message="enemy left"
     }
+    const handleClick=()=>{
+        console.log("handled")
+    }
     return <FullScreenInfo>
         <Menu containerStyle={{width:"50rem",padding:"2.5rem",marginTop:"25rem"}}>
             <div style={{marginLeft:"auto",marginRight:"auto",width:"fit-content"}}>{winner?"you won":"you lost"}</div>

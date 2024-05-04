@@ -8,8 +8,7 @@ import InfoPanel from "../infoPanel/InfoPanel";
 import EnemyShips from "../endingScreen/EnemyShips";
 
 function GameView({
-
-                      infoPanelContent,
+                      info,
                       handleConsoleFieldClick,
                       startingScreen,
                       players,
@@ -25,7 +24,8 @@ function GameView({
                       playerLeft,
                       playerFields,
                       enemyFields,
-                      playerTurn, enemyNickname
+                      playerTurn, enemyNickname,
+                      time
                   }) {
 
     return (
@@ -34,8 +34,8 @@ function GameView({
                 <Board fields={playerFields} boardInfo={BoardFactory.getSeaBoard()}/>
             </div>
             <div style={{width: "50%"}}>
-                <ShipPanel forfeit={forfeit}>
-                    <InfoPanel info={infoPanelContent}></InfoPanel>
+                <ShipPanel forfeit={forfeit} time={time} disabled={!playerTurn}>
+                    <InfoPanel info={info}></InfoPanel>
                     <Board boardInfo={BoardFactory.getConsoleBoard(playerTurn)}
                            handleFieldClick={handleConsoleFieldClick} fields={enemyFields}/>
                 </ShipPanel>

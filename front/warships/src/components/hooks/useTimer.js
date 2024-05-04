@@ -6,9 +6,11 @@ function useTimer(callback, d = 1000) {
     const time=useRef(null)
     useEffect(() => {
         let timeoutId;
-        console.log("in effect")
-        console.log(time)
         if(time.current!==null|| countdown!==0){
+            if(countdown===0&&time.current>0){
+                time.current=null;
+                return;
+            }
             if(time.current===null){
                 time.current=countdown
             }
@@ -24,7 +26,6 @@ function useTimer(callback, d = 1000) {
             }
         }
         return () => {
-            console.log("destroy")
             clearTimeout(timeoutId)
         }
     }, [countdown]);

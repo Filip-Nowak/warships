@@ -41,13 +41,10 @@ function RoomLayout() {
     console.log(inRoom)
     console.log("render")
     function onPlayerLeft(msg){
-        console.log("player left ")
-        console.log(msg)
+        loadingContext.setLoading(false)
         if(msg.message===online.getUserId()){
-            console.log("you left")
             online.setRoomId(null)
             navigate("/online/create-room")
-            setFetching(false)
             onlineContext.setRoom(null)
         }else{
             onlineContext.setRoom(prevState=>{
@@ -55,14 +52,18 @@ function RoomLayout() {
                 prevState.ownerId=online.getRoomId()
                 return {...prevState}
             })
-            setFetching(false)
-            setInRoom(prevState => {
-                if(!prevState && !inGame){
-                    console.log("chuj")
-                    setReady(false)
+            setInGame(prevInGame=>{
+                if(!prevInGame){
+                    setInRoom(prevState => {
+                        if(!prevState){
+                            setReady(false)
+                        }
+                        return true;
+                    })
                 }
-                return true;
+                return prevInGame
             })
+
         }
 
     }
@@ -127,6 +128,7 @@ function RoomLayout() {
         setPlayerFields([])
         setInRoom(true)
         loadingContext.setLoading(false)
+        setInGame(false)
     }
 
     function handleReturnToLobby(msg){
@@ -170,12 +172,14 @@ function RoomLayout() {
         online.leave();
     }
     const returnToRoom=()=>{
+        console.log(inGame)
         setInRoom(true)
         setInGame(false)
         setReady(false)
         setStartingPlayer("")
         setPlayerFields([])
     }
+    console.log(inGame)
     const back=()=>{
         online.back();
     }
@@ -186,7 +190,7 @@ function RoomLayout() {
                 <MenuButton message={"leave"} handleClick={leave}></MenuButton>
                 <RoomView handleReadyClick={setPlayerReady} startGame={startCreator} ready={ready}></RoomView></>
                 :
-                !inGame?<CreatorMenu back={back} online={true} submitShips={submitShips} fetching={fetching}></CreatorMenu>
+                !inGame?<CreatorMenu back={back} online={true} submitShips={submitShips} ></CreatorMenu>
                     :
                     <Game game={game.current} returnToLobby={returnToRoom} startingPlayer={startingPlayer} setPlayerFields={setPlayerFields} playerFields={playerFields}></Game>
 

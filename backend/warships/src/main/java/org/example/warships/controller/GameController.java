@@ -72,7 +72,24 @@ public class GameController {
         GameModel game = gameService.getGame(user.getRoomId());
         System.out.println("shoot");
         System.out.println(game);
+        if(game==null||!game.isInGame()){
+            return;
+        }
         if(!game.getTurn().equals(user.getId())) {
+            return;
+        }
+        if(Objects.equals(message.getMessage(), "")){
+            for(PlayerModel playerModel:game.getPlayers()){
+                messagingTemplate.convertAndSendToUser(playerModel.getId(),"/game",GameLog.builder().type(LogType.MISS).senderId(user.getId()).build());
+            }
+            ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+            scheduler.schedule(() -> {
+                GameModel updatedGame = gameService.getGame(user.getRoomId());
+                updatedGame=gameService.changeTurn(updatedGame);
+                for(PlayerModel player:updatedGame.getPlayers()){
+                    messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().type(LogType.STARTED_TURN).senderId(updatedGame.getTurn()).build());
+                }
+            }, 2, TimeUnit.SECONDS);
             return;
         }
         for(PlayerModel player:game.getPlayers()) {

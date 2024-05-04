@@ -121,9 +121,10 @@ class Online {
 
 
     shoot(pos) {
+        const message=pos===null?"":pos.x+";"+pos.y;
         const msg={
             senderId: this.#userId,
-            message:pos.x+";"+pos.y,
+            message:message,
             roomId: this.#roomId
         }
         this.#stompClient.send("/app/shoot", {}, JSON.stringify(msg))

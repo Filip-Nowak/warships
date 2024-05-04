@@ -1,7 +1,8 @@
 import styles from "./shipPanel.module.css"
 import MenuButton from "../../utils/menuButton/MenuButton";
+import Timer from "../../utils/timer/Timer";
 
-function ShipPanel({children, time, forfeit}) {
+function ShipPanel({children, time, forfeit,disabled}) {
     return <div>
         <div style={{width: "24rem", height: "2.5rem"}}>
             <div style={{
@@ -34,8 +35,7 @@ function ShipPanel({children, time, forfeit}) {
                     </div>
                     <div style={{background:"lime",width:"2%",backgroundColor:"#420000"}}></div>
                     <div className={styles.timer}>
-                        <div>{time}0 : 00</div>
-                    </div>
+                    <Timer time={time} dangerZone={5} disabled={disabled} /></div>
                 </div>
             </div>
         </div>

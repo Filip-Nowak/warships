@@ -62,9 +62,9 @@ export default class OnlineGame {
     }
     handleStartedTurn = (msg) => {
         if (msg.senderId === online.getUserId()) {
-            this.gameEvents.onPlayerStartedTurn(msg.pos)
+            this.gameEvents.onPlayerStartedTurn(10)
         } else {
-            this.gameEvents.onEnemyStartedTurn(msg.pos)
+            this.gameEvents.onEnemyStartedTurn(10)
         }
     }
     handleShooting = (msg) => {
