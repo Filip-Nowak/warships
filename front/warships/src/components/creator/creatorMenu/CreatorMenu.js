@@ -8,16 +8,16 @@ import MenuButton from "../../utils/menuButton/MenuButton";
 import MainPanel from "../mainPanel/MainPanel";
 import useTimer from "../../hooks/useTimer";
 import LoadingContext from "../../context/LoadingContext";
-import getEmptyFields from "../../utils/getEmptyFields";
-import checkField from "../../utils/checkField";
+import getEmptyFields from "../../../utils/board/getEmptyFields";
 import {
+    checkField,
     forAroundFields, forCrossFields,
     getField,
     printFields,
     setAroundFields,
     setCrossFields,
     setField
-} from "../../utils/board/boardUitils";
+} from "../../../utils/board/boardUitils";
 
 function CreatorMenu({submitShips, online, back}) {
     const [fields, setFields] = useState(getEmptyFields())
@@ -25,22 +25,12 @@ function CreatorMenu({submitShips, online, back}) {
     const [shipsLeft, setShipsLeft] = useState([1, 2, 3, 4])
     const [deployingShip, setDeployingShip] = useState([])
     const [removeMode, setRemoveMode] = useState(false)
-    const [time, setTime] = useTimer(() => {
-        if (time === 0) {
-            handleSubmitShips();
-        }
-    })
+
     const loadingContext = useContext(LoadingContext)
-    useEffect(() => {
-        if (online) {
-            setTime(60)
-        }
-    }, []);
     const handleSubmitShips = () => {
         loadingContext.setLoading(true);
         submitShips(fields)
     }
-
 
     const setForbiddenFields = (x, y, fields) => {
         const condition = (v) => {
@@ -212,7 +202,7 @@ function CreatorMenu({submitShips, online, back}) {
         <div className={styles.panel}>
             <TopPanel
                 msg={(removeMode) ? "Pick ship to remove" : selectedShip === 0 ? "select ship to deploy" : "pick location"}
-                mode={!removeMode} time={time} disabled={!online}/>
+                mode={!removeMode} disabled={!online} online={online} handleSubmitShips={handleSubmitShips}/>
             <button onClick={fill}>fill</button>
             <MainPanel shipsLeft={shipsLeft} deployingShip={deployingShip} handleFieldClick={handleFieldClick}
                        ships={null} selectShip={setSelectedShip} selectedShip={selectedShip} removeMode={removeMode}
@@ -233,52 +223,3 @@ function CreatorMenu({submitShips, online, back}) {
 
 export default CreatorMenu
 
-
-// const fill = () => {
-//     setShips(
-//         [
-//             {
-//                 fields: [{pos: {x: 0, y: 0}, hit: false}, {pos: {x: 1, y: 0}, hit: false}, {
-//                     pos: {x: 2, y: 0},
-//                     hit: false
-//                 }, {pos: {x: 3, y: 0}, hit: false}],
-//                 sunken: false
-//             }, {
-//             fields: [{pos: {x: 0, y: 2}, hit: false}, {pos: {x: 1, y: 2}, hit: false}, {
-//                 pos: {x: 2, y: 2},
-//                 hit: false
-//             }],
-//             sunken: false
-//         }, {
-//             fields: [{pos: {x: 0, y: 4}, hit: false}, {pos: {x: 1, y: 4}, hit: false}, {
-//                 pos: {x: 2, y: 4},
-//                 hit: false
-//             }],
-//             sunken: false
-//         }, {
-//             fields: [{pos: {x: 0, y: 6}, hit: false}, {pos: {x: 1, y: 6}, hit: false}],
-//             sunken: false
-//         }, {
-//             fields: [{pos: {x: 0, y: 8}, hit: false}, {pos: {x: 1, y: 8}, hit: false}],
-//             sunken: false
-//         }, {
-//             fields: [{pos: {x: 3, y: 8}, hit: false}, {pos: {x: 4, y: 8}, hit: false}],
-//             sunken: false
-//         },
-//             {
-//                 fields: [{pos: {x: 9, y: 0}, hit: false}],
-//                 sunken: false
-//             }, {
-//             fields: [{pos: {x: 9, y: 2}, hit: false}],
-//             sunken: false
-//         }, {
-//             fields: [{pos: {x: 9, y: 4}, hit: false}],
-//             sunken: false
-//         }, {
-//             fields: [{pos: {x: 9, y: 6}, hit: false}],
-//             sunken: false
-//         }
-//         ]
-//     )
-//     setShipsLeft([0,0,0,0])
-// }

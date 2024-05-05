@@ -1,4 +1,4 @@
-import online from "./Online";
+import online from "../online/Online";
 
 export default class OnlineGame {
     #shootingTimer
@@ -8,9 +8,12 @@ export default class OnlineGame {
     enemyIndex
     players = []
     setRoom
+    startingPlayer
 
-    constructor(players,setRoom) {
-        console.log(players)
+    constructor(players,setRoom,startingPlayer) {
+        console.log(players+" "+startingPlayer)//
+        console.log(startingPlayer)
+        console.log(online.getUserId())
         if (players[0].id === online.getUserId()) {
             this.playerIndex = 0
             this.enemyIndex = 1
@@ -19,7 +22,11 @@ export default class OnlineGame {
             this.enemyIndex = 0
         }
         this.players = [players[0].nickname, players[1].nickname]
-
+        if(startingPlayer===online.getUserId()){
+            this.startingPlayer=this.playerIndex
+        }else{
+            this.startingPlayer=this.enemyIndex
+        }
         this.setRoom=setRoom
         online.addGameLogHandler("HIT", this.handleHit)
         online.addGameLogHandler("SUNKEN", this.handleSunken)
@@ -79,9 +86,9 @@ export default class OnlineGame {
         const data= JSON.parse(msg.message)
 
         if (data.id === online.getUserId()) {
-            this.gameEvents.onWin()
+            this.gameEvents.onWin(data.fields)
         } else {
-            this.gameEvents.onLost();
+            this.gameEvents.onLost(data.fields);
         }
     }
     handlePlayerLeft = (msg) => {

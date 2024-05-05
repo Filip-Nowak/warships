@@ -1,12 +1,12 @@
-import Menu from "../components/utils/Menu/Menu";
+import Menu from "../components/utils/menu/Menu";
 import styles from "./homeLayout.module.css"
 import MenuButton from "../components/utils/menuButton/MenuButton";
-import SubmitInput from "../components/utils/SubmitInput/SubmitInput";
-import SubmitMessageInput from "../components/utils/SubmitMessageInput/SubmitMessageInput";
+import SubmitInput from "../components/utils/submitInput/SubmitInput";
+import SubmitMessageInput from "../components/utils/submitMessageInput/SubmitMessageInput";
 import {useNavigate} from "react-router";
 import onlineContext from "../components/context/OnlineContext";
 import {useContext} from "react";
-import Online from "../gameUtils.js/Online";
+import Online from "../utils/online/Online";
 import OnlineContext from "../components/context/OnlineContext";
 
 function HomeLayout({setUsername}) {

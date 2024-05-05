@@ -1,5 +1,5 @@
 import {useContext} from "react";
-import GameContext from "../../context/gameContext";
+import GameContext from "../../context/GameContext";
 import styles from "./bottmPanel.module.css"
 import BottomPanelContext from "../../context/BottomPanelContext";
 

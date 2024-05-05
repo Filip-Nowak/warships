@@ -1,4 +1,4 @@
-import getEmptyFields from "../components/utils/getEmptyFields";
+import getEmptyFields from "../board/getEmptyFields";
 
 class BotEnemy{
     fields = getEmptyFields()
@@ -29,6 +29,12 @@ class BotEnemy{
         this.addShip(1)
         this.addShip(1)
         this.addShip(1)
+        for(let i=0;i<this.fields.length;i++){
+            for(let j=0;j<this.fields[i].length;j++){
+                if(this.fields[i][j]===2)
+                    this.fields[i][j]=0
+            }
+        }
         console.log(this.fields)
     }
     addShip = (size) => {
@@ -93,7 +99,6 @@ class BotEnemy{
     setField = (pos, value) => {
         this.fields[pos.y][pos.x] = value
     }
-    //todo already hit
     shoot = (pos) => {
         let output={}
         if (this.getField(pos) === 1) {

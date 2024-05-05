@@ -2,7 +2,7 @@ import CreatorMenu from "../components/creator/creatorMenu/CreatorMenu";
 import {useEffect, useRef, useState} from "react";
 import {useNavigate} from "react-router";
 import Game from "../components/game/game/Game";
-import BotGame from "../gameUtils.js/BotGame";
+import BotGame from "../utils/game/BotGame";
 
 function BotLayout() {
     const [inGame, setInGame] = useState(false)

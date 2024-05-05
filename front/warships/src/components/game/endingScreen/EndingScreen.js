@@ -1,7 +1,7 @@
 import FullScreenInfo from "../../utils/loading/FullScreenInfo";
-import Menu from "../../utils/Menu/Menu";
+import Menu from "../../utils/menu/Menu";
 import MenuButton from "../../utils/menuButton/MenuButton";
-import online from "../../../gameUtils.js/Online";
+import online from "../../../utils/online/Online";
 
 function EndingScreen({winner,showEnemyShips,returnToRoom, forfeited, playerLeft}){
     let message=""
@@ -13,9 +13,6 @@ function EndingScreen({winner,showEnemyShips,returnToRoom, forfeited, playerLeft
         }
     }else if(playerLeft){
         message="enemy left"
-    }
-    const handleClick=()=>{
-        console.log("handled")
     }
     return <FullScreenInfo>
         <Menu containerStyle={{width:"50rem",padding:"2.5rem",marginTop:"25rem"}}>

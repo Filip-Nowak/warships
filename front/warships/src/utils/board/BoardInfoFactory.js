@@ -1,30 +1,25 @@
-import getEmptyFields from "../getEmptyFields";
-import checkField from "../checkField";
-import fieldStyles from "../../board/field/fieldStyle.module.css";
-import boardStyles from "../../board/board/boardStyle.module.css";
+import fieldStyles from "../../components/board/field/fieldStyle.module.css";
+import boardStyles from "../../components/board/board/boardStyle.module.css";
 
-export default class BoardFactory {
+export default class BoardInfoFactory {
     static getCreatorBoard = ( disabled, removeMode, deployingShip) => {
         const board = {}
-        const isFieldDisabled =
-            disabled ?
-                (pos,value) => true
+        board.isFieldDisabled = disabled ?
+            (pos, value) => true
+            :
+            removeMode ?
+                (pos, value) => {
+                    return value !== 1
+                }
                 :
-                removeMode ?
-                    (pos,value) => {
-                        return value !== 1
+                deployingShip.length === 0 ?
+                    (pos, value) => {
+                        return value !== 0
                     }
                     :
-                    deployingShip.length === 0 ?
-                        (pos,value) => {
-                            return value !== 0
-                        }
-                        :
-                        (pos,value) => {
-                            return value !== 3
-                        }
-
-        board.isFieldDisabled = isFieldDisabled
+                    (pos, value) => {
+                        return value !== 3
+                    }
         board.fieldType = fieldStyles.creatorField
         board.fieldClassnames = [
             "",

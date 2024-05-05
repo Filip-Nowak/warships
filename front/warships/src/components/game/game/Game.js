@@ -1,12 +1,13 @@
 import GameView from "./GameView";
 import {useContext, useEffect, useState} from "react";
 import LoadingContext from "../../context/LoadingContext";
-import getEmptyFields from "../../utils/getEmptyFields";
-import {forCrossFields, getField} from "../../utils/board/boardUitils";
+import getEmptyFields from "../../../utils/board/getEmptyFields";
+import {forCrossFields, getField} from "../../../utils/board/boardUitils";
 import useTimer from "../../hooks/useTimer";
-import BlinkingDots from "../../utils/BlinkingDots";
+import BlinkingDots from "../../utils/blinkingDots/BlinkingDots";
+import BotGame from "../../../utils/game/BotGame";
 
-function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby}) {
+function Game({game, playerFields, setPlayerFields,returnToLobby}) {
     const [playerTurn, setPlayerTurn] = useState(false);
     const [startingScreen, setStartingScreen] = useState(true)
     const [forfeited, setForfeited] = useState(false)
@@ -19,7 +20,10 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
     const loadingContext = useContext(LoadingContext)
     const onTimeout=()=>{
         if(playerTurn)
+        {
+            setPlayerTurn(false)
             game.shoot(null);
+        }
     }
     const [time,setTime]=useTimer(onTimeout)
     const [shootingPos, setShootingPos] = useState(null)
@@ -35,6 +39,7 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
         game.gameEvents.onEnemySunken = onEnemySunken;
         game.gameEvents.onEnemyMiss = onEnemyMiss;
         game.gameEvents.onEnemyAlreadyHit=onEnemyAlreadyHit
+        game.gameEvents.onPlayerAlreadyHit=onPlayerAlreadyHit;
         game.gameEvents.onPlayerStartedTurn=onPlayerStartedTurn;
         game.gameEvents.onEnemyStartedTurn=onEnemyStartedTurn;
         game.gameEvents.onWin=onWin
@@ -91,8 +96,14 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
     const onEnemyAlreadyHit=(pos)=>{
         setInfo({message:"enemy hit at "+pos.x+" : "+pos.y+" (already hit)"})
     }
+    const onPlayerAlreadyHit=(pos)=>{
+        setInfo({message:"enemy ship got hit at "+pos.x+" : "+pos.y+" (already hit)"})
+        setEnemyFields(prevState => {
+            prevState[pos.y][pos.x] -= 10
+            return [...prevState]
+        })
+    }
     const onPlayerHit = ({x, y}) => {
-        console.log("hit")
         setInfo({message:"enemy ship hit at " + x + ":" + y})
         setEnemyFields(prevState => {
             prevState[y][x] = 1
@@ -100,8 +111,6 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
         })
     }
     const onPlayerMiss = (pos) => {
-        console.log("miss")
-        console.log(pos)
         setInfo({message:"you missed"})
         if (pos == null) {
             setInfo({message:"you didnt shot"})
@@ -113,14 +122,12 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
         }
     }
     const onPlayerSunken = (pos) => {
-        console.log("sunken")
         setInfo({message:"enemy ship got sunken at (" + pos.x + "," + pos.y + ")"})
         setEnemyFields(prevState => {
             return sunkShip(pos,prevState,1,2)
         })
     }
     const onPlayerShooting = () => {
-        console.log("shooting")
         setInfo({message:"shooting",loading:true})
         setTime(0)
         setEnemyFields(prevState=>{
@@ -131,14 +138,11 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
             return [...prevState]
         })
     }
-    console.log("game")
-    console.log(enemyFields)
     const onEnemyShooting = () => {
         setInfo({message:"enemy shooting",loading:true})
         setTime(0);
     }
     const onStart = () => {
-        console.log("onstart")
         setStartingScreen(false)
     }
     const handleConsoleClick = (pos) => {
@@ -160,7 +164,6 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
         setShowEnemyShips(true)
     }
     const onPlayerForfeit=(enemyShips)=>{
-        console.log("you forfeited")
         setShootingPos(prevState=>{
             if(prevState!==null)
             {
@@ -187,7 +190,6 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
         game.endGame();
     }
     const onEnemyForfeit=(enemyShips)=>{
-        console.log("enemy forfeit")
         setShootingPos(prevState=>{
             if(prevState!==null)
             {
@@ -239,10 +241,10 @@ function Game({game, startingPlayer, playerFields, setPlayerFields,returnToLobby
         game.endGame();
     }
 
-    return <GameView startingScreen={startingScreen} startingPlayer={startingPlayer} time={time}
+    return <GameView startingScreen={startingScreen} startingPlayer={game.startingPlayer} time={time}
                      forfeited={forfeited} handleConsoleFieldClick={handleConsoleClick}
                      handleShowEnemyShips={handleShowEnemyShips} playerFields={playerFields} playerLeft={playerLeft}
-                     returnToLobby={returnToLobby} winner={winner} players={game.players} info={info}
+                     returnToLobby={returnToLobby} winner={winner} players={game.players} info={info} timerDisabled={game instanceof BotGame || !playerTurn}
                      enemyFields={enemyFields} forfeit={forfeit} playerTurn={playerTurn} enemyNickname={game.players[game.enemyIndex]} hideEnemyShips={hideEnemyShips} showEnemyShips={showEnemyShips} endingEnemyFields={endingEnemyFields}/>
 }
 

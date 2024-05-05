@@ -1,5 +1,5 @@
 import styles from "./fullScreenInfo.module.css";
-import BlinkingDots from "../BlinkingDots";
+import BlinkingDots from "../blinkingDots/BlinkingDots";
 
 function FullScreenInfo({children,loading}){
     return <div className={styles.absoluteContainer}>

@@ -1,4 +1,4 @@
-import Menu from "../../utils/Menu/Menu";
+import Menu from "../../utils/menu/Menu";
 import PlayersInfo from "./PlayersInfo";
 import FullScreenInfo from "../../utils/loading/FullScreenInfo";
 import styles from "./startingScreen.module.css"

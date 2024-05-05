@@ -1,7 +1,6 @@
 import {useEffect, useRef, useState} from "react";
 
 function useTimer(callback, d = 1000) {
-    console.log("useTimer")
     const [countdown, setCountdown] = useState(0);
     const time=useRef(null)
     useEffect(() => {

@@ -2,15 +2,13 @@ import Field from "./Field";
 import {useEffect, useRef, useState} from "react";
 import useTimer from "../../hooks/useTimer";
 
-function BlinkingField({x,y,handleClick, isDisabled, fieldType, selectedFieldStyle,selectField,selected,value,boardDisabled,classname}){
+function BlinkingField({x,y,handleClick, isDisabled, fieldType, selectedFieldStyle,selectField,selected,value,classname}){
     const [border, setBorder] = useState(true)
     const onTimeChange=()=>{
-        console.log("dupa")
         setBorder(prevState => !prevState)
         setTime(0.3)
     }
     useEffect(() => {
-        console.log("chuj")
         setTime(0.3)
     }, []);
     const [time,setTime]=useTimer(onTimeChange,300)

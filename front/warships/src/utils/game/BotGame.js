@@ -1,5 +1,5 @@
 import BotEnemy from "./BotEnemy";
-import {forCrossFields, getField, setField} from "../components/utils/board/boardUitils";
+import {forCrossFields, getField, setField} from "../board/boardUitils";
 
 export default class BotGame {
     handleBotShot=(pos)=> {

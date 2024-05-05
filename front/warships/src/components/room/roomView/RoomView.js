@@ -1,11 +1,11 @@
-import Menu from "../../utils/Menu/Menu";
+import Menu from "../../utils/menu/Menu";
 import CodeContainer from "./CodeContainer";
 import PlayersInRoom from "./PlayersInRoom";
 import MenuButton from "../../utils/menuButton/MenuButton";
 import styles from "./roomView.module.css"
-import {useContext, useEffect} from "react";
+import {useContext} from "react";
 import OnlineContext from "../../context/OnlineContext";
-import online from "../../../gameUtils.js/Online";
+import online from "../../../utils/online/Online";
 function RoomView({ready,handleReadyClick,startGame}) {
     const onlineContext=useContext(OnlineContext);
     let allPlayersReady=true;

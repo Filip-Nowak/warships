@@ -1,0 +1,25 @@
+.errorContainer{
+    position: absolute;
+    top: 5rem;
+    width:35rem;
+    height:15rem;
+    background-color: #520303;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 80%;
+    font-size: 4rem;
+    text-align: center;
+    display: flex;
+    align-items: center;
+}
+.message{
+    width: 100%;
+}
+.serverError{
+    width:100%;
+    text-align: center;
+    font-size: 5rem;
+    margin-top: 4rem;
+}

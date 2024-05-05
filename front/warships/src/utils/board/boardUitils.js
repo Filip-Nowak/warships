@@ -1,5 +1,3 @@
-import checkField from "../checkField";
-
 function setField(x,y,fields,value){
     if(checkField(x,y))
         fields[y][x]=value
@@ -53,4 +51,13 @@ function printFields(fields){
     })
     console.log(msg)
 }
-export {getField,setField,setCrossFields,forAroundFields,setAroundFields,printFields,forCrossFields}
+function checkField(x, y) {
+    return x >= 0 && y >= 0 && x <= 9 && y <= 9;
+}
+function getRandomNumber (max){
+    return Math.floor(Math.random() * max)
+}
+function cloneFields(fields){
+    return fields.map(arr=>[...arr])
+}
+export {getField,setField,setCrossFields,forAroundFields,setAroundFields,printFields,forCrossFields,checkField,getRandomNumber,cloneFields}

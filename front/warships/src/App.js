@@ -7,10 +7,11 @@ import OnlineLayout from "./layouts/OnlineLayout";
 import "./App.css"
 import BotLayout from "./layouts/BotLayout";
 import {useState} from "react";
+import ServerError from "./components/errors/ServerError";
+import SmartBot from "./utils/game/SmartBot";
 
 function App() {
     const [username, setUsername] = useState("")
-    console.log(username)
     const router = createBrowserRouter(
         createRoutesFromElements(
             <Route path={"/"} element={<RootLayout/>}>
@@ -18,12 +19,22 @@ function App() {
                 <Route path={"bot"} element={<BotLayout/>}/>
                 <Route path={"online"} element={<OnlineLayout username={username} setUsername={setUsername}></OnlineLayout>}>
                     <Route path={"create-room"} element={<CreateRoomLayout/>}/>
-                    <Route path={"room/:roomId"} loader={roomLoader} element={<RoomLayout/>}/>
+                    <Route path={"room/:roomId"}  element={<RoomLayout/>}/>
                 </Route>
+                <Route path={"*"} element={<ServerError message={"page not found"}/> }/>
             </Route>
         )
     )
     return <RouterProvider router={router}/>
+    // const bot = new SmartBot();
+    // return <div>
+    //     {bot.fields.map((row, y) => {
+    //         row.map(field=>{
+    //             return <div>field</div>
+    //         })
+    //     })}
+    // </div>
 }
+
 
 export default App;

@@ -1,4 +1,4 @@
-import {createContext, useContext} from "react";
+import {createContext} from "react";
 
 const OnlineContext=createContext({
     username:"",
@@ -6,8 +6,9 @@ const OnlineContext=createContext({
     room:{
         id:"",
         users:[{id:"",nickname:"",ready:""}],
-        ownerId:""
+        ownerId:"",
     },
+    setError:(prevState)=>{},
     setRoom:(room)=>{},
 })
 export default OnlineContext

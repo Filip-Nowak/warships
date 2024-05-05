@@ -1,28 +1,41 @@
 import JoinRoom from "../components/room/joinRoom/JoinRoom";
-import online from "../gameUtils.js/Online";
+import online from "../utils/online/Online";
 import {useContext, useEffect, useState} from "react";
 import OnlineContext from "../components/context/OnlineContext";
 import {useNavigate} from "react-router";
-import Online from "../gameUtils.js/Online";
+import Online from "../utils/online/Online";
 import MenuButton from "../components/utils/menuButton/MenuButton";
+import RoomNotFoundError from "../components/errors/RoomNotFoundError";
+import LoadingContext from "../components/context/LoadingContext";
 
 function CreateRoomLayout() {
-    const [fetching, setFetching] = useState(true)
     const onlineContext = useContext(OnlineContext);
     const navigate = useNavigate()
+    const [displayError, setDisplayError] = useState(false)
+    const loadingContext=useContext(LoadingContext)
     useEffect(() => {
+        loadingContext.setLoading(true)
         connect();
     }, []);
     const onConnected = () => {
         online.addRoomMessageHandler("JOINED_ROOM", onJoinRoom)
-        setFetching(false)
+        online.addRoomMessageHandler("ERROR",handleError)
+        loadingContext.setLoading(false)
+    }
+    const handleError=()=>{
+        console.log("handled error")
+        loadingContext.setLoading(false)
+        setDisplayError(true)
+        setTimeout(()=>{
+            setDisplayError(false)
+        },2000)
     }
     const joinRoom = (code) => {
-        setFetching(true)
+        loadingContext.setLoading(true)
         online.joinRoom(code)
     }
     const onJoinRoom = (msg) => {
-        setFetching(false)
+        loadingContext.setLoading(false)
         const room=JSON.parse(msg.message)
         console.log(room)
         onlineContext.setRoom(room)
@@ -31,20 +44,19 @@ function CreateRoomLayout() {
         console.log("created")
     }
     const createRoom = () => {
-        setFetching(true)
+        loadingContext.setLoading(true)
         online.createRoom()
     }
-    const onError = (e) => {
-        console.log("error")
-        console.log(e)
-    }
+
 
     async function connect() {
         if (online.getUserId() === null) {
-            await online.createUser(onlineContext.username)
-            await online.connect(onlineContext.username, onConnected, onError)
+            let error=false;
+            await online.createUser(onlineContext.username).catch(e=>{error=true;onlineContext.setError("couldn't connect to server")})
+            if(!error)
+                await online.connect(onlineContext.username, onConnected,onlineContext.setError)
         } else {
-            setFetching(false)
+            loadingContext.setLoading(false)
             online.roomMessageHandlers = {}
             online.addRoomMessageHandler("JOINED_ROOM", onJoinRoom)
         }
@@ -56,8 +68,9 @@ function CreateRoomLayout() {
         onlineContext.setRoom(null)
     }
     return <>
+    {displayError?<RoomNotFoundError/>:""}
         <MenuButton message={"back"} handleClick={deleteSession}></MenuButton>
-        <JoinRoom fetching={fetching} createRoom={createRoom} joinRoom={joinRoom}></JoinRoom>
+        <JoinRoom  createRoom={createRoom} joinRoom={joinRoom}></JoinRoom>
     </>
 }
 

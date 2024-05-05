@@ -1,5 +1,5 @@
 import styles from "./roomView.module.css"
-import BlinkingDots from "../../utils/BlinkingDots";
+import BlinkingDots from "../../utils/blinkingDots/BlinkingDots";
 
 function RoomPlayer({player}) {
     return <div className={styles.player}>{player !== undefined ?

@@ -1,16 +1,12 @@
 import {useNavigate, useParams} from "react-router";
-import online from "../gameUtils.js/Online";
+import online from "../utils/online/Online";
 import RoomView from "../components/room/roomView/RoomView";
 import {useContext, useEffect, useRef, useState} from "react";
 import OnlineContext from "../components/context/OnlineContext";
-import OnlineCreator from "../components/online/OnlineCreator";
 import CreatorMenu from "../components/creator/creatorMenu/CreatorMenu";
-import GameView from "../components/game/game/GameView";
-import OnlineGame2 from "../components/online/OnlineGame2";
 import MenuButton from "../components/utils/menuButton/MenuButton";
 import Game from "../components/game/game/Game";
-import getEmptyFields from "../components/utils/getEmptyFields";
-import OnlineGame from "../gameUtils.js/OnlineGame";
+import OnlineGame from "../utils/game/OnlineGame";
 import LoadingContext from "../components/context/LoadingContext";
 
 
@@ -25,8 +21,12 @@ function RoomLayout() {
     const game = useRef(null);
     const navigate=useNavigate()
     const loadingContext = useContext(LoadingContext)
+    const {roomId}=useParams();
 
     useEffect(() => {
+        if (online.getRoomId() !== roomId) {
+            onlineContext.setError("you are not in this room")
+        }
         online.roomMessageHandlers = {}
         online.addRoomMessageHandler("JOINED_ROOM", onJoinRoom)
         online.addRoomMessageHandler("READY", onPlayerReady)
@@ -122,7 +122,7 @@ function RoomLayout() {
         setFetching(false)
         setInGame(true)
         setStartingPlayer(msg.message)
-        game.current=new OnlineGame(players,onlineContext.setRoom)
+        game.current=new OnlineGame(players,onlineContext.setRoom,msg.message)
     }
     const onBack=()=>{
         setPlayerFields([])
@@ -153,7 +153,6 @@ function RoomLayout() {
         if(playerFields.length!==0){
             return;
         }
-        online.submitShips(fields)
         if(fields.length!==0)
         {
             for(let i=0;i<fields.length;i++){
@@ -164,8 +163,8 @@ function RoomLayout() {
                 }
             }
             setPlayerFields(fields);
-            setPlayerFields(fields);
         }
+        online.submitShips(fields)
     }
     const leave=()=>{
         setFetching(true)
@@ -185,7 +184,8 @@ function RoomLayout() {
     }
     return (
         <>
-            {inRoom?
+            {roomId===online.getRoomId()?
+            inRoom?
                 <>
                 <MenuButton message={"leave"} handleClick={leave}></MenuButton>
                 <RoomView handleReadyClick={setPlayerReady} startGame={startCreator} ready={ready}></RoomView></>
@@ -194,7 +194,7 @@ function RoomLayout() {
                     :
                     <Game game={game.current} returnToLobby={returnToRoom} startingPlayer={startingPlayer} setPlayerFields={setPlayerFields} playerFields={playerFields}></Game>
 
-            }</>
+            :""}</>
 
     )
 }

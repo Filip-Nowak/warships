@@ -1,7 +1,7 @@
 import Field from "../field/Field";
 import styles from "./boardStyle.module.css"
 import {useState} from "react";
-import getEmptyFields from "../../utils/getEmptyFields";
+import getEmptyFields from "../../../utils/board/getEmptyFields";
 import BlinkingField from "../field/BlinkingField";
 
 function Board({boardInfo, handleFieldClick=()=>{}, fields}) {
@@ -15,10 +15,10 @@ function Board({boardInfo, handleFieldClick=()=>{}, fields}) {
                     y={y}
                     fieldType={fieldType}
                     handleClick={handleFieldClick}
-                    classname={fieldClassnames[fieldValue]}
+                    classname={fieldClassnames[fieldValue-10]}
                     isDisabled={isFieldDisabled}
                     selectedFieldStyle={selectedFieldStyle}
-                    selected={selectedField.x === x && selectedField.y === y /*&& shootingPos===null*/}
+                    selected={selectedField.x === x && selectedField.y}
                     selectField={setSelectedField}
                     value={fieldValue-10}/>
 
@@ -31,10 +31,9 @@ function Board({boardInfo, handleFieldClick=()=>{}, fields}) {
                 classname={fieldClassnames[fieldValue]}
                 isDisabled={isFieldDisabled}
                 selectedFieldStyle={selectedFieldStyle}
-                selected={selectedField.x === x && selectedField.y === y /*&& shootingPos===null*/}
+                selected={selectedField.x === x && selectedField.y === y}
                 selectField={setSelectedField}
                 value={fieldValue}
-                // shooting={shootingPos===null?false:(shootingPos.x===x&&shootingPos.y===y)}
             >
             </Field>
         })

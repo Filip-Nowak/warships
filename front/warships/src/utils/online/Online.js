@@ -32,8 +32,13 @@ class Online {
         }
     }
 
-
-    connect = async (username, onConnect, onError) => {
+    #setError
+    #onError = (e) => {
+        this.deleteSession()
+        this.#setError("server error occurred")
+    }
+    connect = async (username, onConnect, setError) => {
+        this.#setError=setError
         console.log("connecting...")
         this.#username = username
         let socket = new SockJS("http://localhost:8080/ws?userid="+encodeURIComponent(this.#userId))
@@ -42,7 +47,7 @@ class Online {
             this.#stompClient.subscribe("/user/" + this.#userId + "/room", this.#handleRoomMessage)
             this.#stompClient.subscribe("/user/" + this.#userId + "/game", this.#handleGameLog)
             onConnect()
-        }, onError)
+        }, this.#onError)
 
 
     }
@@ -50,8 +55,7 @@ class Online {
 
     createUser=async (nickname)=>{
         console.log("creating user")
-        this.#username=nickname
-            const body = JSON.stringify({nickname: this.#username});
+            const body = JSON.stringify({nickname: nickname});
         const response = await fetch("http://localhost:8080/createUser", {
                     method: "POST",
                     body: body,
@@ -60,6 +64,7 @@ class Online {
                     }
                 })
         const data=await response.json();
+        this.#username=nickname
         this.#userId=data.message;
     }
 

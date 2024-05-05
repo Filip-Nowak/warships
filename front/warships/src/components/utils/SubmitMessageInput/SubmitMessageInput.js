@@ -1,4 +1,4 @@
-import SubmitInput from "../SubmitInput/SubmitInput";
+import SubmitInput from "../submitInput/SubmitInput";
 import styles from "./submit.module.css"
 function SubmitMessageInput({message,buttonMessage,handleButtonClick,containerStyle,messageStyle,inputContainerStyle,buttonMessageStyle,inputStyle}){
     return <div style={containerStyle}>
