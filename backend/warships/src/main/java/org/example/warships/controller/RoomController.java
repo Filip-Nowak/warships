@@ -126,7 +126,7 @@ public class RoomController {
             GameModel game = gameService.getGame(user.getRoomId());
             gameService.back(game);
             for (PlayerModel player : game.getPlayers()) {
-                messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().type(RoomMessageType.BACK).build());
+                messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().type(RoomMessageType.BACK).message("").build());
             }
         } catch (RuntimeException e){
             e.printStackTrace();

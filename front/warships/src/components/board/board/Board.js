@@ -1,7 +1,6 @@
 import Field from "../field/Field";
 import styles from "./boardStyle.module.css"
 import {useState} from "react";
-import getEmptyFields from "../../../utils/board/getEmptyFields";
 import BlinkingField from "../field/BlinkingField";
 
 function Board({boardInfo, handleFieldClick=()=>{}, fields}) {

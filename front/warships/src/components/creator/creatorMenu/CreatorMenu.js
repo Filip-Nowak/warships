@@ -8,10 +8,9 @@ import MenuButton from "../../utils/menuButton/MenuButton";
 import MainPanel from "../mainPanel/MainPanel";
 import useTimer from "../../hooks/useTimer";
 import LoadingContext from "../../context/LoadingContext";
-import getEmptyFields from "../../../utils/board/getEmptyFields";
 import {
     checkField,
-    forAroundFields, forCrossFields,
+    forAroundFields, forCrossFields, getEmptyFields,
     getField,
     printFields,
     setAroundFields,

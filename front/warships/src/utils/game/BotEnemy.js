@@ -1,5 +1,4 @@
-import getEmptyFields from "../board/getEmptyFields";
-
+import {getEmptyFields} from "../board/boardUitils";
 class BotEnemy{
     fields = getEmptyFields()
     ships = []

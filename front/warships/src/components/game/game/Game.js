@@ -1,10 +1,8 @@
 import GameView from "./GameView";
 import {useContext, useEffect, useState} from "react";
 import LoadingContext from "../../context/LoadingContext";
-import getEmptyFields from "../../../utils/board/getEmptyFields";
-import {forCrossFields, getField} from "../../../utils/board/boardUitils";
+import {forCrossFields, getEmptyFields, getField} from "../../../utils/board/boardUitils";
 import useTimer from "../../hooks/useTimer";
-import BlinkingDots from "../../utils/blinkingDots/BlinkingDots";
 import BotGame from "../../../utils/game/BotGame";
 
 function Game({game, playerFields, setPlayerFields,returnToLobby}) {
@@ -224,21 +222,28 @@ function Game({game, playerFields, setPlayerFields,returnToLobby}) {
         setShowEnemyShips(false)
     }
     const onPlayerLeft=(fields)=>{
-        setShootingPos(prevState=>{
-            if(prevState!==null)
-            {
-                setEnemyFields(prevFields=>{
-                    prevFields[prevState.y][prevState.x]-=10
-                    return [...prevFields]
+        setWinner(prevState=>{
+            if(prevState===null){
+                setShootingPos(prevState=>{
+                    if(prevState!==null)
+                    {
+                        setEnemyFields(prevFields=>{
+                            prevFields[prevState.y][prevState.x]-=10
+                            return [...prevFields]
+                        })
+                    }
+                    return prevState
                 })
+                setEndingEnemyFields(fields)
+                setPlayerLeft(true)
+                prevState=true
+                setTime(0)
+                game.endGame();
             }
             return prevState
+
         })
-        setEndingEnemyFields(fields)
-        setPlayerLeft(true)
-        setWinner(true)
-        setTime(0)
-        game.endGame();
+
     }
 
     return <GameView startingScreen={startingScreen} startingPlayer={game.startingPlayer} time={time}

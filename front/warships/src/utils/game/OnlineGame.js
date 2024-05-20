@@ -35,8 +35,8 @@ export default class OnlineGame {
         online.addGameLogHandler("STARTED_TURN", this.handleStartedTurn)
         online.addGameLogHandler("SHOOTING", this.handleShooting)
         online.addGameLogHandler("WIN", this.handleWin)
-        online.addGameLogHandler("PLAYER_LEFT", this.handlePlayerLeft)
-        online.addGameLogHandler("FORFEIT", this.handleForfeit)
+        online.addRoomMessageHandler("PLAYER_LEFT", this.handlePlayerLeft)
+        online.addRoomMessageHandler("FORFEIT", this.handleForfeit)
     }
 
     handleHit = (msg) => {
@@ -82,9 +82,14 @@ export default class OnlineGame {
         }
     }
     handleWin = (msg) => {
-        console.log(msg)
+        online.addGameLogHandler("HIT", ()=>{})
+        online.addGameLogHandler("SUNKEN", ()=>{})
+        online.addGameLogHandler("ALREADY_HIT", ()=>{})
+        online.addGameLogHandler("MISS", ()=>{})
+        online.addGameLogHandler("STARTED_TURN", ()=>{})
+        online.addGameLogHandler("SHOOTING", ()=>{})
+        online.addGameLogHandler("WIN", ()=>{})
         const data= JSON.parse(msg.message)
-
         if (data.id === online.getUserId()) {
             this.gameEvents.onWin(data.fields)
         } else {
@@ -92,15 +97,30 @@ export default class OnlineGame {
         }
     }
     handlePlayerLeft = (msg) => {
+        online.addGameLogHandler("HIT", ()=>{})
+        online.addGameLogHandler("SUNKEN", ()=>{})
+        online.addGameLogHandler("ALREADY_HIT", ()=>{})
+        online.addGameLogHandler("MISS", ()=>{})
+        online.addGameLogHandler("STARTED_TURN", ()=>{})
+        online.addGameLogHandler("SHOOTING", ()=>{})
+        online.addGameLogHandler("WIN", ()=>{})
         const data=JSON.parse(msg.message);
         this.setRoom(prevState=>{
-            prevState.users = prevState.users.filter(player=>player.id!==data.id)
-            prevState.ownerId=online.getRoomId()
+            prevState.users = prevState.users.filter(player=>player.id!==data.id && player.id!==msg.message)
+            prevState.ownerId=online.getUserId()
             return {...prevState}
         })
         this.gameEvents.onPlayerLeft(data.fields);
     }
     handleForfeit = (msg) => {
+        console.log("ff")
+        online.addGameLogHandler("HIT", ()=>{})
+        online.addGameLogHandler("SUNKEN", ()=>{})
+        online.addGameLogHandler("ALREADY_HIT", ()=>{})
+        online.addGameLogHandler("MISS", ()=>{})
+        online.addGameLogHandler("STARTED_TURN", ()=>{})
+        online.addGameLogHandler("SHOOTING", ()=>{})
+        online.addGameLogHandler("WIN", ()=>{})
         const data=JSON.parse(msg.message)
         if (data.id === online.getUserId()) {
             this.gameEvents.onPlayerForfeit(data.fields)

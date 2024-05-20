@@ -60,4 +60,18 @@ function getRandomNumber (max){
 function cloneFields(fields){
     return fields.map(arr=>[...arr])
 }
-export {getField,setField,setCrossFields,forAroundFields,setAroundFields,printFields,forCrossFields,checkField,getRandomNumber,cloneFields}
+ function getEmptyFields(){
+    return [
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    ]
+}
+export {getField,setField,setCrossFields,forAroundFields,setAroundFields,printFields,forCrossFields,checkField,getRandomNumber,cloneFields,getEmptyFields}

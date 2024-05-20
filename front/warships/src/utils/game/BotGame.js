@@ -1,5 +1,6 @@
 import BotEnemy from "./BotEnemy";
 import {forCrossFields, getField, setField} from "../board/boardUitils";
+import SmartBot from "./SmartBot";
 
 export default class BotGame {
     handleBotShot=(pos)=> {
@@ -46,7 +47,7 @@ export default class BotGame {
     enemyIndex=1
     constructor(fields) {
         this.playerFields=fields;
-        this.bot=new BotEnemy(this.handleBotShot)
+        this.bot=new SmartBot(this.handleBotShot)
     }
     startTimer=()=>{
         setTimeout(()=>{

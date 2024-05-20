@@ -85,9 +85,8 @@ public class RoomService {
             String destination = "/room";
             GameModel game = cacheService.getGame(user.getRoomId());
             if(game.isInGame()){
-                destination = "/game";
+                destination = "/room";
                 PlayerModel info=UserEntity.builder().id(userId).fields(game.getPlayerById(userId).getFields()).build();
-                System.out.println("chuj");
                 System.out.println(info);
                 message = jsonConverter.toJson(info);
                 System.out.println(message);

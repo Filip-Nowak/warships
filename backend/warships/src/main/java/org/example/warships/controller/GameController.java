@@ -42,7 +42,7 @@ public class GameController {
             if (Objects.equals(message.getMessage(), "")) {
                 gameService.back(game);
                 for (PlayerModel player : game.getPlayers()) {
-                    messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().type(RoomMessageType.BACK).build());
+                    messagingTemplate.convertAndSendToUser(player.getId(), "/room", ResponseModel.builder().type(RoomMessageType.BACK).message("").build());
                 }
                 return;
             }
@@ -158,7 +158,7 @@ public class GameController {
                     break;
                 }
             }
-            messagingTemplate.convertAndSendToUser(player.getId(),"/game",ResponseModel.builder().type(RoomMessageType.FORFEIT).message(jsonConverter.toJson(playerInfo)).build());
+            messagingTemplate.convertAndSendToUser(player.getId(),"/room",ResponseModel.builder().type(RoomMessageType.FORFEIT).message(jsonConverter.toJson(playerInfo)).build());
         }
         gameService.endGame(game);
     }

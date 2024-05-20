@@ -26,6 +26,9 @@ public class Board {
     public int shoot(int x, int y) {
         if (fields[y][x] == 1) {
             int[][] copy = fields.clone();
+            for (int i = 0; i < copy.length; i++) {
+                copy[i] = fields[i].clone();
+            }
             if (checkSunken(x, y, copy)) {
                 sunkShip(x, y);
                 return 2;
