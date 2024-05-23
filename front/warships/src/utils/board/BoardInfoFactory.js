@@ -41,7 +41,7 @@ export default class BoardInfoFactory {
     }
     static getSeaBoard =()=>{
         const board={}
-        board.isFieldDisabled=()=>true
+        board.isFieldDisabled=()=>false
         board.fieldType=fieldStyles.seaField
         board.fieldClassnames =[
             fieldStyles.seaField,

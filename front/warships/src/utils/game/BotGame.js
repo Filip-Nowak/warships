@@ -1,5 +1,4 @@
-import BotEnemy from "./BotEnemy";
-import {forCrossFields, getField, setField} from "../board/boardUitils";
+import {forCrossFields, getField} from "../board/boardUitils";
 import SmartBot from "./SmartBot";
 
 export default class BotGame {
@@ -25,11 +24,20 @@ export default class BotGame {
             forCrossFields(pos.x, pos.y, copiedFields, callback)
             if (sunken) {
                 this.gameEvents.onEnemySunken(pos)
+                this.bot.shotResult(2,pos);
+                this.playerHp--;
+                if(this.playerHp===0){
+                    this.gameEvents.onLost(this.bot.fields);
+                }
             } else {
                 this.gameEvents.onEnemyHit(pos)
+                this.bot.shotResult(1,pos);
             }
         } else {
             this.gameEvents.onEnemyAlreadyHit(pos)
+        }
+        if(field!==1){
+            this.bot.shotResult(0,pos);
         }
         setTimeout(() => {
             this.gameEvents.onPlayerStartedTurn()
@@ -67,7 +75,7 @@ export default class BotGame {
                     this.gameEvents.onPlayerSunken(pos)
                     this.botHp--
                     if (this.botHp === 0)
-                        this.gameEvents.onWin()
+                        this.gameEvents.onWin(this.bot.fields)
                 } else {
                     this.gameEvents.onPlayerHit(pos)
                 }

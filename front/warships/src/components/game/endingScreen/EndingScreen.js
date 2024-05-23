@@ -1,7 +1,6 @@
 import FullScreenInfo from "../../utils/loading/FullScreenInfo";
 import Menu from "../../utils/menu/Menu";
 import MenuButton from "../../utils/menuButton/MenuButton";
-import online from "../../../utils/online/Online";
 
 function EndingScreen({winner,showEnemyShips,returnToRoom, forfeited, playerLeft}){
     let message=""

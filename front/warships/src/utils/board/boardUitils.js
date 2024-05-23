@@ -33,10 +33,7 @@ function setAroundFields(x,y,fields,value,condition=v=>true){
 }
 function forAroundFields(x,y,fields,callback){
     for(let i=-1;i<2;i++){
-        console.log(i)
         for(let j=-1;j<2;j++){
-            console.log(j)
-            console.log("around")
             callback(x+i,y+j,fields)
         }
     }

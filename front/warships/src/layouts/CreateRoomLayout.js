@@ -59,6 +59,7 @@ function CreateRoomLayout() {
             loadingContext.setLoading(false)
             online.roomMessageHandlers = {}
             online.addRoomMessageHandler("JOINED_ROOM", onJoinRoom)
+            online.addRoomMessageHandler("ERROR",handleError)
         }
 
     }

@@ -12,8 +12,6 @@ function BotLayout() {
     useEffect(() => {
         if(game.current!==null)
         {
-            console.log("setting players")
-            console.log(playerFields)
             game.current.setPlayerFields(playerFields)
         }
     }, [playerFields]);
