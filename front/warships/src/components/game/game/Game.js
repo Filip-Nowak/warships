@@ -185,7 +185,6 @@ function Game({game, playerFields, setPlayerFields,returnToLobby}) {
         setWinner(false)
         setTime(0)
 
-        game.endGame();
     }
     const onEnemyForfeit=(enemyShips)=>{
         setShootingPos(prevState=>{
@@ -202,7 +201,6 @@ function Game({game, playerFields, setPlayerFields,returnToLobby}) {
         setForfeited(true)
         setWinner(true)
         setTime(0)
-        game.endGame();
     }
     const forfeit = () => {
         game.forfeit()
@@ -238,7 +236,6 @@ function Game({game, playerFields, setPlayerFields,returnToLobby}) {
                 setPlayerLeft(true)
                 prevState=true
                 setTime(0)
-                game.endGame();
             }
             return prevState
 

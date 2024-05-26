@@ -133,12 +133,14 @@ public class GameController {
                                 break;
                             }
                         }
-                        messagingTemplate.convertAndSendToUser(player.getId(),"/game",ResponseModel.builder().type(RoomMessageType.WIN).message(jsonConverter.toJson(playerInfo)).build());
+                        messagingTemplate.convertAndSendToUser(player.getId(),"/room",ResponseModel.builder().type(RoomMessageType.WIN).message(jsonConverter.toJson(playerInfo)).build());
                     }
                     gameService.endGame(updatedGame);
                     return;
                 }
-                updatedGame=gameService.changeTurn(updatedGame);
+                if (result != 1 && result != 2) {
+                    updatedGame=gameService.changeTurn(updatedGame);
+                }
                 for(PlayerModel player:updatedGame.getPlayers()){
                     messagingTemplate.convertAndSendToUser(player.getId(),"/game",GameLog.builder().type(LogType.STARTED_TURN).senderId(updatedGame.getTurn()).build());
                 }

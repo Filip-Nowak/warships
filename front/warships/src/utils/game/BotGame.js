@@ -2,7 +2,7 @@ import {forCrossFields, getField} from "../board/boardUitils";
 import SmartBot from "./SmartBot";
 
 export default class BotGame {
-    handleBotShot=(pos)=> {
+    handleBotShot = (pos) => {
         const field = getField(pos.x, pos.y, this.playerFields)
         if (field === 0 || field === 4) {
             this.gameEvents.onEnemyMiss(pos)
@@ -24,23 +24,30 @@ export default class BotGame {
             forCrossFields(pos.x, pos.y, copiedFields, callback)
             if (sunken) {
                 this.gameEvents.onEnemySunken(pos)
-                this.bot.shotResult(2,pos);
+                this.bot.shotResult(2, pos);
                 this.playerHp--;
-                if(this.playerHp===0){
+                if (this.playerHp === 0) {
                     this.gameEvents.onLost(this.bot.fields);
                 }
             } else {
                 this.gameEvents.onEnemyHit(pos)
-                this.bot.shotResult(1,pos);
+                this.bot.shotResult(1, pos);
             }
         } else {
             this.gameEvents.onEnemyAlreadyHit(pos)
         }
-        if(field!==1){
-            this.bot.shotResult(0,pos);
+        if (field !== 1) {
+            this.bot.shotResult(0, pos);
         }
         setTimeout(() => {
-            this.gameEvents.onPlayerStartedTurn()
+            if (field === 1) {
+                this.gameEvents.onEnemyStartedTurn();
+                this.#pickingTimer = setTimeout(() => {
+                    this.bot.takeShot()
+                }, 1000);
+            } else {
+                this.gameEvents.onPlayerStartedTurn()
+            }
         }, 2000)
 
     }
@@ -49,77 +56,106 @@ export default class BotGame {
     #pickingTimer
     bot;
     playerFields
-    playerHp=10
-    botHp=10
-    playerIndex=0;
-    enemyIndex=1
+    playerHp = 10
+    botHp = 10
+    playerIndex = 0;
+    enemyIndex = 1
+
     constructor(fields) {
-        this.playerFields=fields;
-        this.bot=new SmartBot(this.handleBotShot)
+        this.playerFields = fields;
+        this.bot = new SmartBot(this.handleBotShot)
     }
-    startTimer=()=>{
-        setTimeout(()=>{
+
+    startTimer = () => {
+        setTimeout(() => {
             this.gameEvents.onStart()
             this.gameEvents.onPlayerStartedTurn()
-        },0)
+        }, 0)
     }
-    setPlayerFields=(fields)=>{
-        this.playerFields=fields;
+    setPlayerFields = (fields) => {
+        this.playerFields = fields;
     }
-    shoot= (pos)=>{
+    shoot = (pos) => {
         this.gameEvents.onPlayerShooting()
-        this.#shootingTimer=setTimeout(()=> {
-            const {hit, sunken} = this.bot.shoot(pos)
-            if (hit) {
+        this.#shootingTimer = setTimeout(() => {
+            const {hit, sunken,alreadyHit} = this.bot.shoot(pos)
+            if(alreadyHit){
+                this.gameEvents.onPlayerAlreadyHit(pos)
+            }else if (hit) {
                 if (sunken) {
                     this.gameEvents.onPlayerSunken(pos)
                     this.botHp--
-                    if (this.botHp === 0)
+                    if (this.botHp === 0) {
+                        this.endGame();
                         this.gameEvents.onWin(this.bot.fields)
+                        return;
+                    }
                 } else {
                     this.gameEvents.onPlayerHit(pos)
                 }
             } else {
                 this.gameEvents.onPlayerMiss(pos)
             }
-            this.#resultTimer=setTimeout(() => {
-                this.gameEvents.onEnemyStartedTurn()
-                this.#pickingTimer=setTimeout(() => {
-                    this.bot.takeShot();
-                }, 1000)
+            this.#resultTimer = setTimeout(() => {
+                if (hit) {
+                    this.gameEvents.onPlayerStartedTurn();
+                } else {
+                    this.gameEvents.onEnemyStartedTurn()
+
+                    this.#pickingTimer = setTimeout(() => {
+                        this.bot.takeShot();
+                    }, 1000)
+                }
             }, 2000)
-        },1500)
+        }, 1500)
 
     }
-    forfeit=()=>{
+    forfeit = () => {
+        this.endGame();
         this.gameEvents.onPlayerForfeit(this.bot.fields)
     }
 
 
+    players = ["you", "bot"]
+    gameEvents = {
+        onStart: () => {
+        },
+        onPlayerHit: () => {
+        },
+        onPlayerMiss: () => {
+        },
+        onPlayerSunken: () => {
+        },
 
-    players=["you","bot"]
-    gameEvents={
-        onStart:()=>{},
-        onPlayerHit:()=>{},
-        onPlayerMiss:()=>{},
-        onPlayerSunken:()=>{},
+        onEnemyHit: () => {
+        },
+        onEnemyMiss: () => {
+        },
+        onEnemySunken: () => {
+        },
 
-        onEnemyHit:()=>{},
-        onEnemyMiss:()=>{},
-        onEnemySunken:()=>{},
-
-        onPlayerShooting:()=>{},
-        onEnemyShooting:()=>{},
-        onWin:()=>{},
-        onLost:()=>{},
-        onPlayerForfeit:()=>{},
-        onEnemyForfeit:()=>{},
-        onEnemyAlreadyHit:(pos)=> {}
-        ,onPlayerAlreadyHit:(pos)=>{},
-        onPlayerStartedTurn:()=>{},
-        onEnemyStartedTurn:()=>{}
+        onPlayerShooting: () => {
+        },
+        onEnemyShooting: () => {
+        },
+        onWin: () => {
+        },
+        onLost: () => {
+        },
+        onPlayerForfeit: () => {
+        },
+        onEnemyForfeit: () => {
+        },
+        onEnemyAlreadyHit: (pos) => {
+        }
+        , onPlayerAlreadyHit: (pos) => {
+        },
+        onPlayerStartedTurn: () => {
+        },
+        onEnemyStartedTurn: () => {
+        }
     }
-    endGame=()=>{
+    endGame = () => {
         clearTimeout(this.#shootingTimer)
         clearTimeout(this.#resultTimer)
         clearTimeout(this.#pickingTimer)

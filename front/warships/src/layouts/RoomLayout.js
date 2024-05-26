@@ -159,7 +159,7 @@ function RoomLayout() {
         if (fields.length !== 0) {
             for (let i = 0; i < fields.length; i++) {
                 for (let j = 0; j < fields[i].length; j++) {
-                    if (fields[i][j] === 4) {
+                    if (fields[i][j] === 4 ||fields[i][j] === 3||fields[i][j] === 2) {
                         fields[i][j] = 0
                     }
                 }

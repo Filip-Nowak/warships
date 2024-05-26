@@ -71,8 +71,6 @@ export default class BotShooter {
                         last = pos;
                     }
                 }
-                this.first = first;
-                this.last = last;
                 if (first.x === last.x) {
                     this.possibleContinues.push(this.checkField(first.x, first.y - 1));
                     this.possibleContinues.push(this.checkField(last.x, last.y + 1));
@@ -87,8 +85,6 @@ export default class BotShooter {
         }
     }
 
-    first = {x: -1, y: -1};
-    last = {x: -1, y: -1};
 
     removePossibleFields() {
         for (let i = 0; i < this.hitShip.length; i++) {

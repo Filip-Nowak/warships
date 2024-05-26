@@ -1,5 +1,9 @@
 package org.example.warships.model;
 
+import org.example.warships.utils.BoolHolder;
+
+import java.util.Arrays;
+
 public class Board {
     private int[][] fields;
     public Board(int[][] fields){
@@ -46,7 +50,7 @@ public class Board {
         int[][] directions = new int[][]{{x + 1, y}, {x - 1, y}, {x, y + 1}, {x, y - 1}};
         for (int[] direction : directions) {
             if (checkField(direction[0], direction[1])) {
-                if (fields[direction[1]][direction[0]] == 2) {
+                if (getField(direction[0],direction[1]) == 2) {
                     sunkShip(direction[0], direction[1]);
                 }
             }
@@ -58,18 +62,37 @@ public class Board {
     }
 
     private boolean checkSunken(int x, int y, int[][] fields) {
-        //5 is checked
+        BoolHolder sunken = new BoolHolder(true);
         fields[y][x] = 5;
-        int[][] directions = new int[][]{{x + 1, y}, {x - 1, y}, {x, y + 1}, {x, y - 1}};
-        for (int[] direction : directions) {
-            if (checkField(direction[0], direction[1])) {
-                if (fields[direction[1]][direction[0]] == 1) {
-                    return false;
-                } else if (fields[direction[1]][direction[0]] == 2) {
-                    return checkSunken(direction[0], direction[1], fields);
-                }
-            }
+        forCrossFields(x, y, fields, sunken);
+        if(sunken.getValue()){
+            System.out.println("xdd sunken");
+        }else{
+            System.out.println("xdd not sunken");
         }
-        return true;
+        return sunken.getValue();
+    }
+    private void callback(int x, int y, int[][] fields, BoolHolder sunken){
+        if(fields[y][x]==1){
+            sunken.setValue(false);
+        }else if(fields[y][x]==2){
+            fields[y][x]=5;
+            forCrossFields(x,y,fields,sunken);
+        }
+    }
+    private void forCrossFields(int x, int y, int[][] fields,BoolHolder sunken){
+        if(checkField(x+1,y)){
+           callback(x+1,y,fields,sunken);
+        }
+        if(checkField(x-1,y)){
+           callback(x-1,y,fields,sunken);
+        }
+        if(checkField(x,y+1)){
+           callback(x,y+1,fields,sunken);
+        }
+        if(checkField(x,y-1)){
+           callback(x,y-1,fields,sunken);
+        }
+
     }
 }

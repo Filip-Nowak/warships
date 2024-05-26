@@ -34,7 +34,7 @@ export default class OnlineGame {
         online.addGameLogHandler("MISS", this.handleMiss)
         online.addGameLogHandler("STARTED_TURN", this.handleStartedTurn)
         online.addGameLogHandler("SHOOTING", this.handleShooting)
-        online.addGameLogHandler("WIN", this.handleWin)
+        online.addRoomMessageHandler("WIN", this.handleWin)
         online.addRoomMessageHandler("PLAYER_LEFT", this.handlePlayerLeft)
         online.addRoomMessageHandler("FORFEIT", this.handleForfeit)
     }
@@ -88,7 +88,7 @@ export default class OnlineGame {
         online.addGameLogHandler("MISS", ()=>{})
         online.addGameLogHandler("STARTED_TURN", ()=>{})
         online.addGameLogHandler("SHOOTING", ()=>{})
-        online.addGameLogHandler("WIN", ()=>{})
+        online.addRoomMessageHandler("WIN", ()=>{})
         const data= JSON.parse(msg.message)
         if (data.id === online.getUserId()) {
             this.gameEvents.onWin(data.fields)
@@ -103,7 +103,7 @@ export default class OnlineGame {
         online.addGameLogHandler("MISS", ()=>{})
         online.addGameLogHandler("STARTED_TURN", ()=>{})
         online.addGameLogHandler("SHOOTING", ()=>{})
-        online.addGameLogHandler("WIN", ()=>{})
+        online.addRoomMessageHandler("WIN", ()=>{})
         const data=JSON.parse(msg.message);
         this.setRoom(prevState=>{
             prevState.users = prevState.users.filter(player=>player.id!==data.id && player.id!==msg.message)
@@ -120,7 +120,7 @@ export default class OnlineGame {
         online.addGameLogHandler("MISS", ()=>{})
         online.addGameLogHandler("STARTED_TURN", ()=>{})
         online.addGameLogHandler("SHOOTING", ()=>{})
-        online.addGameLogHandler("WIN", ()=>{})
+        online.addRoomMessageHandler("WIN", ()=>{})
         const data=JSON.parse(msg.message)
         if (data.id === online.getUserId()) {
             this.gameEvents.onPlayerForfeit(data.fields)

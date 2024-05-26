@@ -150,6 +150,7 @@ class SmartBot {
 
     shoot({x,y}) {
         let output = {}
+        const firsField=this.fields[y][x];
         if (this.fields[y][x]===1) {
             this.fields[y][x]=2;
             let sunken=true;
@@ -163,9 +164,12 @@ class SmartBot {
             }
             const clonedFields=cloneFields(this.fields);
             forCrossFields(x, y, clonedFields, callback)
-            output={hit:true,sunken:sunken};
+            output={hit:true,sunken:sunken,alreadyHit:false};
         } else {
-            output = {hit: false, sunken: false}
+            let alreadyHit=false;
+            if(firsField===2 || firsField===3)
+                alreadyHit=true;
+            output = {hit: false, sunken: false,alreadyHit:alreadyHit}
         }
         return output
     }
