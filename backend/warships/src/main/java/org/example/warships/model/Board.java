@@ -39,7 +39,8 @@ public class Board {
             }
             fields[y][x] = 2;
             return 1;
-        } else if (fields[y][x] == 0) {
+        } else if (fields[y][x] == 0 || fields[y][x] == 4) {
+            fields[y][x] = 4;
             return 0;
         }
         return 3;
