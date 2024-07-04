@@ -1,0 +1,9 @@
+.submitContainer{
+    margin-top: 4em;
+}
+.message{
+    margin-left: auto;
+    margin-right: auto;
+    font-size: 3rem;
+    width: fit-content;
+}
